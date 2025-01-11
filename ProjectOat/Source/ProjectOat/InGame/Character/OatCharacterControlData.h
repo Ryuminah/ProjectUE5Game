@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Character/OatCharacterBase.h"
-#include "OatCharacterPlayer.generated.h"
+#include "Engine/DataAsset.h"
+#include "OatCharacterControlData.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTOAT_API AOatCharacterPlayer : public AOatCharacterBase
+class PROJECTOAT_API UOatCharacterControlData : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 	

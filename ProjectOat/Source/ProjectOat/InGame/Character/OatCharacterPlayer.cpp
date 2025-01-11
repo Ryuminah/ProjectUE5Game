@@ -80,9 +80,11 @@ void AOatCharacterPlayer::Move(const FInputActionValue& InValue)
 {
 	FVector2D MovementVector = InValue.Get<FVector2D>();
 
+	// Update된 ControlRotation 값을 가져와서
 	const FRotator	Rotation = Controller->GetControlRotation();
 	const FRotator	YawRotation(0, Rotation.Yaw, 0);
 
+	// 전진 / 오른쪽 방향을 받아온 뒤
 	const FVector FowardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
@@ -95,6 +97,7 @@ void AOatCharacterPlayer::Look(const FInputActionValue& InValue)
 {
 	FVector2D LookAxisVector = InValue.Get<FVector2D>();
 
+	// 입력값을 받아서 컨트롤러의 ControlRotation 속성을 업데이트 하는데에 사용
 	AddControllerYawInput(LookAxisVector.X);
 	AddControllerPitchInput(LookAxisVector.Y);
 

@@ -2,6 +2,7 @@
 
 
 #include "InGame/Character/OatCharacterBase.h"
+#include "InGame/Character/OatCharacterControlData.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -42,4 +43,29 @@ AOatCharacterBase::AOatCharacterBase()
 	{
 		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
 	} 
+
+	// Control
+	static ConstructorHelpers::FObjectFinder<UOatCharacterControlData> ShoulderDataRef(TEXT("/Script/ProjectOat.OatCharacterControlData'/Game/ProjectOat/Core/InGame/Character/DA_Control_Shoulder.DA_Control_Shoulder'"));
+	if (ShoulderDataRef.Object)
+	{
+		CharacterControlManager.Add(ECharacterControlType::Shoulder,ShoulderDataRef.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<UOatCharacterControlData> QuaterDataRef(TEXT("/Script/ProjectOat.OatCharacterControlData'/Game/ProjectOat/Core/InGame/Character/DA_Control_Quater.DA_Control_Quater'"));
+	if (QuaterDataRef.Object)
+	{
+		CharacterControlManager.Add(ECharacterControlType::Quater, QuaterDataRef.Object);
+	}
+
+}
+
+void AOatCharacterBase::SetCharacterControlData(const UOatCharacterControlData* CharcterControlData)
+{
+	// Pawn
+	bUseControllerRotationYaw = CharcterControlData->bUseControllerRotaitionYaw;
+
+	// CharacterMovement
+	GetCharacterMovement()->bOrientRotationToMovement = CharcterControlData->bOrientRotationToMovement;
+	GetCharacterMovement()->bUseControllerDesiredRotation = CharcterControlData->bUseControllerDesiredRotation;
+	GetCharacterMovement()->RotationRate = CharcterControlData->RotationRate;
 }

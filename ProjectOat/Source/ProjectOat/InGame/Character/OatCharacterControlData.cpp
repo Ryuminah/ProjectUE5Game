@@ -3,3 +3,7 @@
 
 #include "InGame/Character/OatCharacterControlData.h"
 
+UOatCharacterControlData::UOatCharacterControlData()
+{
+	TargetArmLength = 400.f;
+}

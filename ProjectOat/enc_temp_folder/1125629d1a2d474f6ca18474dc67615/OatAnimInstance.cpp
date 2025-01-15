@@ -9,7 +9,7 @@
 UOatAnimInstance::UOatAnimInstance()
 {
 	MovingThreshould = 3.f;
-	JumpingThreshould = 1.f;
+	JumpingThreshould = 100.f;
 }
 
 void UOatAnimInstance::NativeInitializeAnimation()
@@ -33,7 +33,7 @@ void UOatAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		// z°ª Á¦¿Ü
 		GroundSpeed = Velocity.Size2D();
 
-		bIsIdle = (GroundSpeed < MovingThreshould) & !bIsFalling & !bIsJumping;
+		bIsIdle = GroundSpeed < MovingThreshould;
 		bIsFalling = Movement->IsFalling();
 		bIsJumping = bIsFalling & (Velocity.Z > JumpingThreshould);
 	}

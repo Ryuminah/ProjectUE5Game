@@ -9,6 +9,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubSystems.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 AOatCharacterPlayer::AOatCharacterPlayer()
@@ -59,6 +60,12 @@ AOatCharacterPlayer::AOatCharacterPlayer()
 		AttackAction = InputActionAttackRef.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionQuitRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectOat/Core/Systems/Input/Actions/IA_Quit.IA_Quit'"));
+	if (InputActionQuitRef.Object)
+	{
+		QuitAction = InputActionQuitRef.Object;
+	}
+
 	CurrentCharacterControlType = ECharacterControlType::Shoulder;
 }
 
@@ -83,6 +90,9 @@ void AOatCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	EnhancedInputComponent->BindAction(ShoulderMoveAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::ShoulderMove);
 	EnhancedInputComponent->BindAction(ShoulderLookAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::ShoulderLook);
 	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::Attack);
+
+	EnhancedInputComponent->BindAction(QuitAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::QuitGame);
+
 
 }
 
@@ -192,6 +202,12 @@ void AOatCharacterPlayer::QuaterMove(const FInputActionValue& Value)
 void AOatCharacterPlayer::Attack()
 {
 	ProcessAttack();
+}
+
+void AOatCharacterPlayer::QuitGame()
+{
+	// 팝업이 없을 경우 게임 종료
+	UKismetSystemLibrary::QuitGame(this, GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);
 }
 
 

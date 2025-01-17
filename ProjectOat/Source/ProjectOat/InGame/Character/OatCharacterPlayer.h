@@ -43,6 +43,7 @@ protected:
 
 /* Input ---------------------------------------------------------------------*/
 protected:	
+	// InGame 관련 ============================================================
 	UPROPERTY(Category=Input, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> JumpAction;
 
@@ -66,8 +67,13 @@ protected:
 	void ShoulderMove(const FInputActionValue& InValue);
 	void ShoulderLook(const FInputActionValue& InValue);
 	void QuaterMove(const FInputActionValue& Value);
-
 	void Attack();
+
+	
+	// 메뉴 조작 ===============================================================
+	UPROPERTY(Category=Input, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> QuitAction;
+	void QuitGame();
 
 
 };

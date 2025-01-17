@@ -53,7 +53,13 @@ AOatCharacterPlayer::AOatCharacterPlayer()
 		QuaterMoveAction = InputActionQuaterMoveRef.Object;
 	}
 
-	CurrentCharacterControlType = ECharacterControlType::Quater;
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionAttackRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectOat/Core/Systems/Input/Actions/IA_Attack.IA_Attack'"));
+	if (InputActionAttackRef.Object)
+	{
+		AttackAction = InputActionAttackRef.Object;
+	}
+
+	CurrentCharacterControlType = ECharacterControlType::Shoulder;
 }
 
 void AOatCharacterPlayer::BeginPlay()
@@ -76,6 +82,8 @@ void AOatCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	EnhancedInputComponent->BindAction(QuaterMoveAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::QuaterMove);
 	EnhancedInputComponent->BindAction(ShoulderMoveAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::ShoulderMove);
 	EnhancedInputComponent->BindAction(ShoulderLookAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::ShoulderLook);
+	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::Attack);
+
 }
 
 void AOatCharacterPlayer::ChangeCharacterControl()
@@ -180,4 +188,10 @@ void AOatCharacterPlayer::QuaterMove(const FInputActionValue& Value)
 	GetController()->SetControlRotation(FRotationMatrix::MakeFromX(MoveDirection).Rotator());
 	AddMovementInput(MoveDirection, MovementVectorSize);
 }
+
+void AOatCharacterPlayer::Attack()
+{
+	ProcessAttack();
+}
+
 

@@ -27,4 +27,27 @@ protected:
 
 	UPROPERTY(Category=CharacterControl, EditAnywhere, meta=(AllowPrivateAccess = "true"))
 	TMap<ECharacterControlType, class UOatCharacterControlData*> CharacterControlManager;
+
+/* Combo Action -----------------------------------------------------*/
+protected:
+	UPROPERTY(Category=Animation, EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UAnimMontage> AttackMontage;
+
+	UPROPERTY(Category=Attack, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<class UOatAttackActionData> AttackActionData;
+
+	void ProcessAttack();
+	void AttackActionMontageBegin();
+	void AttackActionMontageEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded);
+
+
+	// 현재까지 진행된 콤보 수
+	int32 CurrentCombo = 0;
+	// 원하는 시간에 특정 함수 호출
+	FTimerHandle ComboTimerHandle;
+	// 입력 커맨드가 들어왔는지
+	bool bHasNextComboCommand = false;
+	void SetComboCheckTimer();
+	void ComboCheck();
+
 };

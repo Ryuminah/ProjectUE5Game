@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InGame/Interface/OatAnimationAttackInterface.h"
+
 #include "OatCharacterBase.generated.h"
 
 UENUM()
@@ -14,7 +16,7 @@ enum class ECharacterControlType : uint8
 };
 
 UCLASS()
-class PROJECTOAT_API AOatCharacterBase : public ACharacter
+class PROJECTOAT_API AOatCharacterBase : public ACharacter, public IOatAnimationAttackInterface
 {
 	GENERATED_BODY()
 
@@ -49,5 +51,9 @@ protected:
 	bool bHasNextComboCommand = false;
 	void SetComboCheckTimer();
 	void ComboCheck();
+
+/* Hit Check -----------------------------------------------------*/
+protected:
+	virtual void AttackHitCheck();
 
 };

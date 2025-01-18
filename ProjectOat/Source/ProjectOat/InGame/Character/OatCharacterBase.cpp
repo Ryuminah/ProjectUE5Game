@@ -162,3 +162,6 @@ void AOatCharacterBase::ComboCheck()
 	}
 }
 
+void AOatCharacterBase::AttackHitCheck()
+{}
+

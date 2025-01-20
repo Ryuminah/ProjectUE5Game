@@ -2,11 +2,14 @@
 
 
 #include "OatCharacterBase.h"
+
 #include "OatCharacterControlData.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimMontage.h"
+#include "InGame/Physics/OatCollision.h"
 #include "OatAttackActionData.h"
+#include "Engine/DamageEvents.h"
 
 // Sets default values
 AOatCharacterBase::AOatCharacterBase()
@@ -18,7 +21,7 @@ AOatCharacterBase::AOatCharacterBase()
 
 	// Capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+	GetCapsuleComponent()->SetCollisionProfileName(CPROFILE_OATCAPSULE);
 
 	// Movement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -32,7 +35,7 @@ AOatCharacterBase::AOatCharacterBase()
 	// Mesh
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -100.f), FRotator(0.f, -90.f, 0.f));
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	GetMesh()->SetCollisionProfileName(TEXT("CharacterMesh"));
+	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/ProjectOat/Arts/Characters/Roxy/SK_Roxy.SK_Roxy'"));
 	if (CharacterMeshRef.Object)
@@ -59,8 +62,26 @@ AOatCharacterBase::AOatCharacterBase()
 		CharacterControlManager.Add(ECharacterControlType::Quater, QuaterDataRef.Object);
 	}
 
+	/* Animation ----------------------------------------------------------------------------------*/
 	// Montage Asset은 블루프린트에서 지정
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ActionMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Roxy/Animations/AM_Roxy_ComboAttack.AM_Roxy_ComboAttack'"));
+	if (ActionMontageRef.Object)
+	{
+		AttackMontage = ActionMontageRef.Object;
+	}
 
+	static ConstructorHelpers::FObjectFinder<UOatAttackActionData> ActionDataRef(TEXT("/Script/ProjectOat.OatAttackActionData'/Game/ProjectOat/InGame/Character/DA_AttackAction.DA_AttackAction'"));
+	if (ActionDataRef.Object)
+	{
+		AttackActionData = ActionDataRef.Object;
+	}
+
+	// Dead
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Roxy/Animations/AM_Roxy_Dead.AM_Roxy_Dead'"));
+	if (DeadMontageRef.Object)
+	{
+		DeadMontage = DeadMontageRef.Object;
+	}
 }
 
 void AOatCharacterBase::SetCharacterControlData(const UOatCharacterControlData* CharcterControlData)
@@ -102,8 +123,6 @@ void AOatCharacterBase::AttackActionMontageBegin()
 
 	// 이동 기능 사라짐
 	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
-
-	// 이동 기능 사라짐
 	const float AttackSpeedRate = 1.f;
 
 	// 몽타주 접근을 위해 AnimInstance 접근
@@ -163,5 +182,67 @@ void AOatCharacterBase::ComboCheck()
 }
 
 void AOatCharacterBase::AttackHitCheck()
-{}
+{
+	FHitResult OutHitResult;
+	// 콜리전 분석 시 태그 정보 , 복잡한 형태의 충돌체도 감지 할 지(캡슐.구 -> Convex ) , 무시할 액터 (자기자신)
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
+
+	const float AttackRange = 40.f;
+	const float AttackRadius = 50.f;
+	const float AttackDamage = 30.f;
+	// 현재 액터 위치 + 액터 시선방향 + 캡슐 컴포넌트의 반지름값을 추가해서 정면의 캡슐 위치에서부터 시작함
+	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
+
+	// 시작 + Attack범위
+	const FVector End = Start + GetActorForwardVector() * AttackRange;
+
+	// World에서 제공하는 서비스
+	// HitResult에 결과값을 받아올 수 있음 , 시작 - 끝 , FCollisionShpae을 통하여 구체 영역 지정 / 
+	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANNEL_OATACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
+	if (HitDetected)
+	{
+		FDamageEvent DamageEvent;
+		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
+	}
+#if ENABLE_DRAW_DEBUG
+	// 캡슐 원점 : 시작 + (끝 - 시작) / 2
+	FVector CapsuleOrign = Start + (End - Start) * 0.5f;
+	float CapsuleHalfHeight = AttackRange * 0.5f;
+	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
+
+	// 캡슐을 눕혀서 그려줘야 함
+	DrawDebugCapsule(GetWorld(), CapsuleOrign, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DrawColor, false, 5.f);
+#endif
+}
+
+float AOatCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	// EventInstigator -> 가해자
+	// DamageCasuer -> 가해자가 사용한 무기, 가해자가 빙의한 폰(액터 정보)
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	static float TotalDamage = 0;
+	TotalDamage += DamageAmount;
+
+	if (TotalDamage >= 150.f)
+	{
+		SetDead();
+	}
+
+	// ex. 스탯 정보가 있을 경우 해당 함수에서 연산해서 최종 값으로 리턴
+	return DamageAmount;
+}
+
+void AOatCharacterBase::SetDead()
+{
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	PlayDeadAnim();
+	SetActorEnableCollision(false);
+}
+
+void AOatCharacterBase::PlayDeadAnim()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->StopAllMontages(0.f);
+	AnimInstance->Montage_Play(DeadMontage, 1.f);
+}
 

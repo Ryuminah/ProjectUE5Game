@@ -54,6 +54,16 @@ protected:
 
 /* Hit Check -----------------------------------------------------*/
 protected:
-	virtual void AttackHitCheck();
+	virtual void AttackHitCheck() override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
+/* Dead -----------------------------------------------------*/
+protected:
+	UPROPERTY(Category=Animation, EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UAnimMontage> DeadMontage;
+
+	virtual void SetDead();
+	void PlayDeadAnim();
+
+	float DeadEventDelayTime = 5.f;
 };

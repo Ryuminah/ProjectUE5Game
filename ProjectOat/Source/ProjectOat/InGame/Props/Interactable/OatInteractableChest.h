@@ -24,5 +24,13 @@ protected:
 
 	UPROPERTY(Category=Effect,VisibleAnywhere)
 	TObjectPtr<class UParticleSystemComponent> Effect;
+
+	// 블프에서도 사용할 수 있는 함수이기 때문에 UFunction
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+						bool bFromSweep, const FHitResult& SweepHitResult);
+
+	UFUNCTION()
+	void OnEffectFinished(UParticleSystemComponent* ParticleSystem);
 	
 };

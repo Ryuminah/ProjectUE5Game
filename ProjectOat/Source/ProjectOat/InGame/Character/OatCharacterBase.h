@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InGame/Interface/OatAnimationAttackInterface.h"
+#include "Shared/Interface/OatActorWidgetInterface.h"
 
 #include "OatCharacterBase.generated.h"
 
@@ -16,13 +17,15 @@ enum class ECharacterControlType : uint8
 };
 
 UCLASS()
-class PROJECTOAT_API AOatCharacterBase : public ACharacter, public IOatAnimationAttackInterface
+class PROJECTOAT_API AOatCharacterBase : public ACharacter, public IOatAnimationAttackInterface, public IOatActorWidgetInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	AOatCharacterBase();
+
+	virtual void PostInitializeComponents() override;
 
 protected:
 	virtual void SetCharacterControlData(const class UOatCharacterControlData* CharcterControlData);
@@ -57,7 +60,7 @@ protected:
 	virtual void AttackHitCheck() override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
-/* Dead -----------------------------------------------------*/
+/* Dead ----------------------------------------------------------*/
 protected:
 	UPROPERTY(Category=Animation, EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UAnimMontage> DeadMontage;
@@ -65,5 +68,15 @@ protected:
 	virtual void SetDead();
 	void PlayDeadAnim();
 
-	float DeadEventDelayTime = 5.f;
+	float DeadEventDelayTime = 3.f;
+
+/* Stat ---------------------------------------------------------*/
+	UPROPERTY(Category=Stat, VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<class UOatCharacterStatComponent> Stat;
+
+/* Widget --------------------------------------------------------*/
+	UPROPERTY(Category=Widget, VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<class UOatWidgetComponent> WidgetHpBar;
+
+	virtual void SetUpActorWidget(class UOatUserWidget* InUserWidget) override;
 };

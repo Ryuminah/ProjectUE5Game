@@ -3,13 +3,19 @@
 
 #include "OatCharacterBase.h"
 
-#include "OatCharacterControlData.h"
+#include "Engine/DamageEvents.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimMontage.h"
-#include "InGame/Physics/OatCollision.h"
+
+#include "OatCharacterControlData.h"
 #include "OatAttackActionData.h"
-#include "Engine/DamageEvents.h"
+#include "InGame/Physics/OatCollision.h"
+#include "InGame/Character/Widget/OatHpBarWidget.h"
+#include "InGame/Character/Component/OatCharacterStatComponent.h"
+#include "Shared/Widget/OatWidgetComponent.h"
+
+
 
 // Sets default values
 AOatCharacterBase::AOatCharacterBase()
@@ -82,6 +88,34 @@ AOatCharacterBase::AOatCharacterBase()
 	{
 		DeadMontage = DeadMontageRef.Object;
 	}
+
+	// Stat Component
+	Stat = CreateDefaultSubobject<UOatCharacterStatComponent>(TEXT("Stat"));
+
+	// Widget Component
+	// BeginPlay 이후 클래스 정보로 부터 Instance가 생성되는 구조 (AnimBP와 비슷)
+	WidgetHpBar = CreateDefaultSubobject<UOatWidgetComponent>(TEXT("Widget"));
+	WidgetHpBar->SetupAttachment(GetMesh());
+
+	float CapsuleSize = GetCapsuleComponent()->GetScaledCapsuleHalfHeight()*2;
+	WidgetHpBar->SetRelativeLocation(FVector(0.f,0.f, CapsuleSize + 30.f));
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetHpBarRef(TEXT("/Game/ProjectOat/Arts/UI/WBP_Character_HpBar.WBP_Character_HpBar_C"));
+	if (WidgetHpBarRef.Class)
+	{
+		WidgetHpBar->SetWidgetClass(WidgetHpBarRef.Class);
+		WidgetHpBar->SetWidgetSpace(EWidgetSpace::Screen);
+		WidgetHpBar->SetDrawSize(FVector2D(150.f, 15.f));
+		WidgetHpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
+void AOatCharacterBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	// 어디서 바인딩을 해도 크게 상관 X (생성자나 BeginPlay도 가능하다.)
+	Stat->OnHpZero.AddUObject(this, &AOatCharacterBase::SetDead);
 }
 
 void AOatCharacterBase::SetCharacterControlData(const UOatCharacterControlData* CharcterControlData)
@@ -220,15 +254,8 @@ float AOatCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	// EventInstigator -> 가해자
 	// DamageCasuer -> 가해자가 사용한 무기, 가해자가 빙의한 폰(액터 정보)
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	static float TotalDamage = 0;
-	TotalDamage += DamageAmount;
+	Stat->ApplyDamage(DamageAmount);
 
-	if (TotalDamage >= 150.f)
-	{
-		SetDead();
-	}
-
-	// ex. 스탯 정보가 있을 경우 해당 함수에서 연산해서 최종 값으로 리턴
 	return DamageAmount;
 }
 
@@ -244,5 +271,16 @@ void AOatCharacterBase::PlayDeadAnim()
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->StopAllMontages(0.f);
 	AnimInstance->Montage_Play(DeadMontage, 1.f);
+}
+
+void AOatCharacterBase::SetUpActorWidget(UOatUserWidget* InUserWidget)
+{
+	UOatHpBarWidget* HpBarWidget = Cast<UOatHpBarWidget>(InUserWidget);
+	if (InUserWidget)
+	{
+		HpBarWidget->SetMaxHp(Stat->GetMaxHp());
+		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
+		Stat->OnHpChanged.AddUObject(HpBarWidget, &UOatHpBarWidget::UpdateHpBar);
+	}
 }
 

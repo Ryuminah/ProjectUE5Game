@@ -100,7 +100,7 @@ AOatCharacterBase::AOatCharacterBase()
 	float CapsuleSize = GetCapsuleComponent()->GetScaledCapsuleHalfHeight()*2;
 	WidgetHpBar->SetRelativeLocation(FVector(0.f,0.f, CapsuleSize + 30.f));
 
-	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetHpBarRef(TEXT("/Game/ProjectOat/Arts/UI/WBP_Character_HpBar.WBP_Character_HpBar_C"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetHpBarRef(TEXT("/Game/ProjectOat/InGame/Widget/WBP_Character_HpBar.WBP_Character_HpBar_C"));
 	if (WidgetHpBarRef.Class)
 	{
 		WidgetHpBar->SetWidgetClass(WidgetHpBarRef.Class);

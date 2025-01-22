@@ -14,6 +14,7 @@
 #include "InGame/Character/Widget/OatHpBarWidget.h"
 #include "InGame/Character/Component/OatCharacterStatComponent.h"
 #include "Shared/Widget/OatWidgetComponent.h"
+#include "GameCommon/Items/OatItemWeaponData.h"
 
 
 
@@ -49,7 +50,7 @@ AOatCharacterBase::AOatCharacterBase()
 		GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
 	}
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/ProjectOat/InGame/Roxy/ABP_Roxy.ABP_Roxy_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/ProjectOat/InGame/Character/Roxy/ABP_Roxy.ABP_Roxy_C"));
 	if (AnimInstanceClassRef.Class)
 	{
 		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
@@ -108,6 +109,16 @@ AOatCharacterBase::AOatCharacterBase()
 		WidgetHpBar->SetDrawSize(FVector2D(150.f, 15.f));
 		WidgetHpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
+
+	// Item Callbacks
+	// 아이템을 생성해서 집어넣음 (나중에 안쓸 코드)
+	TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatCharacterBase::TestEquipSocket)));
+	TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatCharacterBase::DrinkPotion)));
+
+	TestSocket = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("TestSocket"));
+	TestSocket->SetupAttachment(GetMesh(), TEXT("L_soket1"));
+
+
 }
 
 void AOatCharacterBase::PostInitializeComponents()
@@ -281,6 +292,27 @@ void AOatCharacterBase::SetUpActorWidget(UOatUserWidget* InUserWidget)
 		HpBarWidget->SetMaxHp(Stat->GetMaxHp());
 		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
 		Stat->OnHpChanged.AddUObject(HpBarWidget, &UOatHpBarWidget::UpdateHpBar);
+	}
+}
+
+void AOatCharacterBase::TakeItem(UOatItemData* InItemData)
+{
+	if (InItemData)
+	{
+		TakeItemCallbacks[(uint8)InItemData->ItemType].ItemDelegate.ExecuteIfBound(InItemData);
+	}
+}
+
+void AOatCharacterBase::DrinkPotion(UOatItemData* InItemData)
+{}
+
+void AOatCharacterBase::TestEquipSocket(UOatItemData* InItemData)
+{
+	UOatItemWeaponData* WeaponItemData = Cast<UOatItemWeaponData>(InItemData);
+	if (WeaponItemData)
+	{
+		if (WeaponItemData->WeaponMesh.IsPending()) { WeaponItemData->WeaponMesh.LoadSynchronous(); }
+		TestSocket->SetSkeletalMesh(WeaponItemData->WeaponMesh.Get());
 	}
 }
 

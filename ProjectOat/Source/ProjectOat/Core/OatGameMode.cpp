@@ -14,7 +14,7 @@ AOatGameMode::AOatGameMode()
 	//	DefaultPawnClass = ThirdPersonClassRef.Class;
 	//}
 
-	static ConstructorHelpers::FClassFinder<APawn> DefaultPawnClassRef(TEXT("/Game/ProjectOat/InGame/Roxy/BP_RoxyCharacter.BP_RoxyCharacter_C"));
+	static ConstructorHelpers::FClassFinder<APawn> DefaultPawnClassRef(TEXT("/Game/ProjectOat/InGame/Character/Roxy/BP_RoxyCharacter.BP_RoxyCharacter_C"));
 	if (DefaultPawnClassRef.Class)
 	{
 		DefaultPawnClass = DefaultPawnClassRef.Class;

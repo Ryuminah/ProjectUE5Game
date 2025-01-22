@@ -1,11 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InGame/Props/Interactable/OatInteractableChest.h"
+#include "GameCommon/Items/Droppable/OatInteractableChest.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "InGame/Physics/OatCollision.h"
+#include "GameCommon/Items/OatItemInterface.h"
 
 
 // Sets default values
@@ -43,6 +44,18 @@ AOatInteractableChest::AOatInteractableChest()
 
 void AOatInteractableChest::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
 {
+	if (!Item)
+	{
+		Destroy();
+		return;
+	}
+
+	IOatItemInterface* OverlapPawn = Cast<IOatItemInterface>(OtherActor);
+	if (OverlapPawn)
+	{
+		OverlapPawn->TakeItem(Item);
+	}
+
 	Effect->Activate();
 	Mesh->SetHiddenInGame(true);
 	SetActorEnableCollision(false);

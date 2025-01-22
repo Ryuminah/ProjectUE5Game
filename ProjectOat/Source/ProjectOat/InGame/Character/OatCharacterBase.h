@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "InGame/Interface/OatAnimationAttackInterface.h"
 #include "Shared/Interface/OatActorWidgetInterface.h"
+#include "GameCommon/Items/OatItemInterface.h"
+
 
 #include "OatCharacterBase.generated.h"
 
@@ -16,8 +18,19 @@ enum class ECharacterControlType : uint8
 	Quater
 };
 
+DECLARE_DELEGATE_OneParam(FOnTakeItemDelegate, class UOatItemData* /*InItemData*/);
+USTRUCT(BlueprintType)
+struct FTakeItemDelegateWrapper
+{
+	GENERATED_BODY()
+	FTakeItemDelegateWrapper() {}
+	FTakeItemDelegateWrapper(const FOnTakeItemDelegate& InItemDelegate) : ItemDelegate(InItemDelegate) {}
+
+	FOnTakeItemDelegate ItemDelegate;
+};
+
 UCLASS()
-class PROJECTOAT_API AOatCharacterBase : public ACharacter, public IOatAnimationAttackInterface, public IOatActorWidgetInterface
+class PROJECTOAT_API AOatCharacterBase : public ACharacter, public IOatAnimationAttackInterface, public IOatActorWidgetInterface, public IOatItemInterface
 {
 	GENERATED_BODY()
 
@@ -79,4 +92,18 @@ protected:
 	TObjectPtr<class UOatWidgetComponent> WidgetHpBar;
 
 	virtual void SetUpActorWidget(class UOatUserWidget* InUserWidget) override;
+
+/* Item --------------------------------------------------------*/
+protected:
+	// Æê °°Àº°É·Î ¹Ù²ãº¸ÀÚ~~
+	UPROPERTY(Category=Equipment,VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<class USkeletalMeshComponent> TestSocket;
+
+	UPROPERTY()
+	TArray<FTakeItemDelegateWrapper> TakeItemCallbacks;
+
+	virtual void TakeItem(class UOatItemData* InItemData) override;
+	virtual void DrinkPotion(class UOatItemData* InItemData);
+	virtual void TestEquipSocket(class UOatItemData* InItemData);
+
 };

@@ -22,7 +22,8 @@ enum class  EStageSectionState : uint8
 {
 	READYBATTLE = 0,
 	INBATTLE = 1,
-	ENDBATTLE = 2
+	ENDBATTLE = 2,
+	NONE = 3,
 };
 
 UCLASS()
@@ -36,6 +37,9 @@ public:
 
 protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void PostInitializeComponents() override;
+
+	virtual void BeginPlay() override;
 
 /* Stage ------------------------------------------------------*/
 protected:
@@ -68,6 +72,7 @@ UPROPERTY(Category=Stage, VisibleAnywhere, meta=(AllowPrivateAccess = "true"))
 
 /* Section State ------------------------------------------------------*/
 private:
+	
 	UPROPERTY(Category=Stage, EditAnywhere, meta=(AllowPrivateAccess = "true"))
 	EStageSectionState CurrentState;
 
@@ -82,6 +87,7 @@ private:
 	void SpawnSectionEnemy(/*스폰 관련 테이블 인자로*/);
 
 /* Battle State ------------------------------------------------------*/
+	// TSubClassOf -> 언리얼엔진이 제공하는 템플릿 : 지정한 클래스로부터 상속받은 클래스 목록만 표시하도록
 	UPROPERTY(Category=Battle, EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class AOatCharacterNPC> OpponentClass;
 

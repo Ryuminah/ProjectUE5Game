@@ -4,13 +4,15 @@
 #include "InGame/Stage/OatStageSectionTrigger.h"
 #include "Components/BoxComponent.h"
 #include "InGame/Physics/OatCollision.h"
+#include "InGame/Character/OatCharacterNPC.h"
 
 
 // Sets default values
 AOatStageSectionTrigger::AOatStageSectionTrigger()
 {
 	StageTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("Stage"));
-	RootComponent = StageTrigger;
+	SetRootComponent(StageTrigger);
+
 
 	StageTrigger->SetBoxExtent(FVector(500.f, 500.f, 300.f));
 	StageTrigger->SetCollisionProfileName(CPROFILE_OATTRIGGER);
@@ -19,29 +21,40 @@ AOatStageSectionTrigger::AOatStageSectionTrigger()
 	// 트리거에 태그 부착
 	//StageTrigger->ComponentTags.Add();
 
-	CurrentState = EStageSectionState::READYBATTLE;
-	SectionStateChangedCallback.Add(EStageSectionState::READYBATTLE, 
-									FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, AOatStageSectionTrigger::SetReadyBattle)));
+	CurrentState = EStageSectionState::NONE;
+
+	SectionStateChangedCallback.Add(EStageSectionState::READYBATTLE,
+									FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetReadyBattle)));
 
 	SectionStateChangedCallback.Add(EStageSectionState::INBATTLE,
-									FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, AOatStageSectionTrigger::SetInBattle)));
+									FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetInBattle)));
 
 	SectionStateChangedCallback.Add(EStageSectionState::ENDBATTLE,
-									FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, AOatStageSectionTrigger::SetEndBattle)));
+									FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetEndBattle)));
 	//static ConstructorHelpers::FObjectFinder<UStaticMeshComponent> StageMeshRef(TEXT("/Script/En"))
 
+	OpponentClass = AOatCharacterNPC::StaticClass();
 
 }
 
 void AOatStageSectionTrigger::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	SetSectionState(CurrentState);
+}
+
+void AOatStageSectionTrigger::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+}
+
+void AOatStageSectionTrigger::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void AOatStageSectionTrigger::OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
 {
-	// 몬스터를 스폰 
+	SetSectionState(EStageSectionState::READYBATTLE);
 }
 
 void AOatStageSectionTrigger::OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
@@ -51,9 +64,14 @@ void AOatStageSectionTrigger::OnGateTriggerBeginOverlap(UPrimitiveComponent* Ove
 
 void AOatStageSectionTrigger::SetSectionState(EStageSectionState InNewState)
 {
+	if (CurrentState == InNewState)
+	{
+		return;
+	}
+
 	// 굳이 Switch를 사용하지 않고 Callback을 통해 연동
 	CurrentState = InNewState;
-	if (SectionStateChangedCallback.Contains(InNewState))
+	if (SectionStateChangedCallback.Contains(CurrentState))
 	{
 		SectionStateChangedCallback[CurrentState].SectionDelegate.ExecuteIfBound();
 	}
@@ -62,31 +80,54 @@ void AOatStageSectionTrigger::SetSectionState(EStageSectionState InNewState)
 void AOatStageSectionTrigger::SetReadyBattle()
 {
 	//// Collision 활성화 , 몬스터 스폰
-	//StageTrigger->SetCollisionProfileName((CPROFILE_OATTRIGGER));
+
+	StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
 	
 	// 전투의 시작에 알림 보내기
+	// 벽 활성화
+	// 몬스터 스폰
+
+	SpawnSectionEnemy();
+	SetSectionState(EStageSectionState::INBATTLE);
+
 }
 
 void AOatStageSectionTrigger::SetInBattle()
 {
-	StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
-	
-	// SectionOrder -> 테이블에서 몬스터 스폰의 위치와 종류를 가져옴.
-	// 스폰한다.
-	SpawnSectionEnemy();
-	// 몬스터 카운팅
 
+	StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+
+	// 몬스터 스폰 및 처치 카운팅
 }
 
 void AOatStageSectionTrigger::SetEndBattle()
 {
-	StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+	// 해당 트리거는 비활성화 해도 됨
+	SetActorEnableCollision(false);
 
 	// Section전투가 끝났다고 노티파이 알림 보내기
+	// 벽 해제
 }
 
 
 void AOatStageSectionTrigger::SpawnSectionEnemy()
-{}
+{
+	const FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * -3500.f;
+	
+	// ?? 왜 되지 (GetWorld 안됨)
+	UWorld* World = GWorld->GetGameInstance()->GetWorld();
+	AActor* OpponentActor = World->SpawnActor(OpponentClass, &SpawnLocation, &FRotator::ZeroRotator);
+	AOatCharacterNPC* AOatEnemy = Cast<AOatCharacterNPC>(OpponentActor);
+	if (AOatEnemy)
+	{
+		AOatEnemy->OnDestroyed.AddDynamic(this, &AOatStageSectionTrigger::OnOpponentDestroyed);
+	}
+
+}
+
+void AOatStageSectionTrigger::OnOpponentDestroyed(AActor* DestroyedActor)
+{
+	SetSectionState(EStageSectionState::ENDBATTLE);
+}
 
 

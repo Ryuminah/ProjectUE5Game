@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "GameData/TestData.h"
 #include "OatItemData.generated.h"
 
 UENUM(BlueprintType)
@@ -25,5 +26,8 @@ class PROJECTOAT_API UOatItemData : public UPrimaryDataAsset
 public:
 	UPROPERTY(Category=ItemType, EditAnywhere, BlueprintReadWrite)
 	EItemType ItemType;
+
+	UPROPERTY(Category=Stat, EditAnywhere)
+	FTestData ModifierStat;
 	
 };

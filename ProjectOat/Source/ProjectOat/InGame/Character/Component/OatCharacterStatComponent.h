@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "GameData/TestData.h"
 #include "OatCharacterStatComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnHpZeroDelegate);
@@ -23,21 +24,35 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	FORCEINLINE float GetMaxHp() { return MaxHp; }
-	FORCEINLINE float GetCurrentHp() { return CurrentHp; }
-	float ApplyDamage(float InDamage);
-
 	FOnHpZeroDelegate OnHpZero;
 	FOnHpChangedDelegate OnHpChanged;
 
-protected:
-	// 배치한 캐릭터마다 다른 값을 가지고 있기 때문에 인스턴스마다 별도로 수행
-	UPROPERTY(category=Stat,VisibleInstanceOnly)
-	float MaxHp;
+	FORCEINLINE float GetCurrentHp() const { return CurrentHp; }
+	float ApplyDamage(float InDamage);
 
+
+	FORCEINLINE float GetCurrentLv() const { return CurrentHp; }
+	void SetLvStat(int32 InLv);
+
+	FORCEINLINE FTestData GetTotalStat() const { return BaseStat + ModifierStat; }
+	void SetModifierStat(const FTestData& InModifierStat) { ModifierStat = InModifierStat; };
+
+
+protected:
 	// Transient -> 디스크에 저장하지 않도록 하여 불필요한 공간 낭비를 줄임
 	UPROPERTY(category=Stat, Transient, VisibleInstanceOnly)
 	float CurrentHp;	
 
 	void SetHp(float NewHp);
+
+		// Transient -> 디스크에 저장하지 않도록 하여 불필요한 공간 낭비를 줄임
+	UPROPERTY(category=Stat, Transient, VisibleInstanceOnly)
+	float CurrentLv;	
+
+	UPROPERTY(category=Stat, Transient, VisibleInstanceOnly, meta=(AllowPrivateAccess="true"))
+	FTestData BaseStat;
+
+	UPROPERTY(category=Stat, Transient, VisibleInstanceOnly, meta=(AllowPrivateAccess="true"))
+	FTestData ModifierStat;
+
 };

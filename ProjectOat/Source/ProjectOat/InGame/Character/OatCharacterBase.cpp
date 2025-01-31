@@ -232,9 +232,9 @@ void AOatCharacterBase::AttackHitCheck()
 	// 콜리전 분석 시 태그 정보 , 복잡한 형태의 충돌체도 감지 할 지(캡슐.구 -> Convex ) , 무시할 액터 (자기자신)
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
 
-	const float AttackRange = 40.f;
-	const float AttackRadius = 50.f;
-	const float AttackDamage = 30.f;
+	const float AttackRange = Stat->GetTotalStat().AtkRange;
+	const float AttackRadius = 100.f;
+	const float AttackDamage = Stat->GetTotalStat().Atk;
 	// 현재 액터 위치 + 액터 시선방향 + 캡슐 컴포넌트의 반지름값을 추가해서 정면의 캡슐 위치에서부터 시작함
 	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
 
@@ -289,7 +289,7 @@ void AOatCharacterBase::SetUpActorWidget(UOatUserWidget* InUserWidget)
 	UOatHpBarWidget* HpBarWidget = Cast<UOatHpBarWidget>(InUserWidget);
 	if (InUserWidget)
 	{
-		HpBarWidget->SetMaxHp(Stat->GetMaxHp());
+		HpBarWidget->SetMaxHp(Stat->GetTotalStat().MaxHP);
 		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
 		Stat->OnHpChanged.AddUObject(HpBarWidget, &UOatHpBarWidget::UpdateHpBar);
 	}
@@ -313,6 +313,7 @@ void AOatCharacterBase::TestEquipSocket(UOatItemData* InItemData)
 	{
 		if (WeaponItemData->WeaponMesh.IsPending()) { WeaponItemData->WeaponMesh.LoadSynchronous(); }
 		TestSocket->SetSkeletalMesh(WeaponItemData->WeaponMesh.Get());
+		Stat->SetModifierStat(WeaponItemData->ModifierStat);
 	}
 }
 

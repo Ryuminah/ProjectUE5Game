@@ -22,7 +22,7 @@ public:
 	static UOatGameSingleton& Get();
 
 public:
-	FORCEINLINE FTestData GetTestData(int32 Level) const { return TestTable.IsValidIndex(Level - 1) ? TestTable[Level] : FTestData(); }
+	FORCEINLINE FTestData GetTestData(int32 Level) const { return TestTable.IsValidIndex(Level - 1) ? TestTable[Level - 1] : FTestData(); }
 
 	UPROPERTY()
 	int32 MaxLv;

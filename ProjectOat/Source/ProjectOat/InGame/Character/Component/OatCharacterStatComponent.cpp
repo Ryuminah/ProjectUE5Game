@@ -2,11 +2,12 @@
 
 
 #include "InGame/Character/Component/OatCharacterStatComponent.h"
+#include "Core/OatGameSingleton.h"
 
 // Sets default values for this component's properties
 UOatCharacterStatComponent::UOatCharacterStatComponent()
 {
-	MaxHp = 200.f;
+	CurrentLv = 1;
 }
 
 
@@ -14,7 +15,8 @@ UOatCharacterStatComponent::UOatCharacterStatComponent()
 void UOatCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	SetHp(MaxHp);
+	SetLvStat(CurrentLv);
+	SetHp(BaseStat.MaxHP);
 }
 
 float UOatCharacterStatComponent::ApplyDamage(float InDamage)
@@ -28,9 +30,16 @@ float UOatCharacterStatComponent::ApplyDamage(float InDamage)
 	return ActualDamage;
 }
 
+void UOatCharacterStatComponent::SetLvStat(int32 InLv)
+{
+	CurrentLv = FMath::Clamp(InLv, 1, UOatGameSingleton::Get().MaxLv);
+	BaseStat = UOatGameSingleton::Get().GetTestData(CurrentLv);
+	check(BaseStat.MaxHP > 0.f);
+}
+
 void UOatCharacterStatComponent::SetHp(float NewHp)
 {
-	CurrentHp = FMath::Clamp<float>(NewHp, 0.f, MaxHp);
+	CurrentHp = FMath::Clamp<float>(NewHp, 0.f, UOatGameSingleton::Get().GetTestData(CurrentLv).MaxHP);
 
 	// Hp가 변경되었으니 델리게이트 실행
 	OnHpChanged.Broadcast(CurrentHp);

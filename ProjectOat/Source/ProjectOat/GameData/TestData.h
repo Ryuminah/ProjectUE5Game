@@ -11,13 +11,16 @@ struct FTestData :  public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	FTestData() : Lv(0.f), Akt(0.f), AtkRange(0.f), MoveSpeed(0.f){}
+	FTestData() : Lv(0.f), MaxHP(0.f), Atk(0.f), AtkRange(0.f), MoveSpeed(0.f){}
 
 	UPROPERTY(Category = Stat, EditAnywhere, BlueprintReadWrite)
 	float Lv;
 
 	UPROPERTY(Category = Stat, EditAnywhere, BlueprintReadWrite)
-	float Akt;
+	float MaxHP;
+
+	UPROPERTY(Category = Stat, EditAnywhere, BlueprintReadWrite)
+	float Atk;
 
 	UPROPERTY(Category = Stat, EditAnywhere, BlueprintReadWrite)
 	float AtkRange;

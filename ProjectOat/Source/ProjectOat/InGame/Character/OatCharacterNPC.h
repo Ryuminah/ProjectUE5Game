@@ -15,7 +15,7 @@ class PROJECTOAT_API AOatCharacterNPC : public AOatCharacterBase
 	GENERATED_BODY()
 	
 public:
-	AOatCharacterNPC() {};
+	AOatCharacterNPC();
 
 public:
 	void SetDead() override;

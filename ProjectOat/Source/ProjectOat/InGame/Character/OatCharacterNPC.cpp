@@ -2,6 +2,13 @@
 
 
 #include "InGame/Character/OatCharacterNPC.h"
+#include "Core/OatAIController.h"
+
+AOatCharacterNPC::AOatCharacterNPC()
+{
+	AIControllerClass = AOatAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+}
 
 void AOatCharacterNPC::SetDead()
 {

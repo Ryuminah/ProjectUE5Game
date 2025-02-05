@@ -20,3 +20,23 @@ void AOatCharacterNPC::SetDead()
 										   DeadEventDelayTime, false);
 
 }
+
+float AOatCharacterNPC::GetAIPatrolRadius()
+{
+	return 500.0f;
+}
+
+float AOatCharacterNPC::GetAIDetectRange()
+{
+	return 0.0f;
+}
+
+float AOatCharacterNPC::GetAIAttackRange()
+{
+	return 0.0f;
+}
+
+float AOatCharacterNPC::GetAITurnSpeed()
+{
+	return 0.0f;
+}

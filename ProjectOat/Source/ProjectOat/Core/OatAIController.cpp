@@ -5,17 +5,18 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "InGame/AI/OatAI.h"
 
 AOatAIController::AOatAIController()
 {
 	static ConstructorHelpers::FObjectFinder<UBlackboardData> BBAssetRef(TEXT("/Script/AIModule.BlackboardData'/Game/ProjectOat/InGame/AI/BB_OatAI.BB_OatAI'"));
-	if (!BBAssetRef.Object)
+	if (BBAssetRef.Object)
 	{
 		BB = BBAssetRef.Object;
 	}
 
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BTAssetRef(TEXT("/Script/AIModule.BehaviorTree'/Game/ProjectOat/InGame/AI/BT_OatAI.BT_OatAI'"));
-	if (!BTAssetRef.Object)
+	if (BTAssetRef.Object)
 	{
 		BT = BTAssetRef.Object;
 	}
@@ -27,6 +28,8 @@ void AOatAIController::RunAI()
 	UBlackboardComponent* BlackboardPtr = Blackboard.Get();
 	if (UseBlackboard(BB, BlackboardPtr))
 	{
+		Blackboard->SetValueAsVector(BBKEY_HOMEPOS, GetPawn()->GetActorLocation());
+
 		bool RunResult = RunBehaviorTree(BT);
 		ensure(RunResult);
 	}

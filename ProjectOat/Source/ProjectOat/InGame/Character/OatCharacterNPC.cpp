@@ -3,6 +3,7 @@
 
 #include "InGame/Character/OatCharacterNPC.h"
 #include "Core/OatAIController.h"
+#include "InGame/Character/Component/OatCharacterStatComponent.h"
 
 AOatCharacterNPC::AOatCharacterNPC()
 {
@@ -23,20 +24,37 @@ void AOatCharacterNPC::SetDead()
 
 float AOatCharacterNPC::GetAIPatrolRadius()
 {
-	return 500.0f;
+	return 800.0f;
 }
 
 float AOatCharacterNPC::GetAIDetectRange()
 {
-	return 0.0f;
+	return 400.0f;
 }
 
 float AOatCharacterNPC::GetAIAttackRange()
 {
-	return 0.0f;
+	return Stat->GetTotalStat().AtkRange+ Stat->GetAttackRadius()*2;
 }
 
 float AOatCharacterNPC::GetAITurnSpeed()
 {
-	return 0.0f;
+	return 2.0f;
+}
+
+void AOatCharacterNPC::SetAIAttackDelegate(const FAIAttackFinished& InOnAttackFinished)
+{
+	OnAttackFinished = InOnAttackFinished;
+}
+
+void AOatCharacterNPC::AttackByAI()
+{
+	ProcessAttack();
+}
+
+void AOatCharacterNPC::NotifyAttackActionEnd()
+{
+	// 부모 클래스에서 Attack Montage가 끝난 시점에 호출
+	Super::NotifyAttackActionEnd();
+	OnAttackFinished.ExecuteIfBound();
 }

@@ -8,6 +8,7 @@
 UOatCharacterStatComponent::UOatCharacterStatComponent()
 {
 	CurrentLv = 1;
+	AttackRadius = 50;
 }
 
 

@@ -57,7 +57,7 @@ protected:
 	void ProcessAttack();
 	void AttackActionMontageBegin();
 	void AttackActionMontageEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded);
-
+	virtual void NotifyAttackActionEnd() {};
 
 	// 현재까지 진행된 콤보 수
 	int32 CurrentCombo = 0;

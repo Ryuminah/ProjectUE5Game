@@ -28,4 +28,11 @@ protected:
 	virtual float GetAIAttackRange() override;
 	virtual float GetAITurnSpeed() override;
 
+	// 몽타주가 끝난 시점을 BTTask_Attack의 공격 성공으로 반환하기 위해
+	virtual void SetAIAttackDelegate(const FAIAttackFinished& InOnAttackFinished) override;
+	virtual void AttackByAI() override;
+	virtual void NotifyAttackActionEnd() override;
+
+	FAIAttackFinished OnAttackFinished;
+
 };

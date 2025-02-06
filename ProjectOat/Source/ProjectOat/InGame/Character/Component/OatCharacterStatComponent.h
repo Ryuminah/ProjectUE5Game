@@ -34,6 +34,9 @@ public:
 	FORCEINLINE float GetCurrentLv() const { return CurrentHp; }
 	void SetLvStat(int32 InLv);
 
+	FORCEINLINE float GetAttackRadius() const { return AttackRadius; }
+
+
 	FORCEINLINE FTestData GetTotalStat() const { return BaseStat + ModifierStat; }
 	void SetModifierStat(const FTestData& InModifierStat) { ModifierStat = InModifierStat; };
 
@@ -48,6 +51,9 @@ protected:
 		// Transient -> 디스크에 저장하지 않도록 하여 불필요한 공간 낭비를 줄임
 	UPROPERTY(category=Stat, Transient, VisibleInstanceOnly)
 	float CurrentLv;	
+
+	UPROPERTY(category=Stat, Transient, VisibleInstanceOnly, meta=(AllowPrivateAccess="true"))
+	float AttackRadius;
 
 	UPROPERTY(category=Stat, Transient, VisibleInstanceOnly, meta=(AllowPrivateAccess="true"))
 	FTestData BaseStat;

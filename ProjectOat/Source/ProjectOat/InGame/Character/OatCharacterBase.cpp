@@ -190,6 +190,8 @@ void AOatCharacterBase::AttackActionMontageEnd(UAnimMontage* TargetMontage, bool
 	// 몽타주 종료 후 초기화
 	ensure(CurrentCombo != 0);
 	CurrentCombo = 0;
+
+	NotifyAttackActionEnd();
 }
 
 void AOatCharacterBase::SetComboCheckTimer()
@@ -233,7 +235,7 @@ void AOatCharacterBase::AttackHitCheck()
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
 
 	const float AttackRange = Stat->GetTotalStat().AtkRange;
-	const float AttackRadius = 100.f;
+	const float AttackRadius = Stat->GetAttackRadius();
 	const float AttackDamage = Stat->GetTotalStat().Atk;
 	// 현재 액터 위치 + 액터 시선방향 + 캡슐 컴포넌트의 반지름값을 추가해서 정면의 캡슐 위치에서부터 시작함
 	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();

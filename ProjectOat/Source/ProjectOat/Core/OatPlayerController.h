@@ -14,7 +14,17 @@ class PROJECTOAT_API AOatPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	AOatPlayerController();
+
 protected:
 	virtual void BeginPlay() override;
 	
+/* HUD --------------------------------------------------*/
+protected:
+	UPROPERTY(Category = HUD, EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<class UOatHUDWidget> OatHUDWidgetClass;
+
+	UPROPERTY(Category = HUD, EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<class UOatHUDWidget> OatHUDWidget;
 };

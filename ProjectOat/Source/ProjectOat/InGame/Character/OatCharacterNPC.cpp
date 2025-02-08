@@ -15,6 +15,12 @@ void AOatCharacterNPC::SetDead()
 {
 	Super::SetDead();
 
+	AOatAIController* OatAIController = Cast<AOatAIController>(GetController());
+	if (OatAIController)
+	{
+		OatAIController->StopAI();
+	}
+
 	// 이벤트 시간 이후 종료
 	FTimerHandle DeadTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([&](){ Destroy(); }), 

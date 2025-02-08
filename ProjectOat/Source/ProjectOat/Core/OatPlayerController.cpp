@@ -2,7 +2,7 @@
 
 
 #include "Core/OatPlayerController.h"
-#include "InGame/UI/OatHUDWidget.h"
+#include "InGame/Widget/OatHUDWidget.h"
 
 AOatPlayerController::AOatPlayerController()
 {

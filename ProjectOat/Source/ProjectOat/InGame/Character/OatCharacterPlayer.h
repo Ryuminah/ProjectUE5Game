@@ -3,15 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "InGame/Character/OatCharacterBase.h"
 #include "InputActionValue.h"
+#include "InGame/Character/OatCharacterBase.h"
+#include "InGame/Interface/OatHUDInterface.h"
 #include "OatCharacterPlayer.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTOAT_API AOatCharacterPlayer : public AOatCharacterBase
+class PROJECTOAT_API AOatCharacterPlayer : public AOatCharacterBase , public IOatHUDInterface
 {
 	GENERATED_BODY()
 	
@@ -21,6 +22,8 @@ public:
 protected:
 	// MappingCon
 	virtual void BeginPlay() override;
+	virtual void SetDead() override;
+
 
 public:
 	// Action과 함수를 매핑 시켜줌
@@ -74,6 +77,12 @@ protected:
 	UPROPERTY(Category=Input, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> QuitAction;
 	void QuitGame();
+	
+
+	// Widget 
+protected:
+	virtual void SetupHUDWidget(class UOatHUDWidget* InHUDWidget) override;
+
 
 
 };

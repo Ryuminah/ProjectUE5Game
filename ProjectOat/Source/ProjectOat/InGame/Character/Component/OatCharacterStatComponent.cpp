@@ -9,15 +9,18 @@ UOatCharacterStatComponent::UOatCharacterStatComponent()
 {
 	CurrentLv = 1;
 	AttackRadius = 50;
+
+	// 이 변수가 true여야지 InitializeComponent()가 호출됨
+	// 성능 때문에!
+	bWantsInitializeComponent = true;
 }
 
 
-// Called when the game starts
-void UOatCharacterStatComponent::BeginPlay()
+void UOatCharacterStatComponent::InitializeComponent()
 {
-	Super::BeginPlay();
-	SetLvStat(CurrentLv);
-	SetHp(BaseStat.MaxHP);
+	Super::InitializeComponent();
+	SetLv(CurrentLv);
+	SetHp(GetBaseStat().MaxHP);
 }
 
 float UOatCharacterStatComponent::ApplyDamage(float InDamage)
@@ -31,11 +34,11 @@ float UOatCharacterStatComponent::ApplyDamage(float InDamage)
 	return ActualDamage;
 }
 
-void UOatCharacterStatComponent::SetLvStat(int32 InLv)
+void UOatCharacterStatComponent::SetLv(int32 InLv)
 {
 	CurrentLv = FMath::Clamp(InLv, 1, UOatGameSingleton::Get().MaxLv);
-	BaseStat = UOatGameSingleton::Get().GetTestData(CurrentLv);
-	check(BaseStat.MaxHP > 0.f);
+	SetBaseStat(UOatGameSingleton::Get().GetTestData(CurrentLv));
+	check(GetBaseStat().MaxHP > 0.f);
 }
 
 void UOatCharacterStatComponent::SetHp(float NewHp)

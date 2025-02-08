@@ -3,6 +3,8 @@
 
 #include "InGame/Character/OatCharacterPlayer.h"
 #include "InGame/Character/OatCharacterControlData.h"
+#include "InGame/Widget/OatHUDWidget.h"
+#include "InGame/Character/Component/OatCharacterStatComponent.h"
 
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -73,7 +75,25 @@ void AOatCharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		EnableInput(PlayerController);
+	}
+
 	SetCharacterControl(CurrentCharacterControlType);
+}
+
+void AOatCharacterPlayer::SetDead()
+{
+	Super::SetDead();
+
+	// 입력 막기
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (PlayerController)
+	{
+		DisableInput(PlayerController);
+	}
 }
 
 void AOatCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -208,6 +228,20 @@ void AOatCharacterPlayer::QuitGame()
 {
 	// 팝업이 없을 경우 게임 종료
 	UKismetSystemLibrary::QuitGame(this, GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);
+}
+
+void AOatCharacterPlayer::SetupHUDWidget(UOatHUDWidget* InHUDWidget)
+{
+	if (InHUDWidget)
+	{
+		InHUDWidget->UpdateStat(Stat->GetBaseStat(), Stat->GetModifierStat());
+		InHUDWidget->UpdateHpBar(Stat->GetCurrentHp());
+
+		// Callback Binding
+		Stat->OnStatChanged.AddUObject(InHUDWidget, &UOatHUDWidget::UpdateStat);
+		Stat->OnHpChanged.AddUObject(InHUDWidget, &UOatHUDWidget::UpdateHpBar);
+
+	}
 }
 
 

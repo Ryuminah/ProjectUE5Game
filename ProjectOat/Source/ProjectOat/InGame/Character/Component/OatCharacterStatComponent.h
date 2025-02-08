@@ -9,6 +9,8 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnHpZeroDelegate);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHpChangedDelegate,float /*CurrentHp*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStatChangedDelegate, const FTestData& /*Base*/, const FTestData& /*Modifier*/);
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECTOAT_API UOatCharacterStatComponent : public UActorComponent
@@ -20,26 +22,28 @@ public:
 	UOatCharacterStatComponent();
 
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+	virtual void InitializeComponent() override;
 
 public:
 	FOnHpZeroDelegate OnHpZero;
 	FOnHpChangedDelegate OnHpChanged;
+	FOnStatChangedDelegate OnStatChanged;
 
 	FORCEINLINE float GetCurrentHp() const { return CurrentHp; }
 	float ApplyDamage(float InDamage);
 
 
 	FORCEINLINE float GetCurrentLv() const { return CurrentHp; }
-	void SetLvStat(int32 InLv);
+	void SetLv(int32 InLv);
 
 	FORCEINLINE float GetAttackRadius() const { return AttackRadius; }
 
-
 	FORCEINLINE FTestData GetTotalStat() const { return BaseStat + ModifierStat; }
-	void SetModifierStat(const FTestData& InModifierStat) { ModifierStat = InModifierStat; };
+	FORCEINLINE FTestData GetBaseStat() const { return BaseStat; }
+	void SetBaseStat(const FTestData& InBaseStat) { BaseStat = InBaseStat; OnStatChanged.Broadcast(GetBaseStat(), GetModifierStat()); }
 
+	FORCEINLINE FTestData GetModifierStat() const { return ModifierStat;}
+	void SetModifierStat(const FTestData& InModifierStat) { ModifierStat = InModifierStat; OnStatChanged.Broadcast(GetBaseStat(), GetModifierStat()); }
 
 protected:
 	// Transient -> 디스크에 저장하지 않도록 하여 불필요한 공간 낭비를 줄임

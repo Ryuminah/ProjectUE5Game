@@ -15,6 +15,7 @@
 #include "InGame/Character/Component/OatCharacterStatComponent.h"
 #include "Shared/Widget/OatWidgetComponent.h"
 #include "GameCommon/Items/OatItemWeaponData.h"
+#include "GameData/TestData.h"
 
 
 
@@ -127,6 +128,7 @@ void AOatCharacterBase::PostInitializeComponents()
 
 	// 어디서 바인딩을 해도 크게 상관 X (생성자나 BeginPlay도 가능하다.)
 	Stat->OnHpZero.AddUObject(this, &AOatCharacterBase::SetDead);
+	Stat->OnStatChanged.AddUObject(this, AOatCharacterBase::ApplyStat);
 }
 
 void AOatCharacterBase::SetCharacterControlData(const UOatCharacterControlData* CharcterControlData)
@@ -284,6 +286,12 @@ void AOatCharacterBase::PlayDeadAnim()
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->StopAllMontages(0.f);
 	AnimInstance->Montage_Play(DeadMontage, 1.f);
+}
+
+void AOatCharacterBase::ApplyStat(const FTestData & BaseStat, const FTestData & ModifierStat)
+{
+	float MovementSpeed = (BaseStat + ModifierStat).MoveSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = MovementSpeed;
 }
 
 void AOatCharacterBase::SetUpActorWidget(UOatUserWidget* InUserWidget)

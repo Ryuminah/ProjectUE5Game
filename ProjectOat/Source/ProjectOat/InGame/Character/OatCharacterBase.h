@@ -7,6 +7,7 @@
 #include "InGame/Interface/OatAnimationAttackInterface.h"
 #include "Shared/Interface/OatActorWidgetInterface.h"
 #include "GameCommon/Items/OatItemInterface.h"
+#include "GameData/TestData.h"
 
 
 #include "OatCharacterBase.generated.h"
@@ -84,8 +85,13 @@ protected:
 	float DeadEventDelayTime = 3.f;
 
 /* Stat ---------------------------------------------------------*/
+protected:
+
 	UPROPERTY(Category=Stat, VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<class UOatCharacterStatComponent> Stat;
+
+public:
+	void ApplyStat(const FTestData& BaseStat, const FTestData& ModifierStat);
 
 /* Widget --------------------------------------------------------*/
 	UPROPERTY(Category=Widget, VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))

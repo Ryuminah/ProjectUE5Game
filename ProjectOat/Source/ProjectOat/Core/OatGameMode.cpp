@@ -27,5 +27,18 @@ AOatGameMode::AOatGameMode()
 		PlayerControllerClass = PlayerControllerClassRef.Class;
 	}
 
+	//
+	CurrentScore = 0;
+	bIsCleared = false;
+
+
 }
+
+bool AOatGameMode::IsGameCleared()
+{
+	return false;
+}
+
+void AOatGameMode::OnPlayerDead()
+{}
  

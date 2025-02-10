@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "InGame/Physics/OatCollision.h"
 #include "InGame/Character/OatCharacterNPC.h"
+#include "Core/Interface/OatGameInterface.h"
 
 
 // Sets default values
@@ -127,6 +128,12 @@ void AOatStageSectionTrigger::SpawnSectionEnemy()
 
 void AOatStageSectionTrigger::OnOpponentDestroyed(AActor* DestroyedActor)
 {
+	// GameMode¸¦ Interface·Î °¨½Î±â
+	IOatGameInterface* OatGameMode = Cast<IOatGameInterface>(GetWorld()->GetAuthGameMode());
+	if (OatGameMode)
+	{
+		// Stage
+	}
 	SetSectionState(EStageSectionState::ENDBATTLE);
 }
 

@@ -128,7 +128,7 @@ void AOatCharacterBase::PostInitializeComponents()
 
 	// 어디서 바인딩을 해도 크게 상관 X (생성자나 BeginPlay도 가능하다.)
 	Stat->OnHpZero.AddUObject(this, &AOatCharacterBase::SetDead);
-	Stat->OnStatChanged.AddUObject(this, AOatCharacterBase::ApplyStat);
+	Stat->OnStatChanged.AddUObject(this, &AOatCharacterBase::ApplyStat);
 }
 
 void AOatCharacterBase::SetCharacterControlData(const UOatCharacterControlData* CharcterControlData)

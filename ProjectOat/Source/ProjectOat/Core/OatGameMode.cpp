@@ -30,15 +30,24 @@ AOatGameMode::AOatGameMode()
 	//
 	CurrentScore = 0;
 	bIsCleared = false;
-
-
 }
 
 bool AOatGameMode::IsGameCleared()
 {
+
 	return false;
 }
 
 void AOatGameMode::OnPlayerDead()
-{}
+{
+	AOatPlayerController* OatPlayerController = Cast<AOatPlayerController>(GetWorld()->GetFirstPlayerController());
+
+	if (OatPlayerController)
+	{
+		return;
+	}
+
+	OatPlayerController->GameOver();
+}
+
  

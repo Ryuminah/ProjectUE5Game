@@ -3,6 +3,9 @@
 
 #include "Core/OatPlayerController.h"
 #include "InGame/Widget/OatHUDWidget.h"
+#include "Core/OatSaveGame.h"
+
+#include "Kismet/GameplayStatics.h"
 
 AOatPlayerController::AOatPlayerController()
 {
@@ -21,9 +24,43 @@ void AOatPlayerController::BeginPlay()
 	FInputModeGameOnly GameOnlyInputMode;
 	SetInputMode(GameOnlyInputMode);
 
-	OatHUDWidget = CreateWidget<UOatHUDWidget>(this, OatHUDWidgetClass);
-	if (OatHUDWidget)
+	//OatHUDWidget = CreateWidget<UOatHUDWidget>(this, OatHUDWidgetClass);
+	//if (OatHUDWidget)
+	//{
+	//	OatHUDWidget->AddToViewport();
+	//}
+
+	SaveGameInstance = Cast<UOatSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("Player0"), 0));
+	if (SaveGameInstance)
 	{
-		OatHUDWidget->AddToViewport();
+		//SaveGameInstance->Retry
 	}
+	else
+	{
+		SaveGameInstance = NewObject<UOatSaveGame>();
+	}
+}
+
+void AOatPlayerController::GameOver()
+{
+	K2_GameOver();
+
+	if (!UGameplayStatics::SaveGameToSlot(SaveGameInstance,TEXT("Player0"),0))
+	{
+		// Error
+	}
+	else
+	{
+
+	}
+}
+
+void AOatPlayerController::GameClear()
+{
+	K2_OnGameClear();
+}
+
+void AOatPlayerController::GameScoreChanged(int32 NewScore)
+{
+	K2_OnScoreChanged(NewScore);
 }

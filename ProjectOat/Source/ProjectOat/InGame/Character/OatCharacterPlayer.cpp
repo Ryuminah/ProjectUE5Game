@@ -5,6 +5,7 @@
 #include "InGame/Character/OatCharacterControlData.h"
 #include "InGame/Widget/OatHUDWidget.h"
 #include "InGame/Character/Component/OatCharacterStatComponent.h"
+#include "Core/Interface/OatGameInterface.h"
 
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -93,6 +94,13 @@ void AOatCharacterPlayer::SetDead()
 	if (PlayerController)
 	{
 		DisableInput(PlayerController);
+
+		//// GameMode는 멀티를 고려한 모든 플레이어를 통틀어 단 하나만 존재함 (방장이 소유한 게임모드이다)
+		//IOatGameInterface* OatGameMode = Cast<IOatGameInterface>(GetWorld()->GetAuthGameMode());
+		//if (OatGameMode)
+		//{
+		//	OatGameMode->OnPlayerDead();
+		//}
 	}
 }
 
@@ -112,8 +120,6 @@ void AOatCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::Attack);
 
 	EnhancedInputComponent->BindAction(QuitAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::QuitGame);
-
-
 }
 
 void AOatCharacterPlayer::ChangeCharacterControl()
@@ -240,7 +246,6 @@ void AOatCharacterPlayer::SetupHUDWidget(UOatHUDWidget* InHUDWidget)
 		// Callback Binding
 		Stat->OnStatChanged.AddUObject(InHUDWidget, &UOatHUDWidget::UpdateStat);
 		Stat->OnHpChanged.AddUObject(InHUDWidget, &UOatHUDWidget::UpdateHpBar);
-
 	}
 }
 

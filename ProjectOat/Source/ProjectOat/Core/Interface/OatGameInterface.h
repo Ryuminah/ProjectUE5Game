@@ -14,7 +14,7 @@ class UOatGameInterface : public UInterface
 };
 
 /**
- * 
+ * GameInterface
  */
 class PROJECTOAT_API IOatGameInterface
 {
@@ -23,5 +23,4 @@ class PROJECTOAT_API IOatGameInterface
 public:
 	virtual bool IsGameCleared() = 0;
 	virtual void  OnPlayerDead() = 0;
-
 };

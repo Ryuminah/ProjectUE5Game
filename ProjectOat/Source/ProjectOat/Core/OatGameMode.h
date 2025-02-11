@@ -18,6 +18,7 @@ class PROJECTOAT_API AOatGameMode : public AGameModeBase , public IOatGameInterf
 public:
 	AOatGameMode();
 
+public:
 	// 현재 진행되고 있는 게임의 점수와 조건들.
 	// 게임 진행을 결정하는 데이터들은 게임 모드에서 보관하는 것이 좋음.
 	UPROPERTY(Category=Game, EditDefaultsOnly, BlueprintReadWrite)
@@ -30,8 +31,11 @@ public:
 	UPROPERTY(Category=Game, VisibleInstanceOnly, BlueprintReadOnly)
 	uint8 bIsCleared : 1;
 
+/* Game Core -------------------------------------------------*/
 public:
 	virtual bool IsGameCleared() override;
 	virtual void  OnPlayerDead() override;
+
+/* System Core ------------------------------------------------*/
 
 };

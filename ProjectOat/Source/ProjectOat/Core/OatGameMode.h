@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Core/Interface/OatGameInterface.h"
+#include "Shared/Enums.h"
 #include "OatGameMode.generated.h"
 
 /**
@@ -33,9 +34,13 @@ public:
 
 /* Game Core -------------------------------------------------*/
 public:
+	virtual void GameOver() override;
+	void GameClear();
+
 	virtual bool IsGameCleared() override;
 	virtual void  OnPlayerDead() override;
 
 /* System Core ------------------------------------------------*/
+
 
 };

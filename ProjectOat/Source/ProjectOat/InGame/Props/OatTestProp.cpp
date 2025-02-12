@@ -7,9 +7,6 @@
 // Sets default values
 AOatTestProp::AOatTestProp()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	Body = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Body"));
 	Cactus = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cactus"));
 

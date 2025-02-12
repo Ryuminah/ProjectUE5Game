@@ -21,8 +21,11 @@ public:
 
 /* Component ------------------------------------------------------*/
 protected:
+	UPROPERTY(Category=Stage, VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<class UStaticMeshComponent> Goal;
+
 	UPROPERTY(Category=Stage, VisibleAnywhere, meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<class UBoxComponent> StageTrigger;
+	TObjectPtr<class UBoxComponent> GoalTrigger;
 
 	UFUNCTION()
 	void OnGoalTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Shared/Enums.h"
 #include "OatGameInstance.generated.h"
 
 /**
@@ -20,11 +21,15 @@ public:
 	virtual void Init() override;
 	virtual void PostInitProperties() override;
 
+private:
+	void SetupGameEventBindings();
+
 public:
-/* Getter ---------------------------------------------------------*/
+/* Getter ----------------------------------------------------------------------------------------------------*/
 	class UOatStageHandler* GetStageHandler() { return StageHandler; }
 	class UOatEventHandler* GetEventHandler() { return EventHandler; }
 
+	ELevelType GetCurrentLevel() { return CurrentLevelType; }
 
 /* Handler --------------------------------------------------------*/
 private:
@@ -37,5 +42,13 @@ private:
 	UPROPERTY()
 	TObjectPtr<class UOatEventHandler> EventHandler;
 
-	
+/* GameCore ----------------------------------------------------------------------------------------------------*/
+	// Level ----------------------------------------------------
+private:
+	ELevelType CurrentLevelType;
+
+public:
+	void TravelLevel(ELevelType LevelType);
+	void QuitGame();
+
 };

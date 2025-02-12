@@ -4,6 +4,10 @@
 #include "Core/OatPlayerController.h"
 #include "InGame/Widget/OatHUDWidget.h"
 #include "Core/OatSaveGame.h"
+#include "Core/OatGameInstance.h"
+#include "Core/OatGameMode.h"
+
+#include "GameCommon/Managers/OatEventHandler.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -43,20 +47,33 @@ void AOatPlayerController::BeginPlay()
 
 void AOatPlayerController::GameOver()
 {
+	AOatGameMode* OatGameMode = Cast<AOatGameMode>(GetWorld()->GetAuthGameMode());
+	if (OatGameMode)
+	{
+		OatGameMode->GameOver();
+	}
+	
 	K2_GameOver();
 
-	if (!UGameplayStatics::SaveGameToSlot(SaveGameInstance,TEXT("Player0"),0))
-	{
-		// Error
-	}
-	else
-	{
+	//if (!UGameplayStatics::SaveGameToSlot(SaveGameInstance,TEXT("Player0"),0))
+	//{
+	//	// Error
+	//}
+	//else
+	//{
 
-	}
+	//}
+
 }
 
 void AOatPlayerController::GameClear()
 {
+	AOatGameMode* OatGameMode = Cast<AOatGameMode>(GetWorld()->GetAuthGameMode());
+	if (OatGameMode)
+	{
+		OatGameMode->GameClear();
+	}
+
 	K2_OnGameClear();
 }
 

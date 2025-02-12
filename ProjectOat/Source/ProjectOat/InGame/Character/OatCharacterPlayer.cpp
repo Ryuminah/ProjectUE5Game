@@ -6,6 +6,7 @@
 #include "InGame/Widget/OatHUDWidget.h"
 #include "InGame/Character/Component/OatCharacterStatComponent.h"
 #include "Core/Interface/OatGameInterface.h"
+#include "Core/OatGameInstance.h"
 
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -232,8 +233,15 @@ void AOatCharacterPlayer::Attack()
 
 void AOatCharacterPlayer::QuitGame()
 {
+	// 게임 종료
 	// 팝업이 없을 경우 게임 종료
-	UKismetSystemLibrary::QuitGame(this, GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);
+
+	// 
+	UOatGameInstance* OatGameInstance = Cast<UOatGameInstance>(GetGameInstance());
+	if (OatGameInstance)
+	{
+		OatGameInstance->QuitGame();
+	}
 }
 
 void AOatCharacterPlayer::SetupHUDWidget(UOatHUDWidget* InHUDWidget)

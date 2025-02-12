@@ -3,3 +3,7 @@
 
 #include "GameCommon/Managers/OatEventHandler.h"
 
+void UOatEventHandler::Initialize(UGameInstance* GameInstance)
+{
+
+}

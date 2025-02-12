@@ -3,6 +3,9 @@
 
 #include "Core/OatGameMode.h"
 #include "Core/OatPlayerController.h"
+#include "Core/OatGameInstance.h"
+#include "GameCommon/Managers/OatEventHandler.h"
+#include "GameCommon/Managers/OatStageHandler.h"
 
 AOatGameMode::AOatGameMode()
 {
@@ -30,6 +33,42 @@ AOatGameMode::AOatGameMode()
 	//
 	CurrentScore = 0;
 	bIsCleared = false;
+}
+
+// 게임 종료시에는 전부 이거 호출
+void AOatGameMode::GameOver()
+{
+	UOatGameInstance* OatGameInstance = Cast<UOatGameInstance>(GetGameInstance());
+	if (!OatGameInstance)
+	{
+		return;
+	}
+
+	OatGameInstance->GetEventHandler()->OnGameOver.Broadcast();
+}
+
+void AOatGameMode::GameClear()
+{
+	UOatGameInstance* OatGameInstance = Cast<UOatGameInstance>(GetGameInstance());
+	if (!OatGameInstance)
+	{
+		return;
+	}
+
+	ELevelType CurrentLevelType = OatGameInstance->GetCurrentLevel();
+	switch (CurrentLevelType)
+	{
+	case ELevelType::LOBBY:
+		break;
+	case ELevelType::SELECT:
+		break;
+	case ELevelType::MAINSTAGE:
+		OatGameInstance->GetEventHandler()->OnStageClearGoal.Broadcast();
+		break;
+	case ELevelType::DUNGEON:
+		OatGameInstance->GetEventHandler()->OnStageClearDungeon.Broadcast();
+		break;
+	}
 }
 
 bool AOatGameMode::IsGameCleared()

@@ -6,6 +6,9 @@
 #include "InGame/Physics/OatCollision.h"
 #include "InGame/Character/OatCharacterNPC.h"
 #include "Core/Interface/OatGameInterface.h"
+#include "InGame/Stage/OatSpawnPoint.h"
+
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -14,8 +17,7 @@ AOatStageSectionTrigger::AOatStageSectionTrigger()
 	StageTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("Stage"));
 	SetRootComponent(StageTrigger);
 
-
-	StageTrigger->SetBoxExtent(FVector(500.f, 500.f, 300.f));
+	StageTrigger->SetBoxExtent(FVector(7.f, 150.f, 70.f));
 	StageTrigger->SetCollisionProfileName(CPROFILE_OATTRIGGER);
 	StageTrigger->OnComponentBeginOverlap.AddDynamic(this, &AOatStageSectionTrigger::OnStageTriggerBeginOverlap);
 
@@ -35,26 +37,24 @@ AOatStageSectionTrigger::AOatStageSectionTrigger()
 	//static ConstructorHelpers::FObjectFinder<UStaticMeshComponent> StageMeshRef(TEXT("/Script/En"))
 
 	OpponentClass = AOatCharacterNPC::StaticClass();
+	OatSpawnPointClass = AOatSpawnPoint::StaticClass();
 
-}
-
-void AOatStageSectionTrigger::OnConstruction(const FTransform& Transform)
-{
-	Super::OnConstruction(Transform);
-}
-
-void AOatStageSectionTrigger::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
 }
 
 void AOatStageSectionTrigger::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CreateSpawnPointData();
 }
 
 void AOatStageSectionTrigger::OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
 {
+	if (CurrentState == EStageSectionState::ENDBATTLE)
+	{
+		return;
+	}
+
 	SetSectionState(EStageSectionState::READYBATTLE);
 }
 
@@ -88,9 +88,28 @@ void AOatStageSectionTrigger::SetReadyBattle()
 	// 벽 활성화
 	// 몬스터 스폰
 
-	SpawnSectionEnemy();
-	SetSectionState(EStageSectionState::INBATTLE);
+	float SpawnInterval = 0.3f;
+	float SpawnDelay = 0.f;
 
+	if (SpawnPointArray.IsEmpty())
+	{
+		CreateSpawnPointData();
+	}
+
+	for (auto SpawnActor : SpawnPointArray)
+	{
+		FTimerHandle SpawnTimerHandle;
+		FVector SpawnPoint = FVector(SpawnActor->GetActorLocation());
+		SpawnDelay += SpawnInterval;
+
+		GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle,  
+											   [this, SpawnPoint]()
+											   {
+												   SpawnSectionEnemy(SpawnPoint);
+											   }, SpawnDelay, false);
+	}
+
+	SetSectionState(EStageSectionState::INBATTLE);
 }
 
 void AOatStageSectionTrigger::SetInBattle()
@@ -108,33 +127,39 @@ void AOatStageSectionTrigger::SetEndBattle()
 
 	// Section전투가 끝났다고 노티파이 알림 보내기
 	// 벽 해제
+	// SpawnPoint destroy 혹은 비활성화 하기
 }
 
 
-void AOatStageSectionTrigger::SpawnSectionEnemy()
+void AOatStageSectionTrigger::SpawnSectionEnemy(FVector SpawnPos)
 {
-	const FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * -3500.f;
+	//const FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * -3500.f;
 	
 	// ?? 왜 되지 (GetWorld 안됨)
 	UWorld* World = GWorld->GetGameInstance()->GetWorld();
-	AActor* OpponentActor = World->SpawnActor(OpponentClass, &SpawnLocation, &FRotator::ZeroRotator);
+	AActor* OpponentActor = World->SpawnActor(OpponentClass, &SpawnPos, &FRotator::ZeroRotator);
 	AOatCharacterNPC* AOatEnemy = Cast<AOatCharacterNPC>(OpponentActor);
 	if (AOatEnemy)
 	{
 		AOatEnemy->OnDestroyed.AddDynamic(this, &AOatStageSectionTrigger::OnOpponentDestroyed);
 	}
+}
 
+void AOatStageSectionTrigger::CreateSpawnPointData()
+{
+	TArray<AActor*> AllSpawnPoints;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), OatSpawnPointClass, AllSpawnPoints);
+	for (AActor* SpawnPointActor : AllSpawnPoints)
+	{
+		AOatSpawnPoint* SpawnPoint = Cast<AOatSpawnPoint>(SpawnPointActor);
+		if (SpawnPoint->GetSectionId() == SectionId)
+		{
+			SpawnPointArray.Add(SpawnPoint);
+		}
+	}
 }
 
 void AOatStageSectionTrigger::OnOpponentDestroyed(AActor* DestroyedActor)
 {
-	// GameMode를 Interface로 감싸기
-	IOatGameInterface* OatGameMode = Cast<IOatGameInterface>(GetWorld()->GetAuthGameMode());
-	if (OatGameMode)
-	{
-		// Stage
-	}
-	SetSectionState(EStageSectionState::ENDBATTLE);
+	//SetSectionState(EStageSectionState::ENDBATTLE);
 }
-
-

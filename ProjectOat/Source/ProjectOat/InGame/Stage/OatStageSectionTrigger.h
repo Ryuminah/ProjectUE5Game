@@ -26,6 +26,7 @@ enum class  EStageSectionState : uint8
 	NONE = 3,
 };
 
+
 UCLASS()
 class PROJECTOAT_API AOatStageSectionTrigger : public AActor
 {
@@ -36,31 +37,35 @@ public:
 	AOatStageSectionTrigger();
 
 protected:
-	virtual void OnConstruction(const FTransform& Transform) override;
-	virtual void PostInitializeComponents() override;
-
 	virtual void BeginPlay() override;
 
 /* Stage ------------------------------------------------------*/
 protected:
-	//UPROPERTY(Category=Stage, VisibleAnywhere, meta=(AllowPrivateAccess = "true"))
-	//TObjectPtr<class UStaticMeshComponent> Stage;
-
 	UPROPERTY(Category=Stage, VisibleAnywhere, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<class UBoxComponent> StageTrigger;
 
 	// 현재 스테이지의 섹션 순서
-	UPROPERTY(Category=Stage, EditAnywhere, meta=(AllowPrivateAccess = "true"))
-	int SectionOrder = 0;
+	UPROPERTY(Category=Stage, EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+	int SectionId = 0;
 
 	UFUNCTION()
 	void OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 									bool bFromSweep, const FHitResult& SweepHitResult);
 
 
+/* Spawn ------------------------------------------------------*/
+	UPROPERTY(Category = HUD, EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<class AOatSpawnPoint> OatSpawnPointClass;
+
+	UPROPERTY()
+	TArray<TObjectPtr<class AOatSpawnPoint>> SpawnPointArray;
+	void SpawnSectionEnemy(FVector SpawnPos/*스폰 관련 테이블 인자로*/);
+
+	void CreateSpawnPointData();
+
 // Gate는 따로 만들기
 /* Gate ------------------------------------------------------*/
-UPROPERTY(Category=Stage, VisibleAnywhere, meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(Category=Stage, VisibleAnywhere, meta=(AllowPrivateAccess = "true"))
 	TMap<FName, TObjectPtr<class UStaticMeshComponent>> GateMap;
 
 	UPROPERTY(Category=Stage, VisibleAnywhere, meta=(AllowPrivateAccess = "true"))
@@ -84,7 +89,6 @@ private:
 	void SetInBattle();
 	void SetEndBattle();
 
-	void SpawnSectionEnemy(/*스폰 관련 테이블 인자로*/);
 
 /* Battle State ------------------------------------------------------*/
 	// TSubClassOf -> 언리얼엔진이 제공하는 템플릿 : 지정한 클래스로부터 상속받은 클래스 목록만 표시하도록

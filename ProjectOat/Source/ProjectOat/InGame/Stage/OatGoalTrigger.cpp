@@ -4,6 +4,7 @@
 #include "InGame/Stage/OatGoalTrigger.h"
 #include "Core/Interface/OatGameInterface.h"
 #include "Core/OatGameInstance.h"
+#include "Core/OatGameMode.h"
 #include "GameCommon/Managers/OatEventHandler.h"
 #include "InGame/Physics/OatCollision.h"
 #include "InGame/Character/OatCharacterNPC.h"
@@ -13,19 +14,28 @@
 // Sets default values
 AOatGoalTrigger::AOatGoalTrigger()
 {
-	StageTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("Goal"));
-	SetRootComponent(StageTrigger);
+	Goal = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Goal"));
+	GoalTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("GoalTrigger"));
 
-	StageTrigger->SetBoxExtent(FVector(500.f, 500.f, 300.f));
-	StageTrigger->SetCollisionProfileName(CPROFILE_OATTRIGGER);
-	StageTrigger->OnComponentBeginOverlap.AddDynamic(this, &AOatGoalTrigger::OnGoalTriggerBeginOverlap);
+	RootComponent = Goal;
+	GoalTrigger->SetupAttachment(Goal);
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> GoalMeshRef(TEXT("/Script/Engine.StaticMesh'/Game/ProjectOat/Arts/Backgrounds/Props/VendingMachine/SM_Goal_VendingMachine.SM_Goal_VendingMachine'"));
+	if (GoalMeshRef.Object)
+	{
+		Goal->SetStaticMesh(GoalMeshRef.Object);
+	}
+
+	GoalTrigger->SetBoxExtent(FVector(150.f, 150.f, 230.f));
+	GoalTrigger->SetCollisionProfileName(CPROFILE_OATTRIGGER);
+	GoalTrigger->OnComponentBeginOverlap.AddDynamic(this, &AOatGoalTrigger::OnGoalTriggerBeginOverlap);
 }
 
 void AOatGoalTrigger::OnGoalTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
 {
-	UOatGameInstance* OatGameInstance = Cast<UOatGameInstance>(GetGameInstance());
-	if (OatGameInstance)
+	AOatGameMode* OatGameMode = Cast<AOatGameMode>(GetWorld()->GetAuthGameMode());
+	if (OatGameMode)
 	{
-		OatGameInstance->GetEventHandler()->OnStageClearGoal.Broadcast();
+		OatGameMode->GameClear();
 	}
 }

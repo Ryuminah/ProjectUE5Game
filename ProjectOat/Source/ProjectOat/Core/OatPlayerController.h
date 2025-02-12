@@ -21,7 +21,6 @@ protected:
 	virtual void BeginPlay() override;
 
 
-
 /* Game Core --------------------------------------------------*/
 public:
 	void GameOver();

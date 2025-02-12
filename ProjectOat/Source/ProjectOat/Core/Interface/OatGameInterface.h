@@ -21,6 +21,7 @@ class PROJECTOAT_API IOatGameInterface
 	GENERATED_BODY()
 
 public:
+	virtual void GameOver() = 0;
 	virtual bool IsGameCleared() = 0;
 	virtual void  OnPlayerDead() = 0;
 };

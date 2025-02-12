@@ -54,13 +54,13 @@ protected:
 
 
 /* Spawn ------------------------------------------------------*/
-	UPROPERTY(Category = HUD, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(Category = Spawn, EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<class AOatSpawnPoint> OatSpawnPointClass;
 
 	UPROPERTY()
-	TArray<TObjectPtr<class AOatSpawnPoint>> SpawnPointArray;
-	void SpawnSectionEnemy(FVector SpawnPos/*스폰 관련 테이블 인자로*/);
+	TArray<TSoftObjectPtr<class AOatSpawnPoint>> SpawnPointArray;
 
+	void SpawnSectionEnemy(FVector SpawnPos/*스폰 관련 테이블*/);
 	void CreateSpawnPointData();
 
 // Gate는 따로 만들기

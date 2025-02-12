@@ -34,11 +34,10 @@ AOatStageSectionTrigger::AOatStageSectionTrigger()
 
 	SectionStateChangedCallback.Add(EStageSectionState::ENDBATTLE,
 									FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetEndBattle)));
-	//static ConstructorHelpers::FObjectFinder<UStaticMeshComponent> StageMeshRef(TEXT("/Script/En"))
+
 
 	OpponentClass = AOatCharacterNPC::StaticClass();
 	OatSpawnPointClass = AOatSpawnPoint::StaticClass();
-
 }
 
 void AOatStageSectionTrigger::BeginPlay()
@@ -72,9 +71,27 @@ void AOatStageSectionTrigger::SetSectionState(EStageSectionState InNewState)
 
 	// 굳이 Switch를 사용하지 않고 Callback을 통해 연동
 	CurrentState = InNewState;
-	if (SectionStateChangedCallback.Contains(CurrentState))
+
+	// 이코드가 문제가 생긴다...^^
+	//if (SectionStateChangedCallback.Contains(CurrentState))
+	//{
+	//	SectionStateChangedCallback[CurrentState].SectionDelegate.ExecuteIfBound();
+	//}
+	switch (InNewState)
 	{
-		SectionStateChangedCallback[CurrentState].SectionDelegate.ExecuteIfBound();
+	case EStageSectionState::READYBATTLE:
+		SetReadyBattle();
+		break;
+	case EStageSectionState::INBATTLE:
+		SetInBattle();
+		break;
+	case EStageSectionState::ENDBATTLE:
+		SetEndBattle();
+		break;
+	case EStageSectionState::NONE:
+		break;
+	default:
+		break;
 	}
 }
 

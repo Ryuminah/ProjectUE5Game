@@ -6,15 +6,15 @@
 #include "Shared/Enums.h"
 #include "Core/OatGameInstance.h"
 
-UOatStageHandler::UOatStageHandler()
+AOatStageHandler::AOatStageHandler()
 {}
 
-void UOatStageHandler::PostInitProperties()
+void AOatStageHandler::PostInitProperties()
 {
 	Super::PostInitProperties();
 }
 
-void UOatStageHandler::Initialize(UGameInstance* GameInstance)
+void AOatStageHandler::Initialize(UGameInstance* GameInstance)
 {
 	UOatGameInstance* OatGameInstance = Cast<UOatGameInstance>(GameInstance);
 	if (!OatGameInstance)
@@ -23,13 +23,13 @@ void UOatStageHandler::Initialize(UGameInstance* GameInstance)
 		return;
 	}
 
-	OatGameInstance->GetEventHandler()->OnStageClearGoal.AddUObject(this, &UOatStageHandler::ReachedStageGoal);
-	OatGameInstance->GetEventHandler()->OnStageClearDungeon.AddUObject(this, &UOatStageHandler::ClearDungeon);
-	OatGameInstance->GetEventHandler()->OnGameOver.AddUObject(this, &UOatStageHandler::GameOver);
+	OatGameInstance->GetEventHandler()->OnStageClearGoal.AddUObject(this, &AOatStageHandler::ReachedStageGoal);
+	OatGameInstance->GetEventHandler()->OnStageClearDungeon.AddUObject(this, &AOatStageHandler::ClearDungeon);
+	OatGameInstance->GetEventHandler()->OnGameOver.AddUObject(this, &AOatStageHandler::GameOver);
 }
 
 // 여기서부터는 인게임 실행 뒤 호출되는 로직이라서, GetWorld()도 안전하다
-void UOatStageHandler::ReachedStageGoal()
+void AOatStageHandler::ReachedStageGoal()
 {
 	// 골에 도달했을 때
 	// 현재 스테이지 정보 갱신
@@ -44,7 +44,7 @@ void UOatStageHandler::ReachedStageGoal()
 	}
 }
 
-void UOatStageHandler::ClearDungeon()
+void AOatStageHandler::ClearDungeon()
 {
 	// 정산 보상
 	// 1.대시 
@@ -52,15 +52,15 @@ void UOatStageHandler::ClearDungeon()
 	// 3.발차기
 }
 
-void UOatStageHandler::GameOver()
+void AOatStageHandler::GameOver()
 {
 	// 로비 씬으로 돌려보내기
 	// 페이드 아웃.. 
 	// 씬에 따라 결과창 ?
 }
 
-void UOatStageHandler::ExitLevel()
+void AOatStageHandler::ExitLevel()
 {}
 
-void UOatStageHandler::EnterLevel()
+void AOatStageHandler::EnterLevel()
 {}

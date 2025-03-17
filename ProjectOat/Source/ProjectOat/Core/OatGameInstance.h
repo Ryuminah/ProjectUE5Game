@@ -8,7 +8,7 @@
 #include "OatGameInstance.generated.h"
 
 /**
- * 
+ * 프로그램 실행부터 종료 시 까지 유지되는 전역 객체
  */
 UCLASS()
 class PROJECTOAT_API UOatGameInstance : public UGameInstance
@@ -26,21 +26,21 @@ private:
 
 public:
 /* Getter ----------------------------------------------------------------------------------------------------*/
-	class UOatStageHandler* GetStageHandler() { return StageHandler; }
-	class UOatEventHandler* GetEventHandler() { return EventHandler; }
+	class AOatStageHandler* GetStageHandler() { return StageHandler; }
+	class AOatEventHandler* GetEventHandler() { return EventHandler; }
 
 	ELevelType GetCurrentLevel() { return CurrentLevelType; }
 
 /* Handler --------------------------------------------------------*/
 private:
 	UPROPERTY()
-	TObjectPtr<class UOatStageHandler> StageHandler;
+	TObjectPtr<class AOatStageHandler> StageHandler;
 		
 	// 오브젝트 풀
 	
 	// 델리게이트 핸들러
 	UPROPERTY()
-	TObjectPtr<class UOatEventHandler> EventHandler;
+	TObjectPtr<class AOatEventHandler> EventHandler;
 
 /* GameCore ----------------------------------------------------------------------------------------------------*/
 	// Level ----------------------------------------------------

@@ -17,11 +17,11 @@ DECLARE_MULTICAST_DELEGATE(FOnStageClearDungeonDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnGameOver);
 DECLARE_MULTICAST_DELEGATE(FOnQuitGame);
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnSelectSceneDelegate, const ELevelType/**/);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSelectSceneDelegate, /*const ELevelType*/ );
 
 
 UCLASS()
-class PROJECTOAT_API UOatEventHandler : public UObject, public IOatHandlerInterface
+class PROJECTOAT_API AOatEventHandler : public AActor, public IOatHandlerInterface
 {
 	GENERATED_BODY()
 
@@ -40,5 +40,6 @@ public:
 
 	// 게임 종료
 	FOnQuitGame OnQuitGame;
+
 };
 

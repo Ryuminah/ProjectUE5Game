@@ -49,6 +49,7 @@ void AOatGameMode::GameOver()
 
 void AOatGameMode::GameClear()
 {
+	// 게임 클리어 시 
 	UOatGameInstance* OatGameInstance = Cast<UOatGameInstance>(GetGameInstance());
 	if (!OatGameInstance)
 	{

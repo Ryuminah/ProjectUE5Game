@@ -11,14 +11,14 @@
  * 스테이지 진행에 관련된 모든 것을 관리
  */
 UCLASS()
-class PROJECTOAT_API UOatStageHandler : public UObject, public IOatHandlerInterface
+class PROJECTOAT_API AOatStageHandler : public AActor, public IOatHandlerInterface
 {
 	GENERATED_BODY()
 
 	friend class UOatGameInstance;
 
 public:
-	UOatStageHandler();
+	AOatStageHandler();
 
 	virtual void PostInitProperties() override;
 	virtual void Initialize(UGameInstance* GameInstance) override;

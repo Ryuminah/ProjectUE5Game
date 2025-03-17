@@ -12,18 +12,24 @@
 
 UOatGameInstance::UOatGameInstance()
 {
-	CurrentLevelType = ELevelType::SELECT;
+	CurrentLevelType = ELevelType::MAINSTAGE;
 }
 
 void UOatGameInstance::Init()
 {
 	Super::Init();
 
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		ensure("UOatGameInstance::Init() if(!World)");
+	}
+
 	TArray<IOatHandlerInterface*> HandlersArray;
-	EventHandler = NewObject<UOatEventHandler>();
+	EventHandler = World->SpawnActor<AOatEventHandler>();
 	HandlersArray.Add(EventHandler);
 
-	StageHandler = NewObject<UOatStageHandler>();
+	StageHandler = World->SpawnActor<AOatStageHandler>();
 	HandlersArray.Add(StageHandler);
 
 	// 초기화 호출
@@ -81,8 +87,10 @@ void UOatGameInstance::TravelLevel(ELevelType LevelType)
 
 void UOatGameInstance::QuitGame()
 {
+	// 종료
 	GetEventHandler()->OnQuitGame.Broadcast();
 
-	// 우선은 여기서 종료하는데..
+	// 우선은 여기서 종료하는데...
 	UKismetSystemLibrary::QuitGame(this, GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);
+	UE_LOG(LogTemp, Log, TEXT("UOatGameInstance::QuitGame()"));
 }

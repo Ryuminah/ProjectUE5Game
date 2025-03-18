@@ -14,17 +14,17 @@ AOatTestProp::AOatTestProp()
 	Cactus->SetupAttachment(Body);
 	Cactus->SetRelativeLocation(FVector(0.f, 0.f, 72.f));
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> BodyMeshRef(TEXT("/Script/Engine.StaticMesh'/Game/ROXY/Geometry/Meshes/1M_Cube.1M_Cube'"));
-	if (BodyMeshRef.Object)
-	{
-		Body->SetStaticMesh(BodyMeshRef.Object);
-	}
-	
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> CactusMeshRef(TEXT("/Script/Engine.StaticMesh'/Game/ROXY/Resources/Background/Natural/SM_MERGED_cactus_1.SM_MERGED_cactus_1'"));
-	if (CactusMeshRef.Object)
-	{
-		Cactus->SetStaticMesh(CactusMeshRef.Object);
-	}
+	// static ConstructorHelpers::FObjectFinder<UStaticMesh> BodyMeshRef(TEXT("/Script/Engine.StaticMesh'/Game/ROXY/Geometry/Meshes/1M_Cube.1M_Cube'"));
+	// if (BodyMeshRef.Object)
+	// {
+	// 	Body->SetStaticMesh(BodyMeshRef.Object);
+	// }
+	//
+	// static ConstructorHelpers::FObjectFinder<UStaticMesh> CactusMeshRef(TEXT("/Script/Engine.StaticMesh'/Game/ROXY/Resources/Background/Natural/SM_MERGED_cactus_1.SM_MERGED_cactus_1'"));
+	// if (CactusMeshRef.Object)
+	// {
+	// 	Cactus->SetStaticMesh(CactusMeshRef.Object);
+	// }
 
 }
 

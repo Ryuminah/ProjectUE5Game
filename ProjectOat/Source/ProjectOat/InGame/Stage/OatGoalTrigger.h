@@ -6,8 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "OatGoalTrigger.generated.h"
 
-
-
 UCLASS()
 class PROJECTOAT_API AOatGoalTrigger : public AActor
 {

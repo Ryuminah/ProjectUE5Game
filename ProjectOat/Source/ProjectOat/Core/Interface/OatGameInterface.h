@@ -22,6 +22,8 @@ class PROJECTOAT_API IOatGameInterface
 
 public:
 	virtual void GameOver() = 0;
+	virtual void GameClear() = 0;
+
 	virtual bool IsGameCleared() = 0;
 	virtual void  OnPlayerDead() = 0;
 };

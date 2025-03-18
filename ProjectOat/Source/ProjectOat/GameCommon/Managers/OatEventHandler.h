@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "GameCommon/Managers/OatHandlerInterface.h"
 #include "Shared/Enums.h"
 #include "OatEventHandler.generated.h"
@@ -12,6 +11,7 @@
  * 
  */
 
+// Stage
 DECLARE_MULTICAST_DELEGATE(FOnStageClearGoalDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnStageClearDungeonDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnGameOver);
@@ -19,6 +19,8 @@ DECLARE_MULTICAST_DELEGATE(FOnQuitGame);
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSelectSceneDelegate, /*const ELevelType*/ );
 
+// InGame
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStageSectionChangedDelegate, const int/*SectionID*/, const EStageSectionState/*bool InBattle*/);
 
 UCLASS()
 class PROJECTOAT_API AOatEventHandler : public AActor, public IOatHandlerInterface
@@ -41,5 +43,7 @@ public:
 	// 게임 종료
 	FOnQuitGame OnQuitGame;
 
+	// 현재 스테이지 섹션 상태 변화 시
+	FOnStageSectionChangedDelegate OnStageSectionChanged;
 };
 

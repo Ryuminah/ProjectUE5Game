@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "GameCommon/Managers/OatHandlerInterface.h"
+#include "GameData/OatStageData.h"
+#include "Shared/Enums.h"
 #include "OatStageHandler.generated.h"
 
 /**
- * ½ºÅ×ÀÌÁö ÁøÇà¿¡ °ü·ÃµÈ ¸ğµç °ÍÀ» °ü¸®
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½à¿¡ ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
  */
 UCLASS()
 class PROJECTOAT_API AOatStageHandler : public AActor, public IOatHandlerInterface
@@ -23,14 +24,36 @@ public:
 	virtual void PostInitProperties() override;
 	virtual void Initialize(UGameInstance* GameInstance) override;
 
+protected:
+	TObjectPtr<class UOatGameInstance> OatGameInstance;	
+
 /* Stage -------------------------------------------------------------- */
+public:
+	// ìœ ì €ì˜ í˜„ì¬ ìŠ¤í…Œì´ì§€ ì •ë³´
+	UPROPERTY(Category=Stage, VisibleInstanceOnly)
+	FOatStageData StageData;
+
+	// Sectionì€ 1ë¶€í„°ë¡œ ë°”ê¿€ê¹Œ..
+public:
+	void ReadyBattle(int SectionId);
+	void InBattle(int SectionId);
+	void EndBattle(int SectionId);
+	
+private:
+	void KillEnemy();
+	
+	
+	// ê²Œì„ì˜ ìŠ¹íŒ¨
 private:
 	void ReachedStageGoal();
 	void ClearDungeon();
 	void GameOver();
 
-/* Stage -------------------------------------------------------------- */
+	// ë‹¤ìŒ ì„¹ì…˜ ê´€ë ¨ ê´€ë¦¬í•´ì•¼í•¨
+
+/* Level -------------------------------------------------------------- */
 private:
-	void ExitLevel();
-	void EnterLevel();
+	void ExitLevel(ELevelType LevelType);
+	void EnterLevel(ELevelType LevelType);
+	
 };

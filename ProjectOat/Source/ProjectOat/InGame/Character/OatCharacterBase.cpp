@@ -71,7 +71,7 @@ AOatCharacterBase::AOatCharacterBase()
 	}
 
 	/* Animation ----------------------------------------------------------------------------------*/
-	// Montage AssetÀº ºí·çÇÁ¸°Æ®¿¡¼­ ÁöÁ¤
+	// Montage Assetï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ActionMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Roxy/Animations/AM_Roxy_ComboAttack.AM_Roxy_ComboAttack'"));
 	if (ActionMontageRef.Object)
 	{
@@ -95,7 +95,7 @@ AOatCharacterBase::AOatCharacterBase()
 	Stat = CreateDefaultSubobject<UOatCharacterStatComponent>(TEXT("Stat"));
 
 	// Widget Component
-	// BeginPlay ÀÌÈÄ Å¬·¡½º Á¤º¸·Î ºÎÅÍ Instance°¡ »ý¼ºµÇ´Â ±¸Á¶ (AnimBP¿Í ºñ½Á)
+	// BeginPlay ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Instanceï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ (AnimBPï¿½ï¿½ ï¿½ï¿½ï¿½)
 	WidgetHpBar = CreateDefaultSubobject<UOatWidgetComponent>(TEXT("Widget"));
 	WidgetHpBar->SetupAttachment(GetMesh());
 
@@ -112,7 +112,7 @@ AOatCharacterBase::AOatCharacterBase()
 	}
 
 	// Item Callbacks
-	// ¾ÆÀÌÅÛÀ» »ý¼ºÇØ¼­ Áý¾î³ÖÀ½ (³ªÁß¿¡ ¾È¾µ ÄÚµå)
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ß¿ï¿½ ï¿½È¾ï¿½ ï¿½Úµï¿½)
 	TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatCharacterBase::TestEquipSocket)));
 	TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatCharacterBase::DrinkPotion)));
 
@@ -126,7 +126,7 @@ void AOatCharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	// ¾îµð¼­ ¹ÙÀÎµùÀ» ÇØµµ Å©°Ô »ó°ü X (»ý¼ºÀÚ³ª BeginPlayµµ °¡´ÉÇÏ´Ù.)
+	// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ï¿½ï¿½ ï¿½Øµï¿½ Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ X (ï¿½ï¿½ï¿½ï¿½ï¿½Ú³ï¿½ BeginPlayï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.)
 	Stat->OnHpZero.AddUObject(this, &AOatCharacterBase::SetDead);
 	Stat->OnStatChanged.AddUObject(this, &AOatCharacterBase::ApplyStat);
 }
@@ -144,21 +144,21 @@ void AOatCharacterBase::SetCharacterControlData(const UOatCharacterControlData* 
 
 void AOatCharacterBase::ProcessAttack()
 {
-	// ¾ÆÁ÷ ¸ùÅ¸ÁÖ°¡ ½ÃÀÛÁßÀÌ ¾Æ´Ô
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´ï¿½
 	if (CurrentCombo == 0)
 	{
 		AttackActionMontageBegin();
 		return;
 	}
 
-	// ÀÌ¹Ì Å¸ÀÌ¸Ó ¹ßµ¿ È¤Àº Ã¼Å©ÇÒ ÇÊ¿ä X
+	// ï¿½Ì¹ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½ßµï¿½ È¤ï¿½ï¿½ Ã¼Å©ï¿½ï¿½ ï¿½Ê¿ï¿½ X
 	if (!ComboTimerHandle.IsValid())
 	{
 		bHasNextComboCommand = false;
 	}
 	else
 	{
-		// Ä¿¸Çµå ÀÌ¹Ì ¹ßµ¿
+		// Ä¿ï¿½Çµï¿½ ï¿½Ì¹ï¿½ ï¿½ßµï¿½
 		bHasNextComboCommand = true;
 	}
 }
@@ -168,19 +168,19 @@ void AOatCharacterBase::AttackActionMontageBegin()
 	// ComboStatus
 	CurrentCombo = 1;
 
-	// ÀÌµ¿ ±â´É »ç¶óÁü
+	// ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
 	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	const float AttackSpeedRate = 1.f;
 
-	// ¸ùÅ¸ÁÖ Á¢±ÙÀ» À§ÇØ AnimInstance Á¢±Ù
+	// ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ AnimInstance ï¿½ï¿½ï¿½ï¿½
 	UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
 	AnimInstatnce->Montage_Play(AttackMontage, AttackSpeedRate);
 
-	// ¸ùÅ¸ÁÖ Á¾·á ½Ã
-	// ±¸Á¶Ã¼Ã³·³ ¹ÙÀÎµùÇÒ µ¨¸®°ÔÀÌÆ®¸¦ ¼±¾ðÇÑ µÚ ÀÎÀÚ·Î ³Ñ°ÜÁÖ¸é µÊ
+	// ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½Ã¼Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ú·ï¿½ ï¿½Ñ°ï¿½ï¿½Ö¸ï¿½ ï¿½ï¿½
 	FOnMontageEnded EndDelegate;
 	EndDelegate.BindUObject(this, &AOatCharacterBase::AttackActionMontageEnd);
-	// DelegateÁöÁ¤, Montage Á¤º¸
+	// Delegateï¿½ï¿½ï¿½ï¿½, Montage ï¿½ï¿½ï¿½ï¿½
 	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
 
 	ComboTimerHandle.Invalidate();
@@ -189,7 +189,7 @@ void AOatCharacterBase::AttackActionMontageBegin()
 
 void AOatCharacterBase::AttackActionMontageEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
 {
-	// ¸ùÅ¸ÁÖ Á¾·á ÈÄ ÃÊ±âÈ­
+	// ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ê±ï¿½È­
 	ensure(CurrentCombo != 0);
 	CurrentCombo = 0;
 
@@ -205,23 +205,23 @@ void AOatCharacterBase::SetComboCheckTimer()
 	float ComboEffectiveTime = (AttackActionData->EffectiveFrameCount[ComboIndex] / AttackActionData->FrameRate) / AttackSpeedRate;
 	if (ComboEffectiveTime > 0.f)
 	{
-		// ½Ã°£À» Ã¼Å©ÇÏµÇ, ¹Ýº¹ÇÏÁö ¾Êµµ·Ï ÇÑ¹ø¸¸ ¹ß»ýÇÏµµ·Ï false
+		// ï¿½Ã°ï¿½ï¿½ï¿½ Ã¼Å©ï¿½Ïµï¿½, ï¿½Ýºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Ïµï¿½ï¿½ï¿½ false
 		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&AOatCharacterBase::ComboCheck,ComboEffectiveTime,false);
 	}
 }
 
 void AOatCharacterBase::ComboCheck()
 {
-	// Å¸ÀÌ¸Ó ÇÚµé ÃÊ±âÈ­
+	// Å¸ï¿½Ì¸ï¿½ ï¿½Úµï¿½ ï¿½Ê±ï¿½È­
 	ComboTimerHandle.Invalidate();
 	if (bHasNextComboCommand)
 	{
-		// ´ÙÀ½ ¼½¼ÇÀ¸·Î Ã¼Å©
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
 		UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
 		CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, AttackActionData->MaxComboCount);
 		FName NextSection = *FString::Printf(TEXT("%s%d"), *AttackActionData->MontageSectionNamePrefix, CurrentCombo);
 
-		// ÁöÁ¤µÈ ÇÁ·¹ÀÓ ÀÌÀü±îÁö´Â µô·¹ÀÌ ½ÃÄÑ¾ß ÇÔ.
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ¾ï¿½ ï¿½ï¿½.
 		AnimInstatnce->Montage_JumpToSection(NextSection, AttackMontage);
 
 
@@ -233,20 +233,20 @@ void AOatCharacterBase::ComboCheck()
 void AOatCharacterBase::AttackHitCheck()
 {
 	FHitResult OutHitResult;
-	// ÄÝ¸®Àü ºÐ¼® ½Ã ÅÂ±× Á¤º¸ , º¹ÀâÇÑ ÇüÅÂÀÇ Ãæµ¹Ã¼µµ °¨Áö ÇÒ Áö(Ä¸½¶.±¸ -> Convex ) , ¹«½ÃÇÒ ¾×ÅÍ (ÀÚ±âÀÚ½Å)
+	// ï¿½Ý¸ï¿½ï¿½ï¿½ ï¿½Ð¼ï¿½ ï¿½ï¿½ ï¿½Â±ï¿½ ï¿½ï¿½ï¿½ï¿½ , ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½(Ä¸ï¿½ï¿½.ï¿½ï¿½ -> Convex ) , ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ú±ï¿½ï¿½Ú½ï¿½)
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
 
 	const float AttackRange = Stat->GetTotalStat().AtkRange;
 	const float AttackRadius = Stat->GetAttackRadius();
 	const float AttackDamage = Stat->GetTotalStat().Atk;
-	// ÇöÀç ¾×ÅÍ À§Ä¡ + ¾×ÅÍ ½Ã¼±¹æÇâ + Ä¸½¶ ÄÄÆ÷³ÍÆ®ÀÇ ¹ÝÁö¸§°ªÀ» Ãß°¡ÇØ¼­ Á¤¸éÀÇ Ä¸½¶ À§Ä¡¿¡¼­ºÎÅÍ ½ÃÀÛÇÔ
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ + ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ï¿½ + Ä¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä¸ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
 
-	// ½ÃÀÛ + Attack¹üÀ§
+	// ï¿½ï¿½ï¿½ï¿½ + Attackï¿½ï¿½ï¿½ï¿½
 	const FVector End = Start + GetActorForwardVector() * AttackRange;
 
-	// World¿¡¼­ Á¦°øÇÏ´Â ¼­ºñ½º
-	// HitResult¿¡ °á°ú°ªÀ» ¹Þ¾Æ¿Ã ¼ö ÀÖÀ½ , ½ÃÀÛ - ³¡ , FCollisionShpaeÀ» ÅëÇÏ¿© ±¸Ã¼ ¿µ¿ª ÁöÁ¤ / 
+	// Worldï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½
+	// HitResultï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ , ï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½ , FCollisionShpaeï¿½ï¿½ ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ / 
 	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANNEL_OATACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
 	if (HitDetected)
 	{
@@ -254,20 +254,20 @@ void AOatCharacterBase::AttackHitCheck()
 		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
 	}
 #if ENABLE_DRAW_DEBUG
-	// Ä¸½¶ ¿øÁ¡ : ½ÃÀÛ + (³¡ - ½ÃÀÛ) / 2
+	// Ä¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ : ï¿½ï¿½ï¿½ï¿½ + (ï¿½ï¿½ - ï¿½ï¿½ï¿½ï¿½) / 2
 	FVector CapsuleOrign = Start + (End - Start) * 0.5f;
 	float CapsuleHalfHeight = AttackRange * 0.5f;
 	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
 
-	// Ä¸½¶À» ´¯Çô¼­ ±×·ÁÁà¾ß ÇÔ
+	// Ä¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 	DrawDebugCapsule(GetWorld(), CapsuleOrign, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DrawColor, false, 5.f);
 #endif
 }
 
 float AOatCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	// EventInstigator -> °¡ÇØÀÚ
-	// DamageCasuer -> °¡ÇØÀÚ°¡ »ç¿ëÇÑ ¹«±â, °¡ÇØÀÚ°¡ ºùÀÇÇÑ Æù(¾×ÅÍ Á¤º¸)
+	// EventInstigator -> ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// DamageCasuer -> ï¿½ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	Stat->ApplyDamage(DamageAmount);
 

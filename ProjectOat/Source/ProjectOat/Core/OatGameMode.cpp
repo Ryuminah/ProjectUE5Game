@@ -6,6 +6,7 @@
 #include "Core/OatGameInstance.h"
 #include "GameCommon/Managers/OatEventHandler.h"
 #include "GameCommon/Managers/OatStageHandler.h"
+#include "Shared/OatUtilities.h"
 
 AOatGameMode::AOatGameMode()
 {
@@ -35,7 +36,7 @@ AOatGameMode::AOatGameMode()
 	bIsCleared = false;
 }
 
-// 게임 종료시에는 전부 이거 호출
+// 게임 오버시에는 전부 이거 호출
 void AOatGameMode::GameOver()
 {
 	UOatGameInstance* OatGameInstance = Cast<UOatGameInstance>(GetGameInstance());

@@ -2,12 +2,8 @@
 
 
 #include "InGame/Stage/OatGoalTrigger.h"
-#include "Core/Interface/OatGameInterface.h"
-#include "Core/OatGameInstance.h"
 #include "Core/OatGameMode.h"
-#include "GameCommon/Managers/OatEventHandler.h"
 #include "InGame/Physics/OatCollision.h"
-#include "InGame/Character/OatCharacterNPC.h"
 
 #include "Components/BoxComponent.h"
 

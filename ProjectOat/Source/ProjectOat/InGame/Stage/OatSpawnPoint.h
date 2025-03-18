@@ -28,7 +28,7 @@ protected:
 	int32 SectionId;
 
 public:
-	int32 GetSpawnId() { return SpawnId; }
-	int32 GetSectionId() { return SectionId; }
+	int32 GetSpawnId() const { return SpawnId; } 
+	int32 GetSectionId() const { return SectionId; } 
 
 };

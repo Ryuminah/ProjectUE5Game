@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Core/Interface/OatGameInterface.h"
+#include "GameData/OatStageData.h"
 #include "Shared/Enums.h"
 #include "OatGameMode.generated.h"
 
@@ -23,7 +24,7 @@ public:
 	// 현재 진행되고 있는 게임의 점수와 조건들.
 	// 게임 진행을 결정하는 데이터들은 게임 모드에서 보관하는 것이 좋음.
 	UPROPERTY(Category=Game, EditDefaultsOnly, BlueprintReadWrite)
-	int32 ClearScrore;
+	int32 ClearScore;
 
 	// 게임의 볼륨이 커진다면 PlayerState에 보관하는 것이 좋을 수도 있음
 	UPROPERTY(Category=Game, VisibleInstanceOnly, BlueprintReadOnly)
@@ -31,11 +32,11 @@ public:
 
 	UPROPERTY(Category=Game, VisibleInstanceOnly, BlueprintReadOnly)
 	uint8 bIsCleared : 1;
-
+	
 /* Game Core -------------------------------------------------*/
 public:
 	virtual void GameOver() override;
-	void GameClear();
+	virtual void GameClear() override;
 
 	virtual bool IsGameCleared() override;
 	virtual void  OnPlayerDead() override;

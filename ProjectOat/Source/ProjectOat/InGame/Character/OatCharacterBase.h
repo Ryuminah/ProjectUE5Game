@@ -86,7 +86,6 @@ protected:
 
 /* Stat ---------------------------------------------------------*/
 protected:
-
 	UPROPERTY(Category=Stat, VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<class UOatCharacterStatComponent> Stat;
 

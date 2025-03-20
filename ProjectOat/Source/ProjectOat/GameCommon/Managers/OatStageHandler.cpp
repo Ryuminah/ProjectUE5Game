@@ -12,20 +12,18 @@ AOatStageHandler::AOatStageHandler()
 void AOatStageHandler::PostInitProperties()
 {
 	Super::PostInitProperties();
-	
-	
 }
 
 void AOatStageHandler::Initialize(UGameInstance* GameInstance)
 {
-	UOatGameInstance* OatGameInstance = Cast<UOatGameInstance>(GameInstance);
-	if (!OatGameInstance)
+	UOatGameInstance* GetOatGameInstance = Cast<UOatGameInstance>(GameInstance);
+	if (!GetOatGameInstance)
 	{
 		ensure(TEXT("OatGameInstance is Null"));
 		return;
 	}
 
-	this->OatGameInstance = OatGameInstance;
+	this->OatGameInstance = GetOatGameInstance;
 
 	OatGameInstance->GetEventHandler()->OnStageClearGoal.AddUObject(this, &AOatStageHandler::ReachedStageGoal);
 	OatGameInstance->GetEventHandler()->OnStageClearDungeon.AddUObject(this, &AOatStageHandler::ClearDungeon);

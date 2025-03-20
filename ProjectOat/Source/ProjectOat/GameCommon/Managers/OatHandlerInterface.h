@@ -20,7 +20,7 @@ class PROJECTOAT_API IOatHandlerInterface
 {
 	GENERATED_BODY()
 
-// ¿ùµå »ı¼º ÀÌÈÄ
+// ì›”ë“œ ìƒì„± ì´í›„
 public:
 	virtual void Initialize(UGameInstance* GameInstance) = 0;
 };

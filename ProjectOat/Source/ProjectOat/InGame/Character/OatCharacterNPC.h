@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "InGame/Character/OatCharacterBase.h"
+#include "InGame/Character/OatFightUnitBase.h"
 #include "InGame/AI/Interface/OatAIInterface.h"
 #include "OatCharacterNPC.generated.h"
 
@@ -11,7 +11,7 @@
  *
  */
 UCLASS()
-class PROJECTOAT_API AOatCharacterNPC : public AOatCharacterBase, public IOatAIInterface
+class PROJECTOAT_API AOatCharacterNPC : public AOatFightUnitBase, public IOatAIInterface
 {
 	GENERATED_BODY()
 
@@ -28,7 +28,7 @@ protected:
 	virtual float GetAIAttackRange() override;
 	virtual float GetAITurnSpeed() override;
 
-	// ¸ùÅ¸ÁÖ°¡ ³¡³­ ½ÃÁ¡À» BTTask_AttackÀÇ °ø°İ ¼º°øÀ¸·Î ¹İÈ¯ÇÏ±â À§ÇØ
+	// ëª½íƒ€ì£¼ê°€ ëë‚œ ì‹œì ì„ BTTask_Attackì˜ ê³µê²© ì„±ê³µìœ¼ë¡œ ë°˜í™˜í•˜ê¸° ìœ„í•´
 	virtual void SetAIAttackDelegate(const FAIAttackFinished& InOnAttackFinished) override;
 	virtual void AttackByAI() override;
 	virtual void NotifyAttackActionEnd() override;

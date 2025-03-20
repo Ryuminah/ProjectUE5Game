@@ -8,7 +8,7 @@
 #include "OatGameInstance.generated.h"
 
 /**
- * ÇÁ·Î±×·¥ ½ÇÇàºÎÅÍ Á¾·á ½Ã ±îÁö À¯ÁöµÇ´Â Àü¿ª °´Ã¼
+ * í”„ë¡œê·¸ë¨ ì‹¤í–‰ë¶€í„° ì¢…ë£Œ ì‹œ ê¹Œì§€ ìœ ì§€ë˜ëŠ” ì „ì—­ ê°ì²´
  */
 UCLASS()
 class PROJECTOAT_API UOatGameInstance : public UGameInstance
@@ -29,16 +29,16 @@ public:
 	class AOatStageHandler* GetStageHandler() { return StageHandler; }
 	class AOatEventHandler* GetEventHandler() { return EventHandler; }
 
-	ELevelType GetCurrentLevel() { return CurrentLevelType; }
+	ELevelType GetCurrentLevel() const { return CurrentLevelType; } 
 
 /* Handler --------------------------------------------------------*/
 private:
 	UPROPERTY()
 	TObjectPtr<class AOatStageHandler> StageHandler;
 		
-	// ¿ÀºêÁ§Æ® Ç®
+	// ì˜¤ë¸Œì íŠ¸ í’€
 	
-	// µ¨¸®°ÔÀÌÆ® ÇÚµé·¯
+	// ë¸ë¦¬ê²Œì´íŠ¸ í•¸ë“¤ëŸ¬
 	UPROPERTY()
 	TObjectPtr<class AOatEventHandler> EventHandler;
 

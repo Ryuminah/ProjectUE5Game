@@ -16,34 +16,36 @@ DECLARE_MULTICAST_DELEGATE(FOnStageClearGoalDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnStageClearDungeonDelegate);
 DECLARE_MULTICAST_DELEGATE(FOnGameOver);
 DECLARE_MULTICAST_DELEGATE(FOnQuitGame);
-
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnSelectSceneDelegate, /*const ELevelType*/ );
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSelectSceneDelegate, /*const ELevelType*/);
 
 // InGame
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStageSectionChangedDelegate, const int/*SectionID*/, const EStageSectionState/*bool InBattle*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStageSectionChangedDelegate, const int/*SectionID*/,
+                                     const EStageSectionState/*bool InBattle*/);
 
+// ê²Œì„ ë‚´ ëª¨ë“  ì´ë²¤íŠ¸ëŠ” ì—¬ê¸°ì„œ ê´€ë¦¬
 UCLASS()
 class PROJECTOAT_API AOatEventHandler : public AActor, public IOatHandlerInterface
 {
 	GENERATED_BODY()
 
 	friend class UOatGameInstance;
+	friend class AOatStageHandler;
 
 public:
 	virtual void Initialize(UGameInstance* GameInstance) override;
 
 public:
-	// ½ºÅ×ÀÌÁö¿¡¼­ °ñ µµ´Ş ½Ã (°ÔÀÓ Å¬¸®¾î¿Í °°´Ù)
+	// ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´ì˜ ê²½ìš°
 	FOnStageClearGoalDelegate OnStageClearGoal;
 	FOnStageClearDungeonDelegate OnStageClearDungeon;
 
-	// Ä³¸¯ÅÍ »ç¸Á or Å¸ÀÓ ¿À¹ö ½Ã
-	FOnGameOver OnGameOver;
+	FOnGameOver OnGameOver; //ê²Œì„ íŒ¨ë°°			
 
-	// °ÔÀÓ Á¾·á
-	FOnQuitGame OnQuitGame;
 
-	// ÇöÀç ½ºÅ×ÀÌÁö ¼½¼Ç »óÅÂ º¯È­ ½Ã
-	FOnStageSectionChangedDelegate OnStageSectionChanged;
+	FOnQuitGame OnQuitGame; //ê²Œì„ ì¢…ë£Œì‹œ
+
+
+private: FOnStageSectionChangedDelegate OnStageSectionChanged;
+public: void AddStageSectionChangedDelegate(UObject* Object, void (UObject::*Function)(int, EStageSectionState));
+	
 };
-

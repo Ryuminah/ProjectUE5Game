@@ -10,7 +10,7 @@
 #include "GameData/TestData.h"
 
 
-#include "OatCharacterBase.generated.h"
+#include "OatFightUnitBase.generated.h"
 
 UENUM()
 enum class ECharacterControlType : uint8
@@ -31,13 +31,13 @@ struct FTakeItemDelegateWrapper
 };
 
 UCLASS()
-class PROJECTOAT_API AOatCharacterBase : public ACharacter, public IOatAnimationAttackInterface, public IOatActorWidgetInterface, public IOatItemInterface
+class PROJECTOAT_API AOatFightUnitBase : public ACharacter, public IOatAnimationAttackInterface, public IOatActorWidgetInterface, public IOatItemInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	AOatCharacterBase();
+	AOatFightUnitBase();
 
 	virtual void PostInitializeComponents() override;
 

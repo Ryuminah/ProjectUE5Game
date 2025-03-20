@@ -8,3 +8,7 @@ void AOatEventHandler::Initialize(UGameInstance* GameInstance)
 
 }
 
+void AOatEventHandler::AddStageSectionChangedDelegate(UObject* Object, void (UObject::*Function)(int, EStageSectionState))
+{
+	OnStageSectionChanged.AddUObject(Object, Function);
+}

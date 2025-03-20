@@ -24,7 +24,7 @@ void AOatPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// °ÔÀÓ ½ÃÀÛ ½Ã ¸¶¿ì½º°¡ ºäÆ÷Æ® ³»ºÎ¿¡ Àû¿ë
+	// ê²Œì„ ì‹œì‘ ì‹œ ë§ˆìš°ìŠ¤ê°€ ë·°í¬íŠ¸ ë‚´ë¶€ì— ì ìš©
 	FInputModeGameOnly GameOnlyInputMode;
 	SetInputMode(GameOnlyInputMode);
 

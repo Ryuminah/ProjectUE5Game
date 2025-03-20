@@ -23,7 +23,7 @@ AOatStageSectionTrigger::AOatStageSectionTrigger()
 	StageTrigger->SetCollisionProfileName(CPROFILE_OATTRIGGER);
 	StageTrigger->OnComponentBeginOverlap.AddDynamic(this, &AOatStageSectionTrigger::OnStageTriggerBeginOverlap);
 
-	// Æ®¸®°Å¿¡ ÅÂ±× ºÎÂø
+	// íŠ¸ë¦¬ê±°ì— íƒœê·¸ ë¶€ì°©
 	//StageTrigger->ComponentTags.Add();
 
 
@@ -77,11 +77,11 @@ void AOatStageSectionTrigger::SetSectionState(EStageSectionState NewState)
 		return;
 	}
 
-	// ±»ÀÌ Switch¸¦ »ç¿ëÇÏÁö ¾Ê°í CallbackÀ» ÅëÇØ ¿¬µ¿
+	// êµ³ì´ Switchë¥¼ ì‚¬ìš©í•˜ì§€ ì•Šê³  Callbackì„ í†µí•´ ì—°ë™
 	CurrentState = NewState;
 
-	// ÀÌ·¸°Ô ÇÏ¸é ¿Ö SpawnPointArray ¹è¿­ÀÌ ³¯¶ó°¥±î?
-	// ¹ÙÀÎµù
+	// ì´ë ‡ê²Œ í•˜ë©´ ì™œ SpawnPointArray ë°°ì—´ì´ ë‚ ë¼ê°ˆê¹Œ?
+	// ë°”ì¸ë”©
 	if (SectionStateChangedCallback.Contains(NewState))
 	{
 		SectionStateChangedCallback[NewState].SectionDelegate.ExecuteIfBound();
@@ -117,14 +117,14 @@ void AOatStageSectionTrigger::SetReadyBattle()
 	
 	OatGameInstance->GetStageHandler()->ReadyBattle(SectionId);
 	
-	//// Collision È°¼ºÈ­
+	//// Collision í™œì„±í™”
 	UE_LOG(LogTemp, Warning, TEXT("AOatStageSectionTrigger Address: %p"), this);
 
 	StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
 	
-	// º® È°¼ºÈ­
+	// ë²½ í™œì„±í™”
 	
-	// ¸ó½ºÅÍ ½ºÆù
+	// ëª¬ìŠ¤í„° ìŠ¤í°
 	float SpawnDelay = 0.f;
 	for (auto SpawnActor : SpawnPointArray)
 	{
@@ -145,7 +145,7 @@ void AOatStageSectionTrigger::SetReadyBattle()
 	SetSectionState(EStageSectionState::INBATTLE);
 }
 
-// »ç½Ç InBattle == ReadyBattleÀÏ¼öµµ.. ¤»¤»¤»¤»¤»¤»¤»¤»
+// ì‚¬ì‹¤ InBattle == ReadyBattleì¼ìˆ˜ë„.. ã…‹ã…‹ã…‹ã…‹ã…‹ã…‹ã…‹ã…‹
 void AOatStageSectionTrigger::SetInBattle()
 {
 	UOatGameInstance* OatGameInstance = Cast<UOatGameInstance>(GetGameInstance());
@@ -153,31 +153,32 @@ void AOatStageSectionTrigger::SetInBattle()
 	{
 		return;
 	}
+
+	OatGameInstance->GetStageHandler()->InBattle(SectionId);
 	
-	OatGameInstance->GetStageHandler()->OnStageSectionChanged.Broadcast(SectionId, EStageSectionState::INBATTLE);
-	
-	// ¸ó½ºÅÍ ½ºÆù ¹× Ã³Ä¡ Ä«¿îÆÃ
+	// ëª¬ìŠ¤í„° ìŠ¤í° ë° ì²˜ì¹˜ ì¹´ìš´íŒ…
 }
 
 void AOatStageSectionTrigger::SetEndBattle()
 {
-	// ÇØ´ç Æ®¸®°Å´Â ºñÈ°¼ºÈ­ ÇØµµ µÊ
+	// í•´ë‹¹ íŠ¸ë¦¬ê±°ëŠ” ë¹„í™œì„±í™” í•´ë„ ë¨
 	UOatGameInstance* OatGameInstance = Cast<UOatGameInstance>(GetGameInstance());
 	if (!OatGameInstance)
 	{
 		return;
 	}
-	OatGameInstance->GetEventHandler()->OnStageSectionChanged.Broadcast(SectionId, EStageSectionState::ENDBATTLE);
+	
+	OatGameInstance->GetStageHandler()->EndBattle(SectionId);
 	SetActorEnableCollision(false);
 	
-	// º® ÇØÁ¦
-	// SpawnPoint destroy È¤Àº ºñÈ°¼ºÈ­ ÇÏ±â
+	// ë²½ í•´ì œ
+	// SpawnPoint destroy í˜¹ì€ ë¹„í™œì„±í™” í•˜ê¸°
 }
 
 
 void AOatStageSectionTrigger::SpawnSectionEnemy(FVector SpawnPos)
 {
-	// (GetWorld ¾ÈµÊ)
+	// (GetWorld ì•ˆë¨)
 	UWorld* World = GWorld->GetGameInstance()->GetWorld();
 	AActor* OpponentActor = World->SpawnActor(OpponentClass, &SpawnPos, &FRotator::ZeroRotator);
 	

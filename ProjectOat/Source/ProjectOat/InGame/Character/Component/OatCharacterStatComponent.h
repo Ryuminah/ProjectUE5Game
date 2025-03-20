@@ -46,13 +46,13 @@ public:
 	void SetModifierStat(const FTestData& InModifierStat) { ModifierStat = InModifierStat; OnStatChanged.Broadcast(GetBaseStat(), GetModifierStat()); }
 
 protected:
-	// Transient -> µğ½ºÅ©¿¡ ÀúÀåÇÏÁö ¾Êµµ·Ï ÇÏ¿© ºÒÇÊ¿äÇÑ °ø°£ ³¶ºñ¸¦ ÁÙÀÓ
+	// Transient -> ë””ìŠ¤í¬ì— ì €ì¥í•˜ì§€ ì•Šë„ë¡ í•˜ì—¬ ë¶ˆí•„ìš”í•œ ê³µê°„ ë‚­ë¹„ë¥¼ ì¤„ì„
 	UPROPERTY(category=Stat, Transient, VisibleInstanceOnly)
 	float CurrentHp;	
 
 	void SetHp(float NewHp);
 
-		// Transient -> µğ½ºÅ©¿¡ ÀúÀåÇÏÁö ¾Êµµ·Ï ÇÏ¿© ºÒÇÊ¿äÇÑ °ø°£ ³¶ºñ¸¦ ÁÙÀÓ
+		// Transient -> ë””ìŠ¤í¬ì— ì €ì¥í•˜ì§€ ì•Šë„ë¡ í•˜ì—¬ ë¶ˆí•„ìš”í•œ ê³µê°„ ë‚­ë¹„ë¥¼ ì¤„ì„
 	UPROPERTY(category=Stat, Transient, VisibleInstanceOnly)
 	float CurrentLv;	
 

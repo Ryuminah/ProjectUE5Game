@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "OatCharacterBase.h"
+#include "OatFightUnitBase.h"
 
 #include "Engine/DamageEvents.h"
 #include "Components/CapsuleComponent.h"
@@ -20,7 +20,7 @@
 
 
 // Sets default values
-AOatCharacterBase::AOatCharacterBase()
+AOatFightUnitBase::AOatFightUnitBase()
 {
 	// Pawn
 	bUseControllerRotationPitch = false;
@@ -51,7 +51,7 @@ AOatCharacterBase::AOatCharacterBase()
 		GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
 	}
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/ProjectOat/InGame/Character/Roxy/ABP_Roxy.ABP_Roxy_C"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/ProjectOat/InGame/Character/Oat/ABP_Oat.ABP_Oat_C"));
 	if (AnimInstanceClassRef.Class)
 	{
 		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
@@ -113,8 +113,8 @@ AOatCharacterBase::AOatCharacterBase()
 
 	// Item Callbacks
 	// �������� �����ؼ� ������� (���߿� �Ⱦ� �ڵ�)
-	TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatCharacterBase::TestEquipSocket)));
-	TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatCharacterBase::DrinkPotion)));
+	TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatFightUnitBase::TestEquipSocket)));
+	TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatFightUnitBase::DrinkPotion)));
 
 	TestSocket = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("TestSocket"));
 	TestSocket->SetupAttachment(GetMesh(), TEXT("L_soket1"));
@@ -122,16 +122,16 @@ AOatCharacterBase::AOatCharacterBase()
 
 }
 
-void AOatCharacterBase::PostInitializeComponents()
+void AOatFightUnitBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
 	// ��� ���ε��� �ص� ũ�� ��� X (�����ڳ� BeginPlay�� �����ϴ�.)
-	Stat->OnHpZero.AddUObject(this, &AOatCharacterBase::SetDead);
-	Stat->OnStatChanged.AddUObject(this, &AOatCharacterBase::ApplyStat);
+	Stat->OnHpZero.AddUObject(this, &AOatFightUnitBase::SetDead);
+	Stat->OnStatChanged.AddUObject(this, &AOatFightUnitBase::ApplyStat);
 }
 
-void AOatCharacterBase::SetCharacterControlData(const UOatCharacterControlData* CharcterControlData)
+void AOatFightUnitBase::SetCharacterControlData(const UOatCharacterControlData* CharcterControlData)
 {
 	// Pawn
 	bUseControllerRotationYaw = CharcterControlData->bUseControllerRotaitionYaw;
@@ -142,7 +142,7 @@ void AOatCharacterBase::SetCharacterControlData(const UOatCharacterControlData* 
 	GetCharacterMovement()->RotationRate = CharcterControlData->RotationRate;
 }
 
-void AOatCharacterBase::ProcessAttack()
+void AOatFightUnitBase::ProcessAttack()
 {
 	// ���� ��Ÿ�ְ� �������� �ƴ�
 	if (CurrentCombo == 0)
@@ -163,7 +163,7 @@ void AOatCharacterBase::ProcessAttack()
 	}
 }
 
-void AOatCharacterBase::AttackActionMontageBegin()
+void AOatFightUnitBase::AttackActionMontageBegin()
 {
 	// ComboStatus
 	CurrentCombo = 1;
@@ -179,7 +179,7 @@ void AOatCharacterBase::AttackActionMontageBegin()
 	// ��Ÿ�� ���� ��
 	// ����üó�� ���ε��� ��������Ʈ�� ������ �� ���ڷ� �Ѱ��ָ� ��
 	FOnMontageEnded EndDelegate;
-	EndDelegate.BindUObject(this, &AOatCharacterBase::AttackActionMontageEnd);
+	EndDelegate.BindUObject(this, &AOatFightUnitBase::AttackActionMontageEnd);
 	// Delegate����, Montage ����
 	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
 
@@ -187,7 +187,7 @@ void AOatCharacterBase::AttackActionMontageBegin()
 	SetComboCheckTimer();
 }
 
-void AOatCharacterBase::AttackActionMontageEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
+void AOatFightUnitBase::AttackActionMontageEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
 {
 	// ��Ÿ�� ���� �� �ʱ�ȭ
 	ensure(CurrentCombo != 0);
@@ -196,7 +196,7 @@ void AOatCharacterBase::AttackActionMontageEnd(UAnimMontage* TargetMontage, bool
 	NotifyAttackActionEnd();
 }
 
-void AOatCharacterBase::SetComboCheckTimer()
+void AOatFightUnitBase::SetComboCheckTimer()
 {
 	int32 ComboIndex = CurrentCombo - 1;
 	ensure(AttackActionData->EffectiveFrameCount.IsValidIndex(ComboIndex));
@@ -206,11 +206,11 @@ void AOatCharacterBase::SetComboCheckTimer()
 	if (ComboEffectiveTime > 0.f)
 	{
 		// �ð��� üũ�ϵ�, �ݺ����� �ʵ��� �ѹ��� �߻��ϵ��� false
-		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&AOatCharacterBase::ComboCheck,ComboEffectiveTime,false);
+		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&AOatFightUnitBase::ComboCheck,ComboEffectiveTime,false);
 	}
 }
 
-void AOatCharacterBase::ComboCheck()
+void AOatFightUnitBase::ComboCheck()
 {
 	// Ÿ�̸� �ڵ� �ʱ�ȭ
 	ComboTimerHandle.Invalidate();
@@ -230,7 +230,7 @@ void AOatCharacterBase::ComboCheck()
 	}
 }
 
-void AOatCharacterBase::AttackHitCheck()
+void AOatFightUnitBase::AttackHitCheck()
 {
 	FHitResult OutHitResult;
 	// �ݸ��� �м� �� �±� ���� , ������ ������ �浹ü�� ���� �� ��(ĸ��.�� -> Convex ) , ������ ���� (�ڱ��ڽ�)
@@ -264,7 +264,7 @@ void AOatCharacterBase::AttackHitCheck()
 #endif
 }
 
-float AOatCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float AOatFightUnitBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	// EventInstigator -> ������
 	// DamageCasuer -> �����ڰ� ����� ����, �����ڰ� ������ ��(���� ����)
@@ -274,27 +274,27 @@ float AOatCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	return DamageAmount;
 }
 
-void AOatCharacterBase::SetDead()
+void AOatFightUnitBase::SetDead()
 {
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	PlayDeadAnim();
 	SetActorEnableCollision(false);
 }
 
-void AOatCharacterBase::PlayDeadAnim()
+void AOatFightUnitBase::PlayDeadAnim()
 {
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->StopAllMontages(0.f);
 	AnimInstance->Montage_Play(DeadMontage, 1.f);
 }
 
-void AOatCharacterBase::ApplyStat(const FTestData & BaseStat, const FTestData & ModifierStat)
+void AOatFightUnitBase::ApplyStat(const FTestData & BaseStat, const FTestData & ModifierStat)
 {
 	float MovementSpeed = (BaseStat + ModifierStat).MoveSpeed;
 	GetCharacterMovement()->MaxWalkSpeed = MovementSpeed;
 }
 
-void AOatCharacterBase::SetUpActorWidget(UOatUserWidget* InUserWidget)
+void AOatFightUnitBase::SetUpActorWidget(UOatUserWidget* InUserWidget)
 {
 	UOatHpBarWidget* HpBarWidget = Cast<UOatHpBarWidget>(InUserWidget);
 	if (InUserWidget)
@@ -305,7 +305,7 @@ void AOatCharacterBase::SetUpActorWidget(UOatUserWidget* InUserWidget)
 	}
 }
 
-void AOatCharacterBase::TakeItem(UOatItemData* InItemData)
+void AOatFightUnitBase::TakeItem(UOatItemData* InItemData)
 {
 	if (InItemData)
 	{
@@ -313,10 +313,10 @@ void AOatCharacterBase::TakeItem(UOatItemData* InItemData)
 	}
 }
 
-void AOatCharacterBase::DrinkPotion(UOatItemData* InItemData)
+void AOatFightUnitBase::DrinkPotion(UOatItemData* InItemData)
 {}
 
-void AOatCharacterBase::TestEquipSocket(UOatItemData* InItemData)
+void AOatFightUnitBase::TestEquipSocket(UOatItemData* InItemData)
 {
 	UOatItemWeaponData* WeaponItemData = Cast<UOatItemWeaponData>(InItemData);
 	if (WeaponItemData)

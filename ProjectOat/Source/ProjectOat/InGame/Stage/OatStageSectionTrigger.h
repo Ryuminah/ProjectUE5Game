@@ -40,7 +40,7 @@ protected:
 	UPROPERTY(Category=Stage, VisibleAnywhere, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<class UBoxComponent> StageTrigger;
 
-	// ÇöÀç ½ºÅ×ÀÌÁöÀÇ ¼½¼Ç ¼ø¼­
+	// í˜„ì¬ ìŠ¤í…Œì´ì§€ì˜ ì„¹ì…˜ ìˆœì„œ
 	UPROPERTY(Category=Stage, EditAnywhere, meta=(AllowPrivateAccess = "true"))
 	int SectionId = 0;
 	
@@ -56,7 +56,7 @@ protected:
 	UPROPERTY()
 	TArray<TSoftObjectPtr<class AOatSpawnPoint>> SpawnPointArray;
 
-	void SpawnSectionEnemy(FVector SpawnPos/*,½ºÆù °ü·Ã Å×ÀÌºí*/);
+	void SpawnSectionEnemy(FVector SpawnPos/*,ìŠ¤í° ê´€ë ¨ í…Œì´ë¸”*/);
 	void CreateSpawnPointData();
 	
 /* Section State ------------------------------------------------------*/
@@ -75,8 +75,8 @@ private:
 
 
 /* Battle State ------------------------------------------------------*/
-	// TSubClassOf -> ¾ğ¸®¾ó¿£ÁøÀÌ Á¦°øÇÏ´Â ÅÛÇÃ¸´ : ÁöÁ¤ÇÑ Å¬·¡½º·ÎºÎÅÍ »ó¼Ó¹ŞÀº Å¬·¡½º ¸ñ·Ï¸¸ Ç¥½ÃÇÏµµ·Ï
-	// ÀÓ½Ã·Î ·Ï½Ã ³Ö¾î³õ±â
+	// TSubClassOf -> ì–¸ë¦¬ì–¼ì—”ì§„ì´ ì œê³µí•˜ëŠ” í…œí”Œë¦¿ : ì§€ì •í•œ í´ë˜ìŠ¤ë¡œë¶€í„° ìƒì†ë°›ì€ í´ë˜ìŠ¤ ëª©ë¡ë§Œ í‘œì‹œí•˜ë„ë¡
+	// ì„ì‹œë¡œ ë¡ì‹œ ë„£ì–´ë†“ê¸°
 	UPROPERTY(Category=Battle, EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class AOatCharacterNPC> OpponentClass;
 
@@ -84,7 +84,7 @@ private:
 	void OnOpponentDestroyed(AActor* DestroyedActor);
 };
 
-// // Gate´Â µû·Î ¸¸µé±â
+// // GateëŠ” ë”°ë¡œ ë§Œë“¤ê¸°
 // /* Gate ------------------------------------------------------*/
 // 	UPROPERTY(Category=Stage, VisibleAnywhere, meta=(AllowPrivateAccess = "true"))
 // 	TMap<FName, TObjectPtr<class UStaticMeshComponent>> GateMap;

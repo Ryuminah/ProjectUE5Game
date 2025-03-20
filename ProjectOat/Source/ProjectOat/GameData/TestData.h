@@ -38,7 +38,7 @@ public:
 		float* ResultPtr = reinterpret_cast<float*>(&Result);
 		int32 StatNum = sizeof(FTestData) / sizeof(float);
 
-		// ÀüºÎ floatÀÌ¶ó°í °¡Á¤ÇÏ°í °è»ê
+		// ì „ë¶€ floatì´ë¼ê³  ê°€ì •í•˜ê³  ê³„ì‚°
 		for (int32 i = 0; i < StatNum; i++)
 		{
 			ResultPtr[i] = ThisPtr[i] + OtherPtr[i];

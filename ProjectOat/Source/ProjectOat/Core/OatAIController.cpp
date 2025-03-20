@@ -24,7 +24,7 @@ AOatAIController::AOatAIController()
 
 void AOatAIController::RunAI()
 {
-	// 블랙보드 구동
+	// 釉붾옓蹂대뱶 援щ룞
 	UBlackboardComponent* BlackboardPtr = Blackboard.Get();
 	if (UseBlackboard(BB, BlackboardPtr))
 	{

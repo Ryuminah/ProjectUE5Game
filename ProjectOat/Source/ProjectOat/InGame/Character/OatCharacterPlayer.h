@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InputActionValue.h"
-#include "InGame/Character/OatCharacterBase.h"
+#include "InGame/Character/OatFightUnitBase.h"
 #include "InGame/Interface/OatHUDInterface.h"
 #include "OatCharacterPlayer.generated.h"
 
@@ -12,7 +12,7 @@
  * 
  */
 UCLASS()
-class PROJECTOAT_API AOatCharacterPlayer : public AOatCharacterBase , public IOatHUDInterface
+class PROJECTOAT_API AOatCharacterPlayer : public AOatFightUnitBase , public IOatHUDInterface
 {
 	GENERATED_BODY()
 	
@@ -26,7 +26,7 @@ protected:
 
 
 public:
-	// Action°ú ÇÔ¼ö¸¦ ¸ÅÇÎ ½ÃÄÑÁÜ
+	// Actionï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	//Character Control Section
@@ -37,7 +37,7 @@ protected :
 
 /* Camera ---------------------------------------------------------------------*/
 protected:
-	// meta : privateÀ¸·Î ¼±¾ðµÈ ¾ð¸®¾ó ¿ÀºêÁ§Æ®ÀÇ °´Ã¼¸¦ ºíÇÁ¿¡¼­µµ Á¢±ÙÇÒ ¼ö ÀÖµµ·Ï ¸¸µé¾îÁÖ´Â Æ¯º°ÇÑ Áö½ÃÀÚ
+	// meta : privateï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ð¸®¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ Æ¯ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<class USpringArmComponent> CameraBoom;
 
@@ -46,7 +46,7 @@ protected:
 
 /* Input ---------------------------------------------------------------------*/
 protected:	
-	// InGame °ü·Ã ============================================================
+	// InGame ï¿½ï¿½ï¿½ï¿½ ============================================================
 	UPROPERTY(Category=Input, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> JumpAction;
 
@@ -73,7 +73,7 @@ protected:
 	void Attack();
 
 	
-	// ¸Þ´º Á¶ÀÛ ===============================================================
+	// ï¿½Þ´ï¿½ ï¿½ï¿½ï¿½ï¿½ ===============================================================
 	UPROPERTY(Category=Input, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> QuitAction;
 	void QuitGame();

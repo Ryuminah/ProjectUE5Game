@@ -41,7 +41,8 @@ void AOatWallBattleField::PostInitializeComponents()
 	{
 		return;
 	}
-	OatGameInstance->GetEventHandler()->OnStageSectionChanged.AddUObject(this,&AOatWallBattleField::BattleStateChanged);
+	
+	OatGameInstance->GetEventHandler()->AddStageSectionChangedDelegate(this, static_cast<void(UObject::*)(int, EStageSectionState)>(&AOatWallBattleField::BattleStateChanged));
 
 	// 처음에 숨김
 	SetActorHiddenInGame(true);

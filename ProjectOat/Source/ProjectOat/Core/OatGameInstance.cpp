@@ -38,13 +38,14 @@ void UOatGameInstance::Init()
 		Handler->Initialize(this);
 	}
 
+	SetupGameEventBindings();
+
 }
 
 // UObject의 모든 속성이 초기화 된 이후, 에디터에서 Spawn될 가능성이 있어도 안정적
 void UOatGameInstance::PostInitProperties()
 {
 	Super::PostInitProperties();
-
 }
 
 void UOatGameInstance::SetupGameEventBindings()
@@ -63,7 +64,7 @@ void UOatGameInstance::TravelLevel(ELevelType LevelType)
 	}
 
 	// 현재 레벨 종료
-	GetStageHandler()->ExitLevel();
+	GetStageHandler()->ExitLevel(LevelType);
 	
 	// 이동 후
 	CurrentLevelType = LevelType;
@@ -82,7 +83,7 @@ void UOatGameInstance::TravelLevel(ELevelType LevelType)
 		break;
 	}
 
-	GetStageHandler()->EnterLevel();
+	GetStageHandler()->EnterLevel(LevelType);
 }
 
 void UOatGameInstance::QuitGame()

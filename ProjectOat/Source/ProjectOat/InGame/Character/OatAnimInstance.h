@@ -19,10 +19,10 @@ public:
 	UOatAnimInstance();
 
 protected:
-	// Ã³À½ »ı¼ºµÉ ¶§ 1È¸ È£Ãú
+	// ì²˜ìŒ ìƒì„±ë  ë•Œ 1íšŒ í˜¸ì¸¨
 	virtual void NativeInitializeAnimation() override;
 
-	// ÇÁ·¹ÀÓ ¸¶´Ù È£Ãâ
+	// í”„ë ˆì„ ë§ˆë‹¤ í˜¸ì¶œ
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 	UPROPERTY(Category=Character, VisibleAnywhere, BlueprintReadOnly)
@@ -40,14 +40,14 @@ protected:
 	UPROPERTY(Category = Character, EditAnywhere, BlueprintReadOnly)
 	uint8 bIsIdle : 1;
 
-	// ¿òÁ÷ÀÌ°í ÀÖ´ÂÁö?
+	// ì›€ì§ì´ê³  ìˆëŠ”ì§€?
 	UPROPERTY(Category = Character, EditAnywhere, BlueprintReadOnly)
 	float MovingThreshould;
 
 	UPROPERTY(Category = Character, EditAnywhere, BlueprintReadOnly)
 	uint8 bIsFalling : 1;
 
-	// ¶³¾îÁö°í ÀÖ´ÂÁö?
+	// ë–¨ì–´ì§€ê³  ìˆëŠ”ì§€?
 	UPROPERTY(Category = Character, EditAnywhere, BlueprintReadOnly)
 	float JumpingThreshould;
 

@@ -30,7 +30,7 @@ void UOatAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (Movement)
 	{
 		Velocity = Movement->Velocity;
-		// z°ª Á¦¿Ü
+		// zê°’ ì œì™¸
 		GroundSpeed = Velocity.Size2D();
 
 		bIsIdle = (GroundSpeed < MovingThreshould) & !bIsFalling & !bIsJumping;

@@ -19,7 +19,7 @@ public:
 	AOatCharacterNPC();
 
 public:
-	void SetDead() override;
+	virtual void SetDead() override;
 
 	/* AI ---------------------------------------------------------------*/
 protected:
@@ -29,10 +29,15 @@ protected:
 	virtual float GetAITurnSpeed() override;
 
 	// 몽타주가 끝난 시점을 BTTask_Attack의 공격 성공으로 반환하기 위해
-	virtual void SetAIAttackDelegate(const FAIAttackFinished& InOnAttackFinished) override;
+	virtual void SetAIAttackFinishedDelegate(const FAIAttackFinished& InOnAttackFinished) override;
+	
 	virtual void AttackByAI() override;
 	virtual void NotifyAttackActionEnd() override;
+	virtual void AttackActionMontageEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded) override;
 
 	FAIAttackFinished OnAttackFinished;
+
+protected:
+	virtual void ProcessAttack() override;
 
 };

@@ -30,11 +30,12 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent & OwnerCo
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		});
 
-	AIPawn->SetAIAttackDelegate(OnAttackFinished);
+	AIPawn->SetAIAttackFinishedDelegate(OnAttackFinished);
+	
 	AIPawn->AttackByAI();
 	return EBTNodeResult::InProgress;
 
-	// ¸ùÅ¸ÁÖ°¡ Àç»ýÀÌ Á¾·áµÇ¾î¾ßÁö °ø°ÝÀÌ ¿Ï·áÀÌ´Ù.
+	// ï¿½ï¿½Å¸ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½ï¿½Ì´ï¿½.
 
 	return Result;
 }

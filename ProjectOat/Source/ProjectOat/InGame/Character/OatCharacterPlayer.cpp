@@ -5,7 +5,8 @@
 #include "InGame/Character/OatCharacterControlData.h"
 #include "InGame/Widget/OatHUDWidget.h"
 #include "InGame/Character/Component/OatCharacterStatComponent.h"
-#include "Core/Interface/OatGameInterface.h"
+#include "GameCommon/Items/OatItemWeaponData.h"
+
 #include "Core/OatGameInstance.h"
 
 #include "Camera/CameraComponent.h"
@@ -13,6 +14,10 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubSystems.h"
+#include "OatAttackActionData.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "InGame/Physics/OatCollision.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 
@@ -28,6 +33,79 @@ AOatCharacterPlayer::AOatCharacterPlayer()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
+	// Character Setup
+	TestSocket = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("TestSocket"));
+	TestSocket->SetupAttachment(GetMesh(), TEXT("L_socket1"));
+
+	// Pawn
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+
+	// Capsule
+	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
+	GetCapsuleComponent()->SetCollisionProfileName(CPROFILE_OATCAPSULE);
+
+	// Movement
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
+	GetCharacterMovement()->JumpZVelocity = 700.f;
+	GetCharacterMovement()->AirControl = 0.35f;
+	GetCharacterMovement()->MaxWalkSpeed = 600.f;
+	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
+	GetCharacterMovement()->BrakingDecelerationFalling = 2000.f;
+
+	// Mesh
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -100.f), FRotator(0.f, -90.f, 0.f));
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/ProjectOat/Arts/Characters/Roxy/SK_Roxy.SK_Roxy'"));
+	if (CharacterMeshRef.Object)
+	{
+		GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
+	}
+
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/ProjectOat/InGame/Character/Oat/ABP_Oat.ABP_Oat_C"));
+	if (AnimInstanceClassRef.Class)
+	{
+		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
+	} 
+
+	/* Animation ----------------------------------------------------------------------------------*/
+	// Montage Assetï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ActionMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Roxy/Animations/AM_Roxy_ComboAttack.AM_Roxy_ComboAttack'"));
+	if (ActionMontageRef.Object)
+	{
+		AttackMontage = ActionMontageRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UOatAttackActionData> ActionDataRef(TEXT("/Script/ProjectOat.OatAttackActionData'/Game/ProjectOat/InGame/Character/DA_AttackAction.DA_AttackAction'"));
+	if (ActionDataRef.Object)
+	{
+		AttackActionData = ActionDataRef.Object;
+	}
+
+	// Dead
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Roxy/Animations/AM_Roxy_Dead.AM_Roxy_Dead'"));
+	if (DeadMontageRef.Object)
+	{
+		DeadMontage = DeadMontageRef.Object;
+	}
+	
+	/* Input ----------------------------------------------------------------------------------*/
+	static ConstructorHelpers::FObjectFinder<UOatCharacterControlData> ShoulderDataRef(TEXT("/Script/ProjectOat.OatCharacterControlData'/Game/ProjectOat/Core/Systems/Input/DA_Control_Shoulder.DA_Control_Shoulder'"));
+	if (ShoulderDataRef.Object)
+	{
+		CharacterControlManager.Add(ECharacterControlType::Shoulder,ShoulderDataRef.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<UOatCharacterControlData> QuaterDataRef(TEXT("/Script/ProjectOat.OatCharacterControlData'/Game/ProjectOat/Core/Systems/Input/DA_Control_Quater.DA_Control_Quater'"));
+	if (QuaterDataRef.Object)
+	{
+		CharacterControlManager.Add(ECharacterControlType::Quater, QuaterDataRef.Object);
+	}
+	
 	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionJumpRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ProjectOat/Core/Systems/Input/Actions/IA_Jump.IA_Jump'"));
 	if (InputActionJumpRef.Object)
 	{
@@ -77,6 +155,8 @@ void AOatCharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetupCallback();
+	
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController)
 	{
@@ -84,19 +164,115 @@ void AOatCharacterPlayer::BeginPlay()
 	}
 
 	SetCharacterControl(CurrentCharacterControlType);
+	
+}
+
+void AOatCharacterPlayer::SetupCallback()
+{
+	// Item Callbacks
+	//TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatCharacterPlayer::TestEquipSocket)));
+	//TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatCharacterPlayer::DrinkPotion)));
+}
+
+void AOatCharacterPlayer::ProcessAttack()
+{
+	Super::ProcessAttack();
+	
+	if (CurrentCombo == 0)
+	{
+		AttackActionMontageBegin();
+		return;
+	}
+
+	if (!ComboTimerHandle.IsValid())
+	{
+		bHasNextComboCommand = false;
+	}
+	else
+	{
+		bHasNextComboCommand = true;
+	}
+}
+
+void AOatCharacterPlayer::SetComboCheckTimer()
+{
+	int32 ComboIndex = CurrentCombo - 1;
+	ensure(AttackActionData->EffectiveFrameCount.IsValidIndex(ComboIndex));
+
+	constexpr float AttackSpeedRate = 1.f;
+	float ComboEffectiveTime = (AttackActionData->EffectiveFrameCount[ComboIndex] / AttackActionData->FrameRate) / AttackSpeedRate;
+	if (ComboEffectiveTime > 0.f)
+	{
+		// ï¿½Ã°ï¿½ï¿½ï¿½ Ã¼Å©ï¿½Ïµï¿½, ï¿½İºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Êµï¿½ï¿½ï¿½ ï¿½Ñ¹ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½Ïµï¿½ï¿½ï¿½ false
+		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&AOatCharacterPlayer::ComboCheck,ComboEffectiveTime,false);
+	}
+}
+
+void AOatCharacterPlayer::ComboCheck()
+{
+	ComboTimerHandle.Invalidate();
+	if (bHasNextComboCommand)
+	{
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¼Å©
+		UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
+		CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, AttackActionData->MaxComboCount);
+		FName NextSection = *FString::Printf(TEXT("%s%d"), *AttackActionData->MontageSectionNamePrefix, CurrentCombo);
+
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ¾ï¿½ ï¿½ï¿½.
+		AnimInstatnce->Montage_JumpToSection(NextSection, AttackMontage);
+
+
+		bHasNextComboCommand = false;
+		SetComboCheckTimer();
+	}
+}
+
+//  FightUnit êµ¬ì¡° ì •ë¦¬ í•„ìš”í•˜ë‹¤
+void AOatCharacterPlayer::AttackActionMontageBegin()
+{
+	Super::AttackActionMontageBegin();
+	
+	// ComboStatus
+	CurrentCombo = 1;
+
+	// ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½
+	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	const float AttackSpeedRate = 1.f;
+
+	// ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ AnimInstance ï¿½ï¿½ï¿½ï¿½
+	UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
+	AnimInstatnce->Montage_Play(AttackMontage, AttackSpeedRate);
+
+	// // ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+	// // ï¿½ï¿½ï¿½ï¿½Ã¼Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ú·ï¿½ ï¿½Ñ°ï¿½ï¿½Ö¸ï¿½ ï¿½ï¿½
+	FOnMontageEnded EndDelegate;
+	EndDelegate.BindUObject(this, &AOatCharacterPlayer::AttackActionMontageEnd);
+	// Delegateï¿½ï¿½ï¿½ï¿½, Montage ï¿½ï¿½ï¿½ï¿½
+	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
+
+	ComboTimerHandle.Invalidate();
+	SetComboCheckTimer();
+}
+
+void AOatCharacterPlayer::AttackActionMontageEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded)
+{
+	Super::AttackActionMontageEnd(TargetMontage, IsProperlyEnded);
+	// ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ê±ï¿½È­
+	ensure(CurrentCombo != 0);
+	CurrentCombo = 0;
 }
 
 void AOatCharacterPlayer::SetDead()
 {
 	Super::SetDead();
 
-	// ÀÔ·Â ¸·±â
+	// ì…ë ¥ ë§‰ê¸°
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController)
 	{
 		DisableInput(PlayerController);
 
-		//// GameMode´Â ¸ÖÆ¼¸¦ °í·ÁÇÑ ¸ğµç ÇÃ·¹ÀÌ¾î¸¦ ÅëÆ²¾î ´Ü ÇÏ³ª¸¸ Á¸ÀçÇÔ (¹æÀåÀÌ ¼ÒÀ¯ÇÑ °ÔÀÓ¸ğµåÀÌ´Ù)
+		//// GameModeëŠ” ë©€í‹°ë¥¼ ê³ ë ¤í•œ ëª¨ë“  í”Œë ˆì´ì–´ë¥¼ í†µí‹€ì–´ ë‹¨ í•˜ë‚˜ë§Œ ì¡´ì¬í•¨ (ë°©ì¥ì´ ì†Œìœ í•œ ê²Œì„ëª¨ë“œì´ë‹¤)
 		//IOatGameInterface* OatGameMode = Cast<IOatGameInterface>(GetWorld()->GetAuthGameMode());
 		//if (OatGameMode)
 		//{
@@ -109,7 +285,7 @@ void AOatCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	// EnhancedInputComponent°¡ »ç¿ëµÇÁö ¾ÊÀº °æ¿ì´Â ¿¡·¯°¡ ¹ß»ıÇÒ ¼ö ÀÖµµ·Ï Ã¼Å©
+	// EnhancedInputComponentê°€ ì‚¬ìš©ë˜ì§€ ì•Šì€ ê²½ìš°ëŠ” ì—ëŸ¬ê°€ ë°œìƒí•  ìˆ˜ ìˆë„ë¡ ì²´í¬
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
 
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
@@ -145,10 +321,10 @@ void AOatCharacterPlayer::SetCharacterControl(ECharacterControlType NewCharacter
 	APlayerController* PlayerController = CastChecked<APlayerController>(GetController());
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 	{
-		// ±âÁ¸ÀÇ ¸ÅÇÎ »èÁ¦
+		// ê¸°ì¡´ì˜ ë§¤í•‘ ì‚­ì œ
 		Subsystem->ClearAllMappings();
 
-		// µ¥ÀÌÅÍ ¿¡¼Â¿¡ Á¸ÀçÇÏ´Â ¸ÅÇÎÀ¸·Î º¯°æ
+		// ë°ì´í„° ì—ì…‹ì— ì¡´ì¬í•˜ëŠ” ë§¤í•‘ìœ¼ë¡œ ë³€ê²½
 		UInputMappingContext* NewMappingContext = NewCharacterControl->InputMappingContext;
 		if (NewMappingContext)
 		{
@@ -161,8 +337,15 @@ void AOatCharacterPlayer::SetCharacterControl(ECharacterControlType NewCharacter
 
 void AOatCharacterPlayer::SetCharacterControlData(const UOatCharacterControlData* CharacterControlData)
 {
-	Super::SetCharacterControlData(CharacterControlData);
+	// Pawn
+	bUseControllerRotationYaw = CharacterControlData->bUseControllerRotaitionYaw;
 
+	// CharacterMovement
+	GetCharacterMovement()->bOrientRotationToMovement = CharacterControlData->bOrientRotationToMovement;
+	GetCharacterMovement()->bUseControllerDesiredRotation = CharacterControlData->bUseControllerDesiredRotation;
+	GetCharacterMovement()->RotationRate = CharacterControlData->RotationRate;
+	
+	// Set Camera
 	CameraBoom->TargetArmLength = CharacterControlData->TargetArmLength;
 	CameraBoom->SetRelativeRotation(CharacterControlData->RelativeRotation);
 	CameraBoom->bUsePawnControlRotation = CharacterControlData->bUsePawnControlRotation;
@@ -170,22 +353,21 @@ void AOatCharacterPlayer::SetCharacterControlData(const UOatCharacterControlData
 	CameraBoom->bInheritYaw = CharacterControlData->bInheritYaw;
 	CameraBoom->bInheritRoll = CharacterControlData->bInheritRoll;
 	CameraBoom->bDoCollisionTest = CharacterControlData->bDoCollisionTest;
-
 }
 
 void AOatCharacterPlayer::ShoulderMove(const FInputActionValue& InValue)
 {
 	FVector2D MovementVector = InValue.Get<FVector2D>();
 
-	// UpdateµÈ ControlRotation °ªÀ» °¡Á®¿Í¼­
+	// Updateëœ ControlRotation ê°’ì„ ê°€ì ¸ì™€ì„œ
 	const FRotator	Rotation = Controller->GetControlRotation();
 	const FRotator	YawRotation(0, Rotation.Yaw, 0);
 
-	// ÀüÁø / ¿À¸¥ÂÊ ¹æÇâÀ» ¹Ş¾Æ¿Â µÚ
+	// ì „ì§„ / ì˜¤ë¥¸ìª½ ë°©í–¥ì„ ë°›ì•„ì˜¨ ë’¤
 	const FVector FowardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-	// IA_Move -> ModifierÀÇ Swizzle (ÀÔ·Â¿¡¼­ÀÇ XY¸¦ ¹İ´ë·Î ¼³Á¤)
+	// IA_Move -> Modifierì˜ Swizzle (ì…ë ¥ì—ì„œì˜ XYë¥¼ ë°˜ëŒ€ë¡œ ì„¤ì •)
 	AddMovementInput(FowardDirection, MovementVector.X);
 	AddMovementInput(RightDirection, MovementVector.Y);
 }
@@ -194,21 +376,21 @@ void AOatCharacterPlayer::ShoulderLook(const FInputActionValue& InValue)
 {
 	FVector2D LookAxisVector = InValue.Get<FVector2D>();
 
-	// ÀÔ·Â°ªÀ» ¹Ş¾Æ¼­ ÄÁÆ®·Ñ·¯ÀÇ ControlRotation ¼Ó¼ºÀ» ¾÷µ¥ÀÌÆ® ÇÏ´Âµ¥¿¡ »ç¿ë
+	// ì…ë ¥ê°’ì„ ë°›ì•„ì„œ ì»¨íŠ¸ë¡¤ëŸ¬ì˜ ControlRotation ì†ì„±ì„ ì—…ë°ì´íŠ¸ í•˜ëŠ”ë°ì— ì‚¬ìš©
 	AddControllerYawInput(LookAxisVector.X);
 	AddControllerPitchInput(LookAxisVector.Y);
 }
 
 void AOatCharacterPlayer::QuaterMove(const FInputActionValue& Value)
 {
-	// ÇöÀç ÀÌµ¿ º¤ÅÍ
+	// í˜„ì¬ ì´ë™ ë²¡í„°
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	float InputSizeSquared = MovementVector.SquaredLength();
 	float MovementVectorSize = 1.f;
 	float MovementVectorSizeSquared = MovementVector.SquaredLength();
 
-	// Å©±â Á¶Á¤
+	// í¬ê¸° ì¡°ì •
 	if (MovementVectorSizeSquared > 1.f)
 	{
 		MovementVector.Normalize();
@@ -220,8 +402,8 @@ void AOatCharacterPlayer::QuaterMove(const FInputActionValue& Value)
 	}
 
 	FVector MoveDirection = FVector(MovementVector.X, MovementVector.Y, 0.0f);
-	// Fowrad ¹æÇâÀ¸·Î Control Rotation ÁöÁ¤ -> 
-	// Movement Component¿¡¼­ ¼³Á¤ÇÑ ¿É¼ÇÀ» ÅëÇØ ÇöÀç Ä³¸¯ÅÍ°¡ ÀÌµ¿ÇÏ´Â ¹æÇâÀ¸·Î È¸Àü
+	// Fowrad ë°©í–¥ìœ¼ë¡œ Control Rotation ì§€ì • -> 
+	// Movement Componentì—ì„œ ì„¤ì •í•œ ì˜µì…˜ì„ í†µí•´ í˜„ì¬ ìºë¦­í„°ê°€ ì´ë™í•˜ëŠ” ë°©í–¥ìœ¼ë¡œ íšŒì „
 	GetController()->SetControlRotation(FRotationMatrix::MakeFromX(MoveDirection).Rotator());
 	AddMovementInput(MoveDirection, MovementVectorSize);
 }
@@ -233,14 +415,20 @@ void AOatCharacterPlayer::Attack()
 
 void AOatCharacterPlayer::QuitGame()
 {
-	// °ÔÀÓ Á¾·á
-	// ÆË¾÷ÀÌ ¾øÀ» °æ¿ì °ÔÀÓ Á¾·á
-
-	// 
-	UOatGameInstance* OatGameInstance = Cast<UOatGameInstance>(GetGameInstance());
-	if (OatGameInstance)
+	// ê²Œì„ ì¢…ë£Œ
+	// íŒì—…ì´ ì—†ì„ ê²½ìš° ê²Œì„ ì¢…ë£Œ
+	
+	if (UOatGameInstance* OatGameInstance = Cast<UOatGameInstance>(GetGameInstance()))
 	{
 		OatGameInstance->QuitGame();
+	}
+}
+
+void AOatCharacterPlayer::TakeItem(class UOatItemData* InItemData)
+{
+	if (InItemData)
+	{
+		TakeItemCallbacks[static_cast<uint8>(InItemData->ItemType)].ItemDelegate.ExecuteIfBound(InItemData);
 	}
 }
 

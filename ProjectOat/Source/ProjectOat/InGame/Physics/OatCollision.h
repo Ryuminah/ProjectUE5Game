@@ -1,12 +1,12 @@
 
-// ÆíÇÏ°Ô °³¹ßÇÏ±â À§ÇÑ ÀüÃ³¸® Çì´õ
+// íŽ¸í•˜ê²Œ ê°œë°œí•˜ê¸° ìœ„í•œ ì „ì²˜ë¦¬ í—¤ë”
 #pragma once
 
 #include "CoreMinimal.h"
 
-// »ý¼ºÇÑ ÇÁ·ÎÇÊ¿¡ ´ëÇÏ¿© ÀÌ¸§ ¸í¸í
+// ìƒì„±í•œ í”„ë¡œí•„ì— ëŒ€í•˜ì—¬ ì´ë¦„ ëª…ëª…
 #define CPROFILE_OATCAPSULE TEXT("OatCapsule")
 #define CPROFILE_OATTRIGGER TEXT("OatTrigger")
 
-// »ý¼ºÇÑ Æ®·¹ÀÌ½º Ã¤³Î¿¡ ´ëÇÏ¿© ÀÌ¸§ ¸í¸í
+// ìƒì„±í•œ íŠ¸ë ˆì´ìŠ¤ ì±„ë„ì— ëŒ€í•˜ì—¬ ì´ë¦„ ëª…ëª…
 #define CCHANNEL_OATACTION ECC_GameTraceChannel1

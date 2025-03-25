@@ -9,7 +9,7 @@
 #include "OatStageHandler.generated.h"
 
 /**
- * �������� ���࿡ ���õ� ��� ���� ����
+ * 
  */
 UCLASS()
 class PROJECTOAT_API AOatStageHandler : public AActor, public IOatHandlerInterface
@@ -25,6 +25,7 @@ public:
 	virtual void Initialize(UGameInstance* GameInstance) override;
 
 protected:
+	UPROPERTY()
 	TObjectPtr<class UOatGameInstance> OatGameInstance;	
 
 /* Stage -------------------------------------------------------------- */
@@ -33,11 +34,14 @@ public:
 	UPROPERTY(Category=Stage, VisibleInstanceOnly)
 	FOatStageData StageData;
 
+public:
+	bool TryChangeStageSectionState(int SectionId , EStageSectionState NewState);
+
 	// Section은 1부터로 바꿀까..
 public:
-	void ReadyBattle(int SectionId);
-	void InBattle(int SectionId);
-	void EndBattle(int SectionId);
+	void ChangeToReadyBattle(int SectionId);
+	void ChangeToInBattle(int SectionId);
+	void ChangeToEndBattle(int SectionId);
 	
 private:
 	void KillEnemy();

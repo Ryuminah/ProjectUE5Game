@@ -30,68 +30,71 @@ void AOatStageHandler::Initialize(UGameInstance* GameInstance)
 	OatGameInstance->GetEventHandler()->OnGameOver.AddUObject(this, &AOatStageHandler::GameOver);
 }
 
-void AOatStageHandler::ReadyBattle(int SectionId) 
+void AOatStageHandler::ChangeToReadyBattle(int SectionId) 
 {
+	// ì´ê²ƒë„ í´ë¦¬ì–´í•œ ì„¹ì…˜ ì•„ì´ë””ë§Œ ì €ì¥í•´ì£¼ë©´ ë¨ (ìŠ¤í…Œì´ì§€ì—)
 	StageData.SectionId = SectionId;
-	StageData.StageSectionState = EStageSectionState::READYBATTLE;
+	// ì´ê±° ì €ì¥ì´ êµ³ì´ í•„ìš” ì—†ìŒ...
+	//StageData.StageSectionState = EStageSectionState::READYBATTLE;
 	
 	OatGameInstance->GetEventHandler()->OnStageSectionChanged.Broadcast(SectionId, EStageSectionState::READYBATTLE);
 }
 
-// ¿©±â¼± »ç½Ç SectionId ÇÊ¿ä¾ø´Âµğ
-void AOatStageHandler::InBattle(int SectionId)
+void AOatStageHandler::ChangeToInBattle(int SectionId)
 {
-	StageData.StageSectionState = EStageSectionState::INBATTLE;
+	//StageData.StageSectionState = EStageSectionState::INBATTLE;
 	
-	 // Ä«¿îÆÃ ½ÃÀÛ
+	 // ì¹´ìš´íŒ… ì‹œì‘
 	OatGameInstance->GetEventHandler()->OnStageSectionChanged.Broadcast(SectionId, EStageSectionState::INBATTLE);
 
 }
 
-void AOatStageHandler::EndBattle(int SectionId)
+void AOatStageHandler::ChangeToEndBattle(int SectionId)
 {
-	StageData.StageSectionState = EStageSectionState::ENDBATTLE;
+	//StageData.StageSectionState = EStageSectionState::ENDBATTLE;
+	
 	OatGameInstance->GetEventHandler()->OnStageSectionChanged.Broadcast(SectionId, EStageSectionState::ENDBATTLE);
 
-	// ±âÅ¸ µîµî ÃÊ±âÈ­
-	// ¹èÆ² ÇÚµé·¯°¡ ÁÁÀ» °Í °°±äÇÑµ¥ ±»ÀÌ,.,
+	// ê¸°íƒ€ ë“±ë“± ì´ˆê¸°í™”
+	// ë°°í‹€ í•¸ë“¤ëŸ¬ê°€ ì¢‹ì„ ê²ƒ ê°™ê¸´í•œë° êµ³ì´,.,
+	// ì´ê²ƒë„ ì„¹ì…˜ì—ì„œ ê´€ë¦¬í•˜ëŠ”ã„±ã…” ë‚«ë‹¤
 	StageData.KillCount = 0;
 	StageData.SectionWave = 0;
 }
 
-// Á×ÀÎ Àû Å¸ÀÔ Á¤º¸ ÇÊ¿äÇÒ±î
+// ì£½ì¸ ì  íƒ€ì… ì •ë³´ í•„ìš”í• ê¹Œ
 void AOatStageHandler::KillEnemy()
 {
 	++StageData.KillCount;
 }
 
-// ¿©±â¼­ºÎÅÍ´Â ÀÎ°ÔÀÓ ½ÇÇà µÚ È£ÃâµÇ´Â ·ÎÁ÷ÀÌ¶ó¼­, GetWorld()µµ ¾ÈÀüÇÏ´Ù
+// ì—¬ê¸°ì„œë¶€í„°ëŠ” ì¸ê²Œì„ ì‹¤í–‰ ë’¤ í˜¸ì¶œë˜ëŠ” ë¡œì§ì´ë¼ì„œ, GetWorld()ë„ ì•ˆì „í•˜ë‹¤
 void AOatStageHandler::ReachedStageGoal()
 {
-	// °ñ¿¡ µµ´ŞÇßÀ» ¶§
-	// ÇöÀç ½ºÅ×ÀÌÁö Á¤º¸ °»½Å
-	// ´ÙÀ½ ½ºÅ×ÀÌÁö·Î ³Ñ°ÜÁØ´Ù
+	// ê³¨ì— ë„ë‹¬í–ˆì„ ë•Œ
+	// í˜„ì¬ ìŠ¤í…Œì´ì§€ ì •ë³´ ê°±ì‹ 
+	// ë‹¤ìŒ ìŠ¤í…Œì´ì§€ë¡œ ë„˜ê²¨ì¤€ë‹¤
 
-	// Áö±İÀº °ÔÀÓ Á¾·á
+	// ì§€ê¸ˆì€ ê²Œì„ ì¢…ë£Œ
 	OatGameInstance->QuitGame();
 }
 
 void AOatStageHandler::ClearDungeon()
 {
-	// Á¤»ê º¸»ó
-	// 1.´ë½Ã 
-	// 2.ÀÏ¼¶
-	// 3.¹ßÂ÷±â
+	// ì •ì‚° ë³´ìƒ
+	// 1.ëŒ€ì‹œ 
+	// 2.ì¼ì„¬
+	// 3.ë°œì°¨ê¸°
 
-	// °ø°İ·Â °­È­?
+	// ê³µê²©ë ¥ ê°•í™”?
 }
 
 void AOatStageHandler::GameOver()
 {
-	// ·Îºñ ¾ÀÀ¸·Î µ¹·Áº¸³»±â
-	// ÆäÀÌµå ¾Æ¿ô..
+	// ë¡œë¹„ ì”¬ìœ¼ë¡œ ëŒë ¤ë³´ë‚´ê¸°
+	// í˜ì´ë“œ ì•„ì›ƒ..
 	
-	// ¾À¿¡ µû¶ó °á°úÃ¢ ?
+	// ì”¬ì— ë”°ë¼ ê²°ê³¼ì°½ ?
 }
 
 void AOatStageHandler::ExitLevel(ELevelType LevelType)
@@ -121,7 +124,7 @@ void AOatStageHandler::EnterLevel(ELevelType LevelType)
 	case ELevelType::MAINSTAGE:
 		break;
 	case ELevelType::DUNGEON:
-		// ¸î·¹º§ ¹«½¼ ´øÀü
+		// ëª‡ë ˆë²¨ ë¬´ìŠ¨ ë˜ì „
 		break;
 	}
 }

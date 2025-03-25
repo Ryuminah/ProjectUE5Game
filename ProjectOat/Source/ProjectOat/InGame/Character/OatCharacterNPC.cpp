@@ -2,26 +2,73 @@
 
 
 #include "InGame/Character/OatCharacterNPC.h"
+
+#include "Components/CapsuleComponent.h"
 #include "Core/OatAIController.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "InGame/Character/Component/OatCharacterStatComponent.h"
+#include "InGame/Physics/OatCollision.h"
 
 AOatCharacterNPC::AOatCharacterNPC()
 {
 	AIControllerClass = AOatAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	// Capsule
+	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
+	GetCapsuleComponent()->SetCollisionProfileName(CPROFILE_OATCAPSULE);
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
+	GetCharacterMovement()->JumpZVelocity = 700.f;
+	GetCharacterMovement()->AirControl = 0.35f;
+	GetCharacterMovement()->MaxWalkSpeed = 600.f;
+	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
+	GetCharacterMovement()->BrakingDecelerationFalling = 2000.f;
+
+	// Mesh
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -100.f), FRotator(0.f, -90.f, 0.f));
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/ProjectOat/Arts/Characters/Cactus/SK_Enemy_Cactus_Melee.SK_Enemy_Cactus_Melee'"));
+	if (CharacterMeshRef.Object)
+	{
+		GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
+	}
+
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/ProjectOat/InGame/AI/Cactus/ABP_Cactus.ABP_Cactus_C"));
+	if (AnimInstanceClassRef.Class)
+	{
+		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
+	} 
+
+	/* Animation ----------------------------------------------------------------------------------*/
+	// Montage Assetï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> ActionMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Cactus/Animations/AM_Cactus_Attack.AM_Cactus_Attack'"));
+	if (ActionMontageRef.Object)
+	{
+		AttackMontage = ActionMontageRef.Object;
+	}
+
+	// Dead
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Cactus/Animations/AM_Cactus_Dead.AM_Cactus_Dead'"));
+	if (DeadMontageRef.Object)
+	{
+		DeadMontage = DeadMontageRef.Object;
+	}
 }
 
 void AOatCharacterNPC::SetDead()
 {
 	Super::SetDead();
 
-	AOatAIController* OatAIController = Cast<AOatAIController>(GetController());
-	if (OatAIController)
+	if (AOatAIController* OatAIController = Cast<AOatAIController>(GetController()))
 	{
 		OatAIController->StopAI();
 	}
 
-	// ÀÌº¥Æ® ½Ã°£ ÀÌÈÄ Á¾·á
+	// ì´ë²¤íŠ¸ ì‹œê°„ ì´í›„ ì¢…ë£Œ
 	FTimerHandle DeadTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([&](){ Destroy(); }), 
 										   DeadEventDelayTime, false);
@@ -48,7 +95,7 @@ float AOatCharacterNPC::GetAITurnSpeed()
 	return 2.0f;
 }
 
-void AOatCharacterNPC::SetAIAttackDelegate(const FAIAttackFinished& InOnAttackFinished)
+void AOatCharacterNPC::SetAIAttackFinishedDelegate(const FAIAttackFinished& InOnAttackFinished)
 {
 	OnAttackFinished = InOnAttackFinished;
 }
@@ -60,7 +107,31 @@ void AOatCharacterNPC::AttackByAI()
 
 void AOatCharacterNPC::NotifyAttackActionEnd()
 {
-	// ºÎ¸ð Å¬·¡½º¿¡¼­ Attack Montage°¡ ³¡³­ ½ÃÁ¡¿¡ È£Ãâ
+	// ë¶€ëª¨ í´ëž˜ìŠ¤ì—ì„œ Attack Montageê°€ ëë‚œ ì‹œì ì— í˜¸ì¶œ
 	Super::NotifyAttackActionEnd();
 	OnAttackFinished.ExecuteIfBound();
+}
+
+void AOatCharacterNPC::AttackActionMontageEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded)
+{
+	Super::AttackActionMontageEnd(TargetMontage, IsProperlyEnded);
+}
+
+void AOatCharacterNPC::ProcessAttack()
+{
+	Super::ProcessAttack();
+	
+	UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
+	
+	float AttackSpeedRate = 1.f;
+	AnimInstatnce->Montage_Play(AttackMontage, AttackSpeedRate);
+
+	// Attack ëª½íƒ€ì£¼ ìž¬ìƒ
+	FOnMontageEnded EndDelegate;
+	EndDelegate.BindUObject(this, &AOatCharacterNPC::AttackActionMontageEnd);
+	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
+	
+
+	
+
 }

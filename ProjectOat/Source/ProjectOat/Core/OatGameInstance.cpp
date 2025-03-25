@@ -32,7 +32,7 @@ void UOatGameInstance::Init()
 	StageHandler = World->SpawnActor<AOatStageHandler>();
 	HandlersArray.Add(StageHandler);
 
-	// ÃÊ±âÈ­ È£Ãâ
+	// ì´ˆê¸°í™” í˜¸ì¶œ
 	for (auto Handler : HandlersArray)
 	{
 		Handler->Initialize(this);
@@ -42,7 +42,7 @@ void UOatGameInstance::Init()
 
 }
 
-// UObjectÀÇ ¸ðµç ¼Ó¼ºÀÌ ÃÊ±âÈ­ µÈ ÀÌÈÄ, ¿¡µðÅÍ¿¡¼­ SpawnµÉ °¡´É¼ºÀÌ ÀÖ¾îµµ ¾ÈÁ¤Àû
+// UObjectì˜ ëª¨ë“  ì†ì„±ì´ ì´ˆê¸°í™” ëœ ì´í›„, ì—ë””í„°ì—ì„œ Spawnë  ê°€ëŠ¥ì„±ì´ ìžˆì–´ë„ ì•ˆì •ì 
 void UOatGameInstance::PostInitProperties()
 {
 	Super::PostInitProperties();
@@ -57,16 +57,16 @@ void UOatGameInstance::SetupGameEventBindings()
 
 void UOatGameInstance::TravelLevel(ELevelType LevelType)
 {
-	// ·¹º§ ÀÌµ¿
+	// ë ˆë²¨ ì´ë™
 	if (GetCurrentLevel() == LevelType)
 	{
 		return;
 	}
 
-	// ÇöÀç ·¹º§ Á¾·á
+	// í˜„ìž¬ ë ˆë²¨ ì¢…ë£Œ
 	GetStageHandler()->ExitLevel(LevelType);
 	
-	// ÀÌµ¿ ÈÄ
+	// ì´ë™ í›„
 	CurrentLevelType = LevelType;
 
 	switch (CurrentLevelType)
@@ -88,10 +88,10 @@ void UOatGameInstance::TravelLevel(ELevelType LevelType)
 
 void UOatGameInstance::QuitGame()
 {
-	// Á¾·á
+	// ì¢…ë£Œ
 	GetEventHandler()->OnQuitGame.Broadcast();
 
-	// ¿ì¼±Àº ¿©±â¼­ Á¾·áÇÏ´Âµ¥...
+	// ìš°ì„ ì€ ì—¬ê¸°ì„œ ì¢…ë£Œí•˜ëŠ”ë°...
 	UKismetSystemLibrary::QuitGame(this, GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);
 	UE_LOG(LogTemp, Log, TEXT("UOatGameInstance::QuitGame()"));
 }

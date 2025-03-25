@@ -18,7 +18,7 @@ public:
 	UOatCharacterControlData();
 
 	/* ControlRotation ------------------------------------------------------------------*/
-	// Ä³¸¯ÅÍÀÇ °æ¿ì Yaw°ªÀ» ÁÖ·Î Ã¼Å©
+	// ìºë¦­í„°ì˜ ê²½ìš° Yawê°’ì„ ì£¼ë¡œ ì²´í¬
 	UPROPERTY(Category = Pawn, EditAnywhere)
 	uint32 bUseControllerRotaitionYaw : 1;
 

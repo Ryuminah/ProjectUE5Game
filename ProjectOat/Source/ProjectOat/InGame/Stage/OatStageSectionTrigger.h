@@ -42,7 +42,7 @@ protected:
 
 	// 현재 스테이지의 섹션 순서
 	UPROPERTY(Category=Stage, EditAnywhere, meta=(AllowPrivateAccess = "true"))
-	int SectionId = 0;
+	int SectionId = 1;
 	
 	UFUNCTION()
 	void OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,

@@ -21,6 +21,7 @@ class PROJECTOAT_API IOatAnimationAttackInterface
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
-public: 
+public:
+	virtual void ProcessAttack() = 0;
 	virtual void AttackHitCheck() = 0;
 };

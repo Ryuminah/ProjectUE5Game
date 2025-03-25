@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8" addBOMForNewFiles="with BOM">
-    <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/OatGameInstance.cpp" charset="EUC-KR" />
+  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/OatGameInstance.cpp" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/OatGameInstance.h" charset="EUC-KR" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/OatGameMode.cpp" charset="EUC-KR" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/OatGameMode.h" charset="EUC-KR" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/GameCommon/Managers/OatEventHandler.h" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Source/ProjectOat/GameCommon/Managers/OatStageHandler.cpp" charset="EUC-KR" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/GameCommon/Managers/OatStageHandler.cpp" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/GameCommon/Managers/OatStageHandler.h" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatCharacterControlData.h" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatCharacterNPC.cpp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatCharacterPlayer.cpp" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatCharacterPlayer.h" charset="CESU-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatFightUnitBase.cpp" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatFightUnitBase.h" charset="EUC-KR" />
-    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Physics/OatCollision.h" charset="EUC-KR" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatFightUnitBase.h" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Physics/OatCollision.h" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Stage/OatStageSectionTrigger.cpp" charset="EUC-KR" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Stage/OatStageSectionTrigger.h" charset="EUC-KR" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Stage/OatWallBattleField.cpp" charset="UTF-8" />

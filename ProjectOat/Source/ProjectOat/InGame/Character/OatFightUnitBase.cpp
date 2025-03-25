@@ -22,74 +22,74 @@
 // Sets default values
 AOatFightUnitBase::AOatFightUnitBase()
 {
-	// Pawn
-	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
-	bUseControllerRotationRoll = false;
-
-	// Capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
-	GetCapsuleComponent()->SetCollisionProfileName(CPROFILE_OATCAPSULE);
-
-	// Movement
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
-	GetCharacterMovement()->JumpZVelocity = 700.f;
-	GetCharacterMovement()->AirControl = 0.35f;
-	GetCharacterMovement()->MaxWalkSpeed = 600.f;
-	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
-	GetCharacterMovement()->BrakingDecelerationFalling = 2000.f;
-
-	// Mesh
-	GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -100.f), FRotator(0.f, -90.f, 0.f));
-	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
-
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/ProjectOat/Arts/Characters/Roxy/SK_Roxy.SK_Roxy'"));
-	if (CharacterMeshRef.Object)
-	{
-		GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
-	}
-
-	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/ProjectOat/InGame/Character/Oat/ABP_Oat.ABP_Oat_C"));
-	if (AnimInstanceClassRef.Class)
-	{
-		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
-	} 
+	// // Pawn
+	// bUseControllerRotationPitch = false;
+	// bUseControllerRotationYaw = false;
+	// bUseControllerRotationRoll = false;
+	//
+	// // Capsule
+	// GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
+	// GetCapsuleComponent()->SetCollisionProfileName(CPROFILE_OATCAPSULE);
+	//
+	// // Movement
+	// GetCharacterMovement()->bOrientRotationToMovement = true;
+	// GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
+	// GetCharacterMovement()->JumpZVelocity = 700.f;
+	// GetCharacterMovement()->AirControl = 0.35f;
+	// GetCharacterMovement()->MaxWalkSpeed = 600.f;
+	// GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
+	// GetCharacterMovement()->BrakingDecelerationFalling = 2000.f;
+	//
+	// // Mesh
+	// GetMesh()->SetRelativeLocationAndRotation(FVector(0.f, 0.f, -100.f), FRotator(0.f, -90.f, 0.f));
+	// GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+	// GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
+	//
+	// static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/ProjectOat/Arts/Characters/Roxy/SK_Roxy.SK_Roxy'"));
+	// if (CharacterMeshRef.Object)
+	// {
+	// 	GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
+	// }
+	//
+	// static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/ProjectOat/InGame/Character/Oat/ABP_Oat.ABP_Oat_C"));
+	// if (AnimInstanceClassRef.Class)
+	// {
+	// 	GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
+	// } 
 
 	// Control
-	static ConstructorHelpers::FObjectFinder<UOatCharacterControlData> ShoulderDataRef(TEXT("/Script/ProjectOat.OatCharacterControlData'/Game/ProjectOat/Core/Systems/Input/DA_Control_Shoulder.DA_Control_Shoulder'"));
-	if (ShoulderDataRef.Object)
-	{
-		CharacterControlManager.Add(ECharacterControlType::Shoulder,ShoulderDataRef.Object);
-	}
-
-	static ConstructorHelpers::FObjectFinder<UOatCharacterControlData> QuaterDataRef(TEXT("/Script/ProjectOat.OatCharacterControlData'/Game/ProjectOat/Core/Systems/Input/DA_Control_Quater.DA_Control_Quater'"));
-	if (QuaterDataRef.Object)
-	{
-		CharacterControlManager.Add(ECharacterControlType::Quater, QuaterDataRef.Object);
-	}
+	// static ConstructorHelpers::FObjectFinder<UOatCharacterControlData> ShoulderDataRef(TEXT("/Script/ProjectOat.OatCharacterControlData'/Game/ProjectOat/Core/Systems/Input/DA_Control_Shoulder.DA_Control_Shoulder'"));
+	// if (ShoulderDataRef.Object)
+	// {
+	// 	CharacterControlManager.Add(ECharacterControlType::Shoulder,ShoulderDataRef.Object);
+	// }
+	//
+	// static ConstructorHelpers::FObjectFinder<UOatCharacterControlData> QuaterDataRef(TEXT("/Script/ProjectOat.OatCharacterControlData'/Game/ProjectOat/Core/Systems/Input/DA_Control_Quater.DA_Control_Quater'"));
+	// if (QuaterDataRef.Object)
+	// {
+	// 	CharacterControlManager.Add(ECharacterControlType::Quater, QuaterDataRef.Object);
+	// }
 
 	/* Animation ----------------------------------------------------------------------------------*/
 	// Montage Asset�� ��������Ʈ���� ����
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> ActionMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Roxy/Animations/AM_Roxy_ComboAttack.AM_Roxy_ComboAttack'"));
-	if (ActionMontageRef.Object)
-	{
-		AttackMontage = ActionMontageRef.Object;
-	}
+	// static ConstructorHelpers::FObjectFinder<UAnimMontage> ActionMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Roxy/Animations/AM_Roxy_ComboAttack.AM_Roxy_ComboAttack'"));
+	// if (ActionMontageRef.Object)
+	// {
+	// 	AttackMontage = ActionMontageRef.Object;
+	// }
+	//
+	// static ConstructorHelpers::FObjectFinder<UOatAttackActionData> ActionDataRef(TEXT("/Script/ProjectOat.OatAttackActionData'/Game/ProjectOat/InGame/Character/DA_AttackAction.DA_AttackAction'"));
+	// if (ActionDataRef.Object)
+	// {
+	// 	AttackActionData = ActionDataRef.Object;
+	// }
 
-	static ConstructorHelpers::FObjectFinder<UOatAttackActionData> ActionDataRef(TEXT("/Script/ProjectOat.OatAttackActionData'/Game/ProjectOat/InGame/Character/DA_AttackAction.DA_AttackAction'"));
-	if (ActionDataRef.Object)
-	{
-		AttackActionData = ActionDataRef.Object;
-	}
-
-	// Dead
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Roxy/Animations/AM_Roxy_Dead.AM_Roxy_Dead'"));
-	if (DeadMontageRef.Object)
-	{
-		DeadMontage = DeadMontageRef.Object;
-	}
+	// // Dead
+	// static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Roxy/Animations/AM_Roxy_Dead.AM_Roxy_Dead'"));
+	// if (DeadMontageRef.Object)
+	// {
+	// 	DeadMontage = DeadMontageRef.Object;
+	// }
 
 	// Stat Component
 	Stat = CreateDefaultSubobject<UOatCharacterStatComponent>(TEXT("Stat"));
@@ -111,15 +111,8 @@ AOatFightUnitBase::AOatFightUnitBase()
 		WidgetHpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
-	// Item Callbacks
-	// �������� �����ؼ� ������� (���߿� �Ⱦ� �ڵ�)
-	TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatFightUnitBase::TestEquipSocket)));
-	TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatFightUnitBase::DrinkPotion)));
-
-	TestSocket = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("TestSocket"));
-	TestSocket->SetupAttachment(GetMesh(), TEXT("L_soket1"));
-
-
+	// TestSocket = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("TestSocket"));
+	// TestSocket->SetupAttachment(GetMesh(), TEXT("L_socket1"));
 }
 
 void AOatFightUnitBase::PostInitializeComponents()
@@ -131,104 +124,94 @@ void AOatFightUnitBase::PostInitializeComponents()
 	Stat->OnStatChanged.AddUObject(this, &AOatFightUnitBase::ApplyStat);
 }
 
-void AOatFightUnitBase::SetCharacterControlData(const UOatCharacterControlData* CharcterControlData)
-{
-	// Pawn
-	bUseControllerRotationYaw = CharcterControlData->bUseControllerRotaitionYaw;
-
-	// CharacterMovement
-	GetCharacterMovement()->bOrientRotationToMovement = CharcterControlData->bOrientRotationToMovement;
-	GetCharacterMovement()->bUseControllerDesiredRotation = CharcterControlData->bUseControllerDesiredRotation;
-	GetCharacterMovement()->RotationRate = CharcterControlData->RotationRate;
-}
-
 void AOatFightUnitBase::ProcessAttack()
 {
-	// ���� ��Ÿ�ְ� �������� �ƴ�
-	if (CurrentCombo == 0)
-	{
-		AttackActionMontageBegin();
-		return;
-	}
-
-	// �̹� Ÿ�̸� �ߵ� Ȥ�� üũ�� �ʿ� X
-	if (!ComboTimerHandle.IsValid())
-	{
-		bHasNextComboCommand = false;
-	}
-	else
-	{
-		// Ŀ�ǵ� �̹� �ߵ�
-		bHasNextComboCommand = true;
-	}
+	// UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
+	// AnimInstatnce->Montage_Play(AttackMontage, AttackSpeedRate);
+	//
+	// // // ��Ÿ�� ���� ��
+	// // // ����üó�� ���ε��� ��������Ʈ�� ������ �� ���ڷ� �Ѱ��ָ� ��
+	// FOnMontageEnded EndDelegate;
+	// EndDelegate.BindUObject(this, &AOatCharacterPlayer::AttackActionMontageEnd);
+	// // Delegate����, Montage ����
+	// AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
 }
+
+// void AOatFightUnitBase::SetCharacterControlData(const UOatCharacterControlData* CharcterControlData)
+// {
+// 	// Pawn
+// 	bUseControllerRotationYaw = CharcterControlData->bUseControllerRotaitionYaw;
+//
+// 	// CharacterMovement
+// 	GetCharacterMovement()->bOrientRotationToMovement = CharcterControlData->bOrientRotationToMovement;
+// 	GetCharacterMovement()->bUseControllerDesiredRotation = CharcterControlData->bUseControllerDesiredRotation;
+// 	GetCharacterMovement()->RotationRate = CharcterControlData->RotationRate;
+// }
+
+// void AOatFightUnitBase::ProcessAttack()
+// {
+// 	// ���� ��Ÿ�ְ� �������� �ƴ�
+// 	if (CurrentCombo == 0)
+// 	{
+// 		AttackActionMontageBegin();
+// 		return;
+// 	}
+//
+// 	// �̹� Ÿ�̸� �ߵ� Ȥ�� üũ�� �ʿ� X
+// 	if (!ComboTimerHandle.IsValid())
+// 	{
+// 		bHasNextComboCommand = false;
+// 	}
+// 	else
+// 	{
+// 		// Ŀ�ǵ� �̹� �ߵ�
+// 		bHasNextComboCommand = true;
+// 	}
+// }
 
 void AOatFightUnitBase::AttackActionMontageBegin()
 {
-	// ComboStatus
-	CurrentCombo = 1;
 
-	// �̵� ��� �����
-	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
-	const float AttackSpeedRate = 1.f;
-
-	// ��Ÿ�� ������ ���� AnimInstance ����
-	UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
-	AnimInstatnce->Montage_Play(AttackMontage, AttackSpeedRate);
-
-	// ��Ÿ�� ���� ��
-	// ����üó�� ���ε��� ��������Ʈ�� ������ �� ���ڷ� �Ѱ��ָ� ��
-	FOnMontageEnded EndDelegate;
-	EndDelegate.BindUObject(this, &AOatFightUnitBase::AttackActionMontageEnd);
-	// Delegate����, Montage ����
-	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
-
-	ComboTimerHandle.Invalidate();
-	SetComboCheckTimer();
 }
 
 void AOatFightUnitBase::AttackActionMontageEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
 {
-	// ��Ÿ�� ���� �� �ʱ�ȭ
-	ensure(CurrentCombo != 0);
-	CurrentCombo = 0;
-
 	NotifyAttackActionEnd();
 }
 
-void AOatFightUnitBase::SetComboCheckTimer()
-{
-	int32 ComboIndex = CurrentCombo - 1;
-	ensure(AttackActionData->EffectiveFrameCount.IsValidIndex(ComboIndex));
+// void AOatFightUnitBase::SetComboCheckTimer()
+// {
+// 	int32 ComboIndex = CurrentCombo - 1;
+// 	ensure(AttackActionData->EffectiveFrameCount.IsValidIndex(ComboIndex));
+//
+// 	const float AttackSpeedRate = 1.f;
+// 	float ComboEffectiveTime = (AttackActionData->EffectiveFrameCount[ComboIndex] / AttackActionData->FrameRate) / AttackSpeedRate;
+// 	if (ComboEffectiveTime > 0.f)
+// 	{
+// 		// �ð��� üũ�ϵ�, �ݺ����� �ʵ��� �ѹ��� �߻��ϵ��� false
+// 		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&AOatFightUnitBase::ComboCheck,ComboEffectiveTime,false);
+// 	}
+// }
 
-	const float AttackSpeedRate = 1.f;
-	float ComboEffectiveTime = (AttackActionData->EffectiveFrameCount[ComboIndex] / AttackActionData->FrameRate) / AttackSpeedRate;
-	if (ComboEffectiveTime > 0.f)
-	{
-		// �ð��� üũ�ϵ�, �ݺ����� �ʵ��� �ѹ��� �߻��ϵ��� false
-		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&AOatFightUnitBase::ComboCheck,ComboEffectiveTime,false);
-	}
-}
-
-void AOatFightUnitBase::ComboCheck()
-{
-	// Ÿ�̸� �ڵ� �ʱ�ȭ
-	ComboTimerHandle.Invalidate();
-	if (bHasNextComboCommand)
-	{
-		// ���� �������� üũ
-		UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
-		CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, AttackActionData->MaxComboCount);
-		FName NextSection = *FString::Printf(TEXT("%s%d"), *AttackActionData->MontageSectionNamePrefix, CurrentCombo);
-
-		// ������ ������ ���������� ������ ���Ѿ� ��.
-		AnimInstatnce->Montage_JumpToSection(NextSection, AttackMontage);
-
-
-		bHasNextComboCommand = false;
-		SetComboCheckTimer();
-	}
-}
+// void AOatFightUnitBase::ComboCheck()
+// {
+// 	// Ÿ�̸� �ڵ� �ʱ�ȭ
+// 	ComboTimerHandle.Invalidate();
+// 	if (bHasNextComboCommand)
+// 	{
+// 		// ���� �������� üũ
+// 		UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
+// 		CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, AttackActionData->MaxComboCount);
+// 		FName NextSection = *FString::Printf(TEXT("%s%d"), *AttackActionData->MontageSectionNamePrefix, CurrentCombo);
+//
+// 		// ������ ������ ���������� ������ ���Ѿ� ��.
+// 		AnimInstatnce->Montage_JumpToSection(NextSection, AttackMontage);
+//
+//
+// 		bHasNextComboCommand = false;
+// 		SetComboCheckTimer();
+// 	}
+// }
 
 void AOatFightUnitBase::AttackHitCheck()
 {
@@ -305,25 +288,25 @@ void AOatFightUnitBase::SetUpActorWidget(UOatUserWidget* InUserWidget)
 	}
 }
 
-void AOatFightUnitBase::TakeItem(UOatItemData* InItemData)
-{
-	if (InItemData)
-	{
-		TakeItemCallbacks[(uint8)InItemData->ItemType].ItemDelegate.ExecuteIfBound(InItemData);
-	}
-}
+// void AOatFightUnitBase::TakeItem(UOatItemData* InItemData)
+// {
+// 	if (InItemData)
+// 	{
+// 		TakeItemCallbacks[(uint8)InItemData->ItemType].ItemDelegate.ExecuteIfBound(InItemData);
+// 	}
+// }
 
-void AOatFightUnitBase::DrinkPotion(UOatItemData* InItemData)
-{}
+// void AOatFightUnitBase::DrinkPotion(UOatItemData* InItemData)
+// {}
 
-void AOatFightUnitBase::TestEquipSocket(UOatItemData* InItemData)
-{
-	UOatItemWeaponData* WeaponItemData = Cast<UOatItemWeaponData>(InItemData);
-	if (WeaponItemData)
-	{
-		if (WeaponItemData->WeaponMesh.IsPending()) { WeaponItemData->WeaponMesh.LoadSynchronous(); }
-		TestSocket->SetSkeletalMesh(WeaponItemData->WeaponMesh.Get());
-		Stat->SetModifierStat(WeaponItemData->ModifierStat);
-	}
-}
+// void AOatFightUnitBase::TestEquipSocket(UOatItemData* InItemData)
+// {
+// 	UOatItemWeaponData* WeaponItemData = Cast<UOatItemWeaponData>(InItemData);
+// 	if (WeaponItemData)
+// 	{
+// 		if (WeaponItemData->WeaponMesh.IsPending()) { WeaponItemData->WeaponMesh.LoadSynchronous(); }
+// 		TestSocket->SetSkeletalMesh(WeaponItemData->WeaponMesh.Get());
+// 		Stat->SetModifierStat(WeaponItemData->ModifierStat);
+// 	}
+// }
 

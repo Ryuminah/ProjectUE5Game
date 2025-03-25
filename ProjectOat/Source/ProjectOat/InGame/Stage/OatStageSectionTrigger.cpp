@@ -2,9 +2,9 @@
 
 
 #include "InGame/Stage/OatStageSectionTrigger.h"
+
 #include "Components/BoxComponent.h"
 #include "Core/OatGameInstance.h"
-#include "GameCommon/Managers/OatEventHandler.h"
 #include "GameCommon/Managers/OatStageHandler.h"
 #include "InGame/Physics/OatCollision.h"
 #include "InGame/Character/OatCharacterNPC.h"
@@ -27,30 +27,31 @@ AOatStageSectionTrigger::AOatStageSectionTrigger()
 	//StageTrigger->ComponentTags.Add();
 
 
-
 	OpponentClass = AOatCharacterNPC::StaticClass();
 	OatSpawnPointClass = AOatSpawnPoint::StaticClass();
-	
-	CurrentState = EStageSectionState::NONE;
 
+	CurrentState = EStageSectionState::NONE;
 }
 
 void AOatStageSectionTrigger::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SectionStateChangedCallback.Add(EStageSectionState::READYBATTLE,
+	                                      FStageSectionChangedDelegateWrapper(
+		                                      FOnStageSectionStateChangedDelegate::CreateUObject(
+			                                      this, &AOatStageSectionTrigger::SetReadyBattle)));
 
+	SectionStateChangedCallback.Add(EStageSectionState::INBATTLE,
+	                                      FStageSectionChangedDelegateWrapper(
+		                                      FOnStageSectionStateChangedDelegate::CreateUObject(
+			                                      this, &AOatStageSectionTrigger::SetInBattle)));
 
+	SectionStateChangedCallback.Add(EStageSectionState::ENDBATTLE,
+	                                      FStageSectionChangedDelegateWrapper(
+		                                      FOnStageSectionStateChangedDelegate::CreateUObject(
+			                                      this, &AOatStageSectionTrigger::SetEndBattle)));
 
-	SectionStateChangedCallback.FindOrAdd(EStageSectionState::READYBATTLE,
-					FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetReadyBattle)));
-	
-	SectionStateChangedCallback.FindOrAdd(EStageSectionState::INBATTLE,
-									FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetInBattle)));
-	
-	SectionStateChangedCallback.FindOrAdd(EStageSectionState::ENDBATTLE,
-									FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetEndBattle)));
-	
 	CreateSpawnPointData();
 }
 
@@ -59,7 +60,9 @@ void AOatStageSectionTrigger::PostInitializeComponents()
 	Super::PostInitializeComponents();
 }
 
-void AOatStageSectionTrigger::OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
+void AOatStageSectionTrigger::OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                                         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+                                                         bool bFromSweep, const FHitResult& SweepHitResult)
 {
 	if (CurrentState == EStageSectionState::ENDBATTLE)
 	{
@@ -78,33 +81,15 @@ void AOatStageSectionTrigger::SetSectionState(EStageSectionState NewState)
 	}
 
 	// 굳이 Switch를 사용하지 않고 Callback을 통해 연동
+	// 이것도 나중에 유저 데이터로 통합한다
 	CurrentState = NewState;
 
-	// 이렇게 하면 왜 SpawnPointArray 배열이 날라갈까?
-	// 바인딩
+
 	if (SectionStateChangedCallback.Contains(NewState))
 	{
 		SectionStateChangedCallback[NewState].SectionDelegate.ExecuteIfBound();
 	}
-	//UE_LOG(LogTemp, Warning, TEXT("AOatStageSectionTrigger Address: %p"), this);
 
-	
-	// switch (NewState)
-	// {
-	// case EStageSectionState::READYBATTLE:
-	// 	SetReadyBattle();
-	// 	break;
-	// case EStageSectionState::INBATTLE:
-	// 	SetInBattle();
-	// 	break;
-	// case EStageSectionState::ENDBATTLE:
-	// 	SetEndBattle();
-	// 	break;
-	// case EStageSectionState::NONE:
-	// 	break;
-	// default:
-	// 	break;
-	// }
 }
 
 void AOatStageSectionTrigger::SetReadyBattle()
@@ -114,17 +99,14 @@ void AOatStageSectionTrigger::SetReadyBattle()
 	{
 		return;
 	}
-	
-	OatGameInstance->GetStageHandler()->ReadyBattle(SectionId);
-	
+
+	OatGameInstance->GetStageHandler()->ChangeToReadyBattle(SectionId);
+
 	//// Collision 활성화
-	UE_LOG(LogTemp, Warning, TEXT("AOatStageSectionTrigger Address: %p"), this);
+	//UE_LOG(LogTemp, Warning, TEXT("AOatStageSectionTrigger Address: %p"), this);
 
 	StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
-	
-	// 벽 활성화
-	
-	// 몬스터 스폰
+
 	float SpawnDelay = 0.f;
 	for (auto SpawnActor : SpawnPointArray)
 	{
@@ -133,15 +115,14 @@ void AOatStageSectionTrigger::SetReadyBattle()
 		FVector SpawnPoint = FVector(SpawnActor->GetActorLocation());
 		SpawnDelay += SpawnInterval;
 
-		GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle,  
-											   [this, SpawnPoint]()
-											   {
-												   SpawnSectionEnemy(SpawnPoint);
-											   }, SpawnDelay, false);
+		GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle,
+		                                       [this, SpawnPoint]()
+		                                       {
+			                                       SpawnSectionEnemy(SpawnPoint);
+		                                       }, SpawnDelay, false);
 	}
 
 
-	
 	SetSectionState(EStageSectionState::INBATTLE);
 }
 
@@ -154,8 +135,8 @@ void AOatStageSectionTrigger::SetInBattle()
 		return;
 	}
 
-	OatGameInstance->GetStageHandler()->InBattle(SectionId);
-	
+	OatGameInstance->GetStageHandler()->ChangeToInBattle(SectionId);
+
 	// 몬스터 스폰 및 처치 카운팅
 }
 
@@ -167,10 +148,11 @@ void AOatStageSectionTrigger::SetEndBattle()
 	{
 		return;
 	}
-	
-	OatGameInstance->GetStageHandler()->EndBattle(SectionId);
+
+	OatGameInstance->GetStageHandler()->ChangeToEndBattle(SectionId);
+
 	SetActorEnableCollision(false);
-	
+
 	// 벽 해제
 	// SpawnPoint destroy 혹은 비활성화 하기
 }
@@ -179,11 +161,12 @@ void AOatStageSectionTrigger::SetEndBattle()
 void AOatStageSectionTrigger::SpawnSectionEnemy(FVector SpawnPos)
 {
 	// (GetWorld 안됨)
+
+
 	UWorld* World = GWorld->GetGameInstance()->GetWorld();
 	AActor* OpponentActor = World->SpawnActor(OpponentClass, &SpawnPos, &FRotator::ZeroRotator);
-	
-	AOatCharacterNPC* AOatEnemy = Cast<AOatCharacterNPC>(OpponentActor);
-	if (AOatEnemy)
+
+	if (AOatCharacterNPC* AOatEnemy = Cast<AOatCharacterNPC>(OpponentActor))
 	{
 		AOatEnemy->OnDestroyed.AddDynamic(this, &AOatStageSectionTrigger::OnOpponentDestroyed);
 	}
@@ -192,7 +175,7 @@ void AOatStageSectionTrigger::SpawnSectionEnemy(FVector SpawnPos)
 void AOatStageSectionTrigger::CreateSpawnPointData()
 {
 	TArray<AActor*> AllSpawnPoints;
-	
+
 	UWorld* World = GWorld->GetGameInstance()->GetWorld();
 	UGameplayStatics::GetAllActorsOfClass(World, OatSpawnPointClass, AllSpawnPoints);
 	for (AActor* SpawnPointActor : AllSpawnPoints)

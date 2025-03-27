@@ -28,6 +28,7 @@ public:
 	virtual float GetAIAttackRange() = 0;
 	virtual float GetAITurnSpeed() = 0;
 
+	// 이 부분 구조 개선하기 (FightUnit과 합치자)
 	virtual void SetAIAttackFinishedDelegate(const FAIAttackFinished& InOnAttackFinished) = 0;
 	virtual void AttackByAI() = 0;
 

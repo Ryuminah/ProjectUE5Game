@@ -102,7 +102,7 @@ void AOatCharacterNPC::SetAIAttackFinishedDelegate(const FAIAttackFinished& InOn
 
 void AOatCharacterNPC::AttackByAI()
 {
-	ProcessAttack();
+	OnAttackStart();
 }
 
 void AOatCharacterNPC::NotifyAttackActionEnd()
@@ -117,9 +117,9 @@ void AOatCharacterNPC::AttackActionMontageEnd(class UAnimMontage* TargetMontage,
 	Super::AttackActionMontageEnd(TargetMontage, IsProperlyEnded);
 }
 
-void AOatCharacterNPC::ProcessAttack()
+void AOatCharacterNPC::OnAttackStart()
 {
-	Super::ProcessAttack();
+	Super::OnAttackStart();
 	
 	UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
 	

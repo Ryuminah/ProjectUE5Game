@@ -2,19 +2,18 @@
 
 
 #include "InGame/Character/AnimNotify_AttackHitCheck.h"
-#include "InGame/Interface/OatAnimationAttackInterface.h"
+#include "InGame/Interface/OatAnimFightInterface.h"
 
 void UAnimNotify_AttackHitCheck::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::Notify(MeshComp, Animation, EventReference);
 
-	// 인자의 정보로부터 액터에 명령을 내려야 함
 	if (MeshComp)
 	{
-		IOatAnimationAttackInterface* AttackPawn = Cast<IOatAnimationAttackInterface>(MeshComp->GetOwner());
+		IOatAnimFightInterface* AttackPawn = Cast<IOatAnimFightInterface>(MeshComp->GetOwner());
 		if (AttackPawn)
 		{
-			AttackPawn->AttackHitCheck();
+			AttackPawn->OnAttackHitCheck();
 		}
 	}
 }

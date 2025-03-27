@@ -20,6 +20,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent & OwnerCo
 	}
 
 
+	// FightUnitInterface로 교체
 	IOatAIInterface* AIPawn = Cast<IOatAIInterface>(ControllingPawn);
 	if (!AIPawn) { return EBTNodeResult::Failed;}
 

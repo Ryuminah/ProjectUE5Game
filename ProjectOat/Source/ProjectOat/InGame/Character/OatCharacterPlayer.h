@@ -53,7 +53,7 @@ protected:
 	UPROPERTY(Category=Attack, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<class UOatAttackActionData> AttackActionData;
 
-	virtual void ProcessAttack() override;
+	virtual void OnAttackStart() override;
 	virtual void AttackActionMontageBegin() override;
 	virtual void AttackActionMontageEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded) override;
 
@@ -106,10 +106,10 @@ protected:
 
 	ECharacterControlType CurrentCharacterControlType;
 
-	void ShoulderMove(const FInputActionValue& InValue);
-	void ShoulderLook(const FInputActionValue& InValue);
-	void QuaterMove(const FInputActionValue& Value);
-	void Attack();
+	void InputShoulderMove(const FInputActionValue& InValue);
+	void InputShoulderLook(const FInputActionValue& InValue);
+	void InputQuaterMove(const FInputActionValue& Value);
+	void InputAttack();
 
 
 	// ??? ???? ===============================================================

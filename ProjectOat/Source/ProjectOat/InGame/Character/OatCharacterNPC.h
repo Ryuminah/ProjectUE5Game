@@ -38,6 +38,6 @@ protected:
 	FAIAttackFinished OnAttackFinished;
 
 protected:
-	virtual void ProcessAttack() override;
+	virtual void OnAttackStart() override;
 
 };

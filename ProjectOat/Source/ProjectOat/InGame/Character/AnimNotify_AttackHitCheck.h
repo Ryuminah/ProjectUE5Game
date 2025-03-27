@@ -15,6 +15,6 @@ class PROJECTOAT_API UAnimNotify_AttackHitCheck : public UAnimNotify
 	GENERATED_BODY()
 	
 protected:
-	// UAnimNotify°¡ Á¦°øÇÏ´Â ÇÔ¼ö¸¦ overrideÇÏ¿© ±¸Çö
+	// UAnimNotifyê°€ ì œê³µí•˜ëŠ” í•¨ìˆ˜ë¥¼ overrideí•˜ì—¬ êµ¬í˜„
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference);
 };

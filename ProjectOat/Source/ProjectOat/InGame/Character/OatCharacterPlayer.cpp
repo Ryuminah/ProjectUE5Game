@@ -174,9 +174,9 @@ void AOatCharacterPlayer::SetupCallback()
 	//TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatCharacterPlayer::DrinkPotion)));
 }
 
-void AOatCharacterPlayer::ProcessAttack()
+void AOatCharacterPlayer::OnAttackStart()
 {
-	Super::ProcessAttack();
+	Super::OnAttackStart();
 	
 	if (CurrentCombo == 0)
 	{
@@ -291,10 +291,10 @@ void AOatCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 	EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 	EnhancedInputComponent->BindAction(ChangeControlAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::ChangeCharacterControl);
-	EnhancedInputComponent->BindAction(QuaterMoveAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::QuaterMove);
-	EnhancedInputComponent->BindAction(ShoulderMoveAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::ShoulderMove);
-	EnhancedInputComponent->BindAction(ShoulderLookAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::ShoulderLook);
-	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::Attack);
+	EnhancedInputComponent->BindAction(QuaterMoveAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::InputQuaterMove);
+	EnhancedInputComponent->BindAction(ShoulderMoveAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::InputShoulderMove);
+	EnhancedInputComponent->BindAction(ShoulderLookAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::InputShoulderLook);
+	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::InputAttack);
 
 	EnhancedInputComponent->BindAction(QuitAction, ETriggerEvent::Triggered, this, &AOatCharacterPlayer::QuitGame);
 }
@@ -355,7 +355,7 @@ void AOatCharacterPlayer::SetCharacterControlData(const UOatCharacterControlData
 	CameraBoom->bDoCollisionTest = CharacterControlData->bDoCollisionTest;
 }
 
-void AOatCharacterPlayer::ShoulderMove(const FInputActionValue& InValue)
+void AOatCharacterPlayer::InputShoulderMove(const FInputActionValue& InValue)
 {
 	FVector2D MovementVector = InValue.Get<FVector2D>();
 
@@ -372,7 +372,7 @@ void AOatCharacterPlayer::ShoulderMove(const FInputActionValue& InValue)
 	AddMovementInput(RightDirection, MovementVector.Y);
 }
 
-void AOatCharacterPlayer::ShoulderLook(const FInputActionValue& InValue)
+void AOatCharacterPlayer::InputShoulderLook(const FInputActionValue& InValue)
 {
 	FVector2D LookAxisVector = InValue.Get<FVector2D>();
 
@@ -381,12 +381,12 @@ void AOatCharacterPlayer::ShoulderLook(const FInputActionValue& InValue)
 	AddControllerPitchInput(LookAxisVector.Y);
 }
 
-void AOatCharacterPlayer::QuaterMove(const FInputActionValue& Value)
+void AOatCharacterPlayer::InputQuaterMove(const FInputActionValue& Value)
 {
 	// 현재 이동 벡터
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	float InputSizeSquared = MovementVector.SquaredLength();
+	//float InputSizeSquared = MovementVector.SquaredLength();
 	float MovementVectorSize = 1.f;
 	float MovementVectorSizeSquared = MovementVector.SquaredLength();
 
@@ -394,7 +394,7 @@ void AOatCharacterPlayer::QuaterMove(const FInputActionValue& Value)
 	if (MovementVectorSizeSquared > 1.f)
 	{
 		MovementVector.Normalize();
-		MovementVectorSizeSquared = 1.f;
+		//MovementVectorSizeSquared = 1.f;
 	}
 	else
 	{
@@ -408,9 +408,9 @@ void AOatCharacterPlayer::QuaterMove(const FInputActionValue& Value)
 	AddMovementInput(MoveDirection, MovementVectorSize);
 }
 
-void AOatCharacterPlayer::Attack()
+void AOatCharacterPlayer::InputAttack()
 {
-	ProcessAttack();
+	OnAttackStart();
 }
 
 void AOatCharacterPlayer::QuitGame()

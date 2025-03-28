@@ -13,7 +13,7 @@
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatCharacterNPC.cpp" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatCharacterPlayer.cpp" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatCharacterPlayer.h" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatFightUnitBase.cpp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatFightUnitBase.cpp" charset="EUC-KR" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatFightUnitBase.h" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Physics/OatCollision.h" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Stage/OatStageSectionTrigger.cpp" charset="EUC-KR" />

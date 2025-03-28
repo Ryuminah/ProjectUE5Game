@@ -34,7 +34,9 @@ public:
 	AOatCharacterPlayer();
 
 protected:
+	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
+	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void SetCharacterControlData(const class UOatCharacterControlData* CharcterControlData);
 
@@ -42,22 +44,22 @@ protected:
 	TMap<ECharacterControlType, class UOatCharacterControlData*> CharacterControlManager;
 
 protected:
-	void SetupCallback();
+	virtual void SetupCallback() override;
 
 	
 /* Combo Action -----------------------------------------------------*/
-//protected:
+private:
 	// UPROPERTY(Category=Animation, EditAnywhere, BlueprintReadWrite)
 	// TObjectPtr<class UAnimMontage> AttackMontage;
 
 	UPROPERTY(Category=Attack, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<class UOatAttackActionData> AttackActionData;
 
-	virtual void OnAttackStart() override;
-	virtual void AttackActionMontageBegin() override;
-	virtual void AttackActionMontageEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded) override;
+	bool TryStartComboAttack();
+	void AttackActionMontageBegin();
+	void AttackActionMontageEnd();
 
-	virtual void NotifyAttackActionEnd() override {};
+	//virtual void AttackMonEnd() override {};
 
 	// 현재까지 진행된 콤보 수
 	int32 CurrentCombo = 0;
@@ -112,7 +114,7 @@ protected:
 	void InputAttack();
 
 
-	// ??? ???? ===============================================================
+	// Esc눌렀을 때 게임 종료 ===============================================================
 	UPROPERTY(Category=Input, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> QuitAction;
 	void QuitGame();

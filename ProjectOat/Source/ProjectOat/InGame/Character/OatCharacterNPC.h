@@ -18,10 +18,17 @@ class PROJECTOAT_API AOatCharacterNPC : public AOatFightUnitBase, public IOatAII
 public:
 	AOatCharacterNPC();
 
+protected:
+	virtual void SetupCallback() override;
+
 public:
 	virtual void SetDead() override;
 
-	/* AI ---------------------------------------------------------------*/
+	// Attack 상태
+	void InputAttack();
+	void SetOnBTTaskAttackFinishedDelegate(const FOnBTTaskAttackFinished& InOnAttackFinished);
+
+/* Get Set ---------------------------------------------------------------*/
 protected:
 	virtual float GetAIPatrolRadius() override;
 	virtual float GetAIDetectRange() override;
@@ -29,15 +36,16 @@ protected:
 	virtual float GetAITurnSpeed() override;
 
 	// 몽타주가 끝난 시점을 BTTask_Attack의 공격 성공으로 반환하기 위해
-	virtual void SetAIAttackFinishedDelegate(const FAIAttackFinished& InOnAttackFinished) override;
-	
-	virtual void AttackByAI() override;
-	virtual void NotifyAttackActionEnd() override;
-	virtual void AttackActionMontageEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded) override;
 
-	FAIAttackFinished OnAttackFinished;
+/* Attack ---------------------------------------------------------------*/
+private:
+	FOnBTTaskAttackFinished OnAttackFinished;
 
-protected:
-	virtual void OnAttackStart() override;
+private:
+	bool TryStartAttack();
+
+	// CallbackFunc
+	void AttackActionMontageBegin();
+	void AttackActionMontageEnd();
 
 };

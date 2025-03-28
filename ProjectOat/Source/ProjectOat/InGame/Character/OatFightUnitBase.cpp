@@ -26,7 +26,6 @@ AOatFightUnitBase::AOatFightUnitBase()
 	Stat = CreateDefaultSubobject<UOatCharacterStatComponent>(TEXT("Stat"));
 
 	// Widget Component
-	// BeginPlay ���� Ŭ���� ������ ���� Instance�� �����Ǵ� ���� (AnimBP�� ���)
 	WidgetHpBar = CreateDefaultSubobject<UOatWidgetComponent>(TEXT("Widget"));
 	WidgetHpBar->SetupAttachment(GetMesh());
 
@@ -60,41 +59,33 @@ void AOatFightUnitBase::OnAttackStart()
 	AnimInstatnce->Montage_Play(AttackMontage, AttackSpeedRate);
 	OnAttackMonStart.Broadcast();
 	
-	// 
 	FOnMontageEnded EndDelegate;
-	EndDelegate.BindLambda(this, [&]{OnAttackMonEnd.Broadcast();});
+	EndDelegate.BindUObject(this, &AOatFightUnitBase::OnAttackEnd);
 	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
 }
 
-
-void AOatFightUnitBase::AttackActionMontageBegin()
+// 우선 BindLambda로
+void AOatFightUnitBase::OnAttackEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
 {
-}
-
-void AOatFightUnitBase::AttackActionMontageEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
-{
-	
-	NotifyAttackActionEnd();
+	OnAttackMonEnd.Broadcast();	
+	//AttackMonEnd();
 }
 
 
-void AOatFightUnitBase::OnAttackHitCheck()
+
+
+void AOatFightUnitBase::AnimNotifyAttackHitCheck()
 {
 	FHitResult OutHitResult;
-	// �ݸ��� �м� �� �±� ���� , ������ ������ �浹ü�� ���� �� ��(ĸ��.�� -> Convex ) , ������ ���� (�ڱ��ڽ�)
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
 
 	const float AttackRange = Stat->GetTotalStat().AtkRange;
 	const float AttackRadius = Stat->GetAttackRadius();
 	const float AttackDamage = Stat->GetTotalStat().Atk;
-	// ���� ���� ��ġ + ���� �ü����� + ĸ�� ������Ʈ�� ���������� �߰��ؼ� ������ ĸ�� ��ġ�������� ������
 	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
 
-	// ���� + Attack����
 	const FVector End = Start + GetActorForwardVector() * AttackRange;
 
-	// World���� �����ϴ� ����
-	// HitResult�� ������� �޾ƿ� �� ���� , ���� - �� , FCollisionShpae�� ���Ͽ� ��ü ���� ���� / 
 	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANNEL_OATACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
 	if (HitDetected)
 	{
@@ -102,20 +93,16 @@ void AOatFightUnitBase::OnAttackHitCheck()
 		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
 	}
 #if ENABLE_DRAW_DEBUG
-	// ĸ�� ���� : ���� + (�� - ����) / 2
 	FVector CapsuleOrign = Start + (End - Start) * 0.5f;
 	float CapsuleHalfHeight = AttackRange * 0.5f;
 	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
 
-	// ĸ���� ������ �׷���� ��
 	DrawDebugCapsule(GetWorld(), CapsuleOrign, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DrawColor, false, 5.f);
 #endif
 }
 
 float AOatFightUnitBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	// EventInstigator -> ������
-	// DamageCasuer -> �����ڰ� ����� ����, �����ڰ� ������ ��(���� ����)
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	Stat->ApplyDamage(DamageAmount);
 

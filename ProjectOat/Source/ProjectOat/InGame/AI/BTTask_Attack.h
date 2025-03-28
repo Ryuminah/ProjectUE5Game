@@ -7,7 +7,7 @@
 #include "BTTask_Attack.generated.h"
 
 /**
- * 
+ *	소유자가 없는 일회용 작업 / GetPawn() 등으로 외부 객체에 접근해서 동작을 위임 
  */
 UCLASS()
 class PROJECTOAT_API UBTTask_Attack : public UBTTaskNode
@@ -16,7 +16,6 @@ class PROJECTOAT_API UBTTask_Attack : public UBTTaskNode
 	
 public:
 	UBTTask_Attack();
-
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 };

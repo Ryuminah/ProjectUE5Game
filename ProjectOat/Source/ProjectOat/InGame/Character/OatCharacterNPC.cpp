@@ -44,7 +44,6 @@ AOatCharacterNPC::AOatCharacterNPC()
 	} 
 
 	/* Animation ----------------------------------------------------------------------------------*/
-	// Montage Asset�� ��������Ʈ���� ����
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ActionMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Cactus/Animations/AM_Cactus_Attack.AM_Cactus_Attack'"));
 	if (ActionMontageRef.Object)
 	{
@@ -57,6 +56,14 @@ AOatCharacterNPC::AOatCharacterNPC()
 	{
 		DeadMontage = DeadMontageRef.Object;
 	}
+}
+
+void AOatCharacterNPC::SetupCallback()
+{
+	Super::SetupCallback();
+	
+	AddDelegateOnAttackMonStart(FOnAttackMonStart::FDelegate::CreateUObject(this,&AOatCharacterNPC::AttackActionMontageBegin));
+	AddDelegateOnAttackMonEnd(FOnAttackMonStart::FDelegate::CreateUObject(this,&AOatCharacterNPC::AttackActionMontageEnd));
 }
 
 void AOatCharacterNPC::SetDead()
@@ -73,6 +80,15 @@ void AOatCharacterNPC::SetDead()
 	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([&](){ Destroy(); }), 
 										   DeadEventDelayTime, false);
 
+}
+
+void AOatCharacterNPC::InputAttack()
+{
+	if (TryStartAttack())
+	{
+		Super::OnAttackStart();
+		return;
+	}
 }
 
 float AOatCharacterNPC::GetAIPatrolRadius()
@@ -95,43 +111,40 @@ float AOatCharacterNPC::GetAITurnSpeed()
 	return 2.0f;
 }
 
-void AOatCharacterNPC::SetAIAttackFinishedDelegate(const FAIAttackFinished& InOnAttackFinished)
+void AOatCharacterNPC::SetOnBTTaskAttackFinishedDelegate(const FOnBTTaskAttackFinished& InOnAttackFinished)
 {
 	OnAttackFinished = InOnAttackFinished;
 }
 
-void AOatCharacterNPC::AttackByAI()
+
+bool AOatCharacterNPC::TryStartAttack()
 {
-	OnAttackStart();
+	// 공격 가능한 상황인지 판단
+	
+	return true;
 }
 
-void AOatCharacterNPC::NotifyAttackActionEnd()
+void AOatCharacterNPC::AttackActionMontageBegin()
 {
-	// 부모 클래스에서 Attack Montage가 끝난 시점에 호출
-	Super::NotifyAttackActionEnd();
+	// 일단 만들어는 둠..
+}
+
+void AOatCharacterNPC::AttackActionMontageEnd()
+{
 	OnAttackFinished.ExecuteIfBound();
 }
 
-void AOatCharacterNPC::AttackActionMontageEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded)
-{
-	Super::AttackActionMontageEnd(TargetMontage, IsProperlyEnded);
-}
-
-void AOatCharacterNPC::OnAttackStart()
-{
-	Super::OnAttackStart();
-	
-	UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
-	
-	float AttackSpeedRate = 1.f;
-	AnimInstatnce->Montage_Play(AttackMontage, AttackSpeedRate);
-
-	// Attack 몽타주 재생
-	FOnMontageEnded EndDelegate;
-	EndDelegate.BindUObject(this, &AOatCharacterNPC::AttackActionMontageEnd);
-	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
-	
-
-	
-
-}
+//void AOatCharacterNPC::OnAttackStart()
+//{
+//	Super::OnAttackStart();
+//	
+//	UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
+//	
+//	float AttackSpeedRate = 1.f;
+//	AnimInstatnce->Montage_Play(AttackMontage, AttackSpeedRate);
+//
+//	// Attack 몽타주 재생
+//	FOnMontageEnded EndDelegate;
+//	EndDelegate.BindUObject(this, &AOatCharacterNPC::AttackActionMontageEnd);
+//	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
+//}

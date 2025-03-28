@@ -16,5 +16,5 @@ class PROJECTOAT_API UAnimNotify_AttackHitCheck : public UAnimNotify
 	
 protected:
 	// UAnimNotify가 제공하는 함수를 override하여 구현
-	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference);
+	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 };

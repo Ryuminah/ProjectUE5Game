@@ -4,6 +4,9 @@
 #include "InGame/AI/BTTask_Attack.h"
 #include "Core/OatAIController.h"
 #include "InGame/AI/Interface/OatAIInterface.h"
+#include "InGame/Character/OatCharacterNPC.h"
+#include "InGame/Character/OatFightUnitBase.h"
+#include "InGame/Interface/OatFightUnitInterface.h"
 
 
 UBTTask_Attack::UBTTask_Attack()
@@ -21,22 +24,33 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent & OwnerCo
 
 
 	// FightUnitInterface로 교체
-	IOatAIInterface* AIPawn = Cast<IOatAIInterface>(ControllingPawn);
+//	IOatAIInterface* AIPawn = Cast<IOatAIInterface>(ControllingPawn);
+//	if (!AIPawn) { return EBTNodeResult::Failed;}
+//
+//	FAIAttackFinished OnAttackFinished;
+//	OnAttackFinished.BindLambda(
+//		[&]()
+//		{
+//			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+//		});
+//
+//	AIPawn->SetAIAttackFinishedDelegate(OnAttackFinished);
+//	
+//	AIPawn->AttackByAI();
+//	return EBTNodeResult::InProgress;
+
+	AOatCharacterNPC* AIPawn = Cast<AOatCharacterNPC>(ControllingPawn);
 	if (!AIPawn) { return EBTNodeResult::Failed;}
 
-	FAIAttackFinished OnAttackFinished;
+	FOnBTTaskAttackFinished OnAttackFinished;
 	OnAttackFinished.BindLambda(
 		[&]()
 		{
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		});
 
-	AIPawn->SetAIAttackFinishedDelegate(OnAttackFinished);
-	
-	AIPawn->AttackByAI();
+	AIPawn->SetOnBTTaskAttackFinishedDelegate(OnAttackFinished);
+	AIPawn->InputAttack();
 	return EBTNodeResult::InProgress;
 
-	// ��Ÿ�ְ� ����� ����Ǿ���� ������ �Ϸ��̴�.
-
-	return Result;
 }

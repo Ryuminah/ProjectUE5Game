@@ -2,7 +2,7 @@
 
 
 #include "InGame/Character/AnimNotify_AttackHitCheck.h"
-#include "InGame/Interface/OatAnimFightInterface.h"
+#include "InGame/Interface/OatFightUnitInterface.h"
 
 void UAnimNotify_AttackHitCheck::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
@@ -10,10 +10,10 @@ void UAnimNotify_AttackHitCheck::Notify(USkeletalMeshComponent* MeshComp, UAnimS
 
 	if (MeshComp)
 	{
-		IOatAnimFightInterface* AttackPawn = Cast<IOatAnimFightInterface>(MeshComp->GetOwner());
+		IOatFightUnitInterface* AttackPawn = Cast<IOatFightUnitInterface>(MeshComp->GetOwner());
 		if (AttackPawn)
 		{
-			AttackPawn->OnAttackHitCheck();
+			AttackPawn->AnimNotifyAttackHitCheck();
 		}
 	}
 }

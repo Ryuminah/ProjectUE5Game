@@ -16,6 +16,7 @@
 #include "EnhancedInputSubSystems.h"
 #include "OatAttackActionData.h"
 #include "Components/CapsuleComponent.h"
+#include "Core/Interface/OatGameInterface.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "InGame/Physics/OatCollision.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -73,7 +74,6 @@ AOatCharacterPlayer::AOatCharacterPlayer()
 	} 
 
 	/* Animation ----------------------------------------------------------------------------------*/
-	// Montage Asset�� ��������Ʈ���� ����
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> ActionMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Roxy/Animations/AM_Roxy_ComboAttack.AM_Roxy_ComboAttack'"));
 	if (ActionMontageRef.Object)
 	{
@@ -151,11 +151,16 @@ AOatCharacterPlayer::AOatCharacterPlayer()
 	CurrentCharacterControlType = ECharacterControlType::Shoulder;
 }
 
+void AOatCharacterPlayer::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	SetupCallback();
+}
+
 void AOatCharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetupCallback();
 	
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController)
@@ -169,29 +174,23 @@ void AOatCharacterPlayer::BeginPlay()
 
 void AOatCharacterPlayer::SetupCallback()
 {
+	Super::SetupCallback();
 	// Item Callbacks
 	//TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatCharacterPlayer::TestEquipSocket)));
 	//TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatCharacterPlayer::DrinkPotion)));
+	
+	/* 기본 공격 관련 Callback*/
+	AddDelegateOnAttackMonStart(FOnAttackMonStart::FDelegate::CreateUObject(this, &AOatCharacterPlayer::AttackActionMontageBegin));
+	AddDelegateOnAttackMonEnd(FOnAttackMonEnd::FDelegate::CreateUObject(this, &AOatCharacterPlayer::AttackActionMontageEnd));
 }
 
-void AOatCharacterPlayer::OnAttackStart()
+bool AOatCharacterPlayer::TryStartComboAttack()
 {
-	Super::OnAttackStart();
-	
-	if (CurrentCombo == 0)
-	{
-		AttackActionMontageBegin();
-		return;
-	}
+	//Super::OnAttackStart();
 
-	if (!ComboTimerHandle.IsValid())
-	{
-		bHasNextComboCommand = false;
-	}
-	else
-	{
-		bHasNextComboCommand = true;
-	}
+	// 공격 가능한 상황인지 판단해야함 (스턴이나 스킬 사용중 같은거 확인)
+	
+	return true;
 }
 
 void AOatCharacterPlayer::SetComboCheckTimer()
@@ -220,44 +219,48 @@ void AOatCharacterPlayer::ComboCheck()
 
 		// ������ ������ ���������� ������ ���Ѿ� ��.
 		AnimInstatnce->Montage_JumpToSection(NextSection, AttackMontage);
-
-
+		
 		bHasNextComboCommand = false;
 		SetComboCheckTimer();
 	}
 }
 
-//  FightUnit 구조 정리 필요하다
+// 공격 첫 시작 시 몽타주 호출
 void AOatCharacterPlayer::AttackActionMontageBegin()
 {
-	Super::AttackActionMontageBegin();
-	
 	// ComboStatus
 	CurrentCombo = 1;
 
-	// �̵� ��� �����
-	//GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
-	const float AttackSpeedRate = 1.f;
+//	const float AttackSpeedRate = 1.f;
+//
+//	UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
+//	AnimInstatnce->Montage_Play(AttackMontage, AttackSpeedRate);
+//
+//	FOnMontageEnded EndDelegate;
+//	EndDelegate.BindUObject(this, &AOatCharacterPlayer::AttackActionMontageEnd);
+//	// Delegate����, Montage ����
+//	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
+	//SetComboCheckTimer();
 
-	// ��Ÿ�� ������ ���� AnimInstance ����
-	UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
-	AnimInstatnce->Montage_Play(AttackMontage, AttackSpeedRate);
-
-	// // ��Ÿ�� ���� ��
-	// // ����üó�� ���ε��� ��������Ʈ�� ������ �� ���ڷ� �Ѱ��ָ� ��
-	FOnMontageEnded EndDelegate;
-	EndDelegate.BindUObject(this, &AOatCharacterPlayer::AttackActionMontageEnd);
-	// Delegate����, Montage ����
-	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
-
-	ComboTimerHandle.Invalidate();
-	SetComboCheckTimer();
+//	ComboTimerHandle.Invalidate();
+//
+//	int32 ComboIndex = CurrentCombo - 1;
+//	ensure(AttackActionData->EffectiveFrameCount.IsValidIndex(ComboIndex));
+//
+//	constexpr float AttackSpeedRate = 1.f;
+//	float ComboEffectiveTime = (AttackActionData->EffectiveFrameCount[ComboIndex] / AttackActionData->FrameRate) / AttackSpeedRate;
+//	if (ComboEffectiveTime > 0.f)
+//	{
+//		// �ð��� üũ�ϵ�, �ݺ����� �ʵ��� �ѹ��� �߻��ϵ��� false
+//		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&AOatCharacterPlayer::ComboCheck,ComboEffectiveTime,false);
+//	}
+	
+	//SetComboCheckTimer();
 }
 
-void AOatCharacterPlayer::AttackActionMontageEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded)
+void AOatCharacterPlayer::AttackActionMontageEnd()
 {
-	Super::AttackActionMontageEnd(TargetMontage, IsProperlyEnded);
-	// ��Ÿ�� ���� �� �ʱ�ȭ
+	// 콤보 초기화
 	ensure(CurrentCombo != 0);
 	CurrentCombo = 0;
 }
@@ -267,17 +270,16 @@ void AOatCharacterPlayer::SetDead()
 	Super::SetDead();
 
 	// 입력 막기
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController)
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
 		DisableInput(PlayerController);
 
-		//// GameMode는 멀티를 고려한 모든 플레이어를 통틀어 단 하나만 존재함 (방장이 소유한 게임모드이다)
-		//IOatGameInterface* OatGameMode = Cast<IOatGameInterface>(GetWorld()->GetAuthGameMode());
-		//if (OatGameMode)
-		//{
-		//	OatGameMode->OnPlayerDead();
-		//}
+//		// GameMode는 멀티를 고려한 모든 플레이어를 통틀어 단 하나만 존재함 (방장이 소유한 게임모드이다)
+//		IOatGameInterface* OatGameMode = Cast<IOatGameInterface>(GetWorld()->GetAuthGameMode());
+//		if (OatGameMode)
+//		{
+//			OatGameMode->OnPlayerDead();
+//		}
 	}
 }
 
@@ -408,9 +410,36 @@ void AOatCharacterPlayer::InputQuaterMove(const FInputActionValue& Value)
 	AddMovementInput(MoveDirection, MovementVectorSize);
 }
 
+// 입력이 들어왔을 때
 void AOatCharacterPlayer::InputAttack()
 {
-	OnAttackStart();
+	if (TryStartComboAttack())
+	{
+		if (CurrentCombo == 0)
+		{
+			Super::OnAttackStart();
+			return;
+		}
+
+		bHasNextComboCommand = !(ComboTimerHandle.IsValid());
+
+//		else
+//		{
+//		}
+
+//		if (!ComboTimerHandle.IsValid())
+//		{
+//			bHasNextComboCommand = false;
+//		}
+//		else
+//		{
+//			bHasNextComboCommand = true;
+//		}
+
+	}
+	
+	
+	//OnAttackStart();
 }
 
 void AOatCharacterPlayer::QuitGame()

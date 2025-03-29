@@ -59,7 +59,7 @@ protected:
 		OnAttackMonStart.Add(InDelegate);
 	}
 
-	void AddDelegateOnAttackMonEnd(const FOnAttackMonEnd::FDelegate& InDelegate) { OnAttackMonStart.Add(InDelegate); }
+	void AddDelegateOnAttackMonEnd(const FOnAttackMonEnd::FDelegate& InDelegate) { OnAttackMonEnd.Add(InDelegate); }
 
 
 // /* Attack  -----------------------------------------------------*/

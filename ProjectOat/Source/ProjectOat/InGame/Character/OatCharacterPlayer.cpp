@@ -155,6 +155,7 @@ void AOatCharacterPlayer::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	SetupCallback();
+
 }
 
 void AOatCharacterPlayer::BeginPlay()
@@ -240,7 +241,7 @@ void AOatCharacterPlayer::AttackActionMontageBegin()
 //	EndDelegate.BindUObject(this, &AOatCharacterPlayer::AttackActionMontageEnd);
 //	// Delegate����, Montage ����
 //	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
-	//SetComboCheckTimer();
+	SetComboCheckTimer();
 
 //	ComboTimerHandle.Invalidate();
 //
@@ -421,21 +422,7 @@ void AOatCharacterPlayer::InputAttack()
 			return;
 		}
 
-		bHasNextComboCommand = !(ComboTimerHandle.IsValid());
-
-//		else
-//		{
-//		}
-
-//		if (!ComboTimerHandle.IsValid())
-//		{
-//			bHasNextComboCommand = false;
-//		}
-//		else
-//		{
-//			bHasNextComboCommand = true;
-//		}
-
+		bHasNextComboCommand = ComboTimerHandle.IsValid();
 	}
 	
 	

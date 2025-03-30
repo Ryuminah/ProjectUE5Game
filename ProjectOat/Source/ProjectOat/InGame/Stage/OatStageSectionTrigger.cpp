@@ -38,19 +38,13 @@ void AOatStageSectionTrigger::BeginPlay()
 	Super::BeginPlay();
 
 	SectionStateChangedCallback.Add(EStageSectionState::READYBATTLE,
-	                                      FStageSectionChangedDelegateWrapper(
-		                                      FOnStageSectionStateChangedDelegate::CreateUObject(
-			                                      this, &AOatStageSectionTrigger::SetReadyBattle)));
+	                                      FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetReadyBattle)));
 
 	SectionStateChangedCallback.Add(EStageSectionState::INBATTLE,
-	                                      FStageSectionChangedDelegateWrapper(
-		                                      FOnStageSectionStateChangedDelegate::CreateUObject(
-			                                      this, &AOatStageSectionTrigger::SetInBattle)));
+	                                      FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetInBattle)));
 
 	SectionStateChangedCallback.Add(EStageSectionState::ENDBATTLE,
-	                                      FStageSectionChangedDelegateWrapper(
-		                                      FOnStageSectionStateChangedDelegate::CreateUObject(
-			                                      this, &AOatStageSectionTrigger::SetEndBattle)));
+	                                      FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetEndBattle)));
 
 	CreateSpawnPointData();
 }

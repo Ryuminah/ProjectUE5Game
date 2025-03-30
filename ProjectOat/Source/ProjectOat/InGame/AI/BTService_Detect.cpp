@@ -28,16 +28,17 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	UWorld* World = ControllingPawn->GetWorld();
 	if (!World) { return; }
 
+	// ê°™ì€ AIì¼ ê²½ìš° Return
 	IOatAIInterface* AIPawn = Cast<IOatAIInterface>(ControllingPawn);
 	if (!AIPawn) { return; }
 
-	// ÀÎÅÍÆäÀÌ½º·ÎºÎÅÍ °¨ÁöÇÒ ¿µ¿ªÀÇ °ªÀ» °¡Á®¿È
+	// ì¸í„°í˜ì´ìŠ¤ë¡œë¶€í„° ê°ì§€í•  ì˜ì—­ì˜ ê°’ì„ ê°€ì ¸ì˜´
 	float DetectRadius = AIPawn->GetAIDetectRange();
 
-	// ÇÃ·¹ÀÌ¾î°¡ ´Ù¼öÀÏ ¼öµµ ÀÖÀ½
+	// í”Œë ˆì´ì–´ê°€ ë‹¤ìˆ˜ì¼ ìˆ˜ë„ ìˆìŒ
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams CollisionQueryParam(SCENE_QUERY_STAT(Detect), false, ControllingPawn);
-	bool bResult = World->OverlapMultiByChannel(OverlapResults,Center,FQuat::Identity,CCHANNEL_OATACTION,
+	bool bResult = World->OverlapMultiByChannel(OverlapResults,Center,FQuat::Identity,CCHANNEL_ENEMYACTION,
 												FCollisionShape::MakeSphere(DetectRadius),CollisionQueryParam);
 
 	if (bResult)
@@ -47,7 +48,7 @@ void UBTService_Detect::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 			APawn* Pawn = Cast<APawn>(Result.GetActor());
 			if (Pawn && Pawn->GetController()->IsPlayerController())
 			{
-				// ºí·¢º¸µå Å¸°Ù°ª ÀúÀå
+				// ë¸”ë™ë³´ë“œ íƒ€ê²Ÿê°’ ì €ì¥
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject(BBKEY_TARGET, Pawn);
 				DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
 				

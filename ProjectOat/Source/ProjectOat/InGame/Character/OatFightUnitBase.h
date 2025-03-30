@@ -39,8 +39,9 @@ class PROJECTOAT_API AOatFightUnitBase : public ACharacter, public IOatFightUnit
 public:
 	AOatFightUnitBase();
 	virtual void PostInitializeComponents() override;
+	virtual void SetupCallback(){};
 
-// /* Attack  -----------------------------------------------------*/
+/* Montage Callback  -----------------------------------------------------*/
 private:
 	FOnAttackMonStart OnAttackMonStart;
 	FOnAttackMonEnd OnAttackMonEnd;
@@ -50,19 +51,15 @@ private:
 
 	FOnDeadMonStart OnDeadMonStart;
 	FOnDeadMonStart OnDeadMonEnd;
-
+	
 protected:
-	virtual void SetupCallback(){};
-
-	void AddDelegateOnAttackMonStart(const FOnAttackMonStart::FDelegate& InDelegate)
-	{
-		OnAttackMonStart.Add(InDelegate);
-	}
-
-	void AddDelegateOnAttackMonEnd(const FOnAttackMonEnd::FDelegate& InDelegate) { OnAttackMonEnd.Add(InDelegate); }
+	virtual void AttackMontageBegin(){};
+	virtual void AttackMontageEnd(){};
+	void AddDelegateOnAttackMonStart(const FOnAttackMonStart::FDelegate& InDelegate){OnAttackMonStart.Add(InDelegate);}
+	void AddDelegateOnAttackMonEnd(const FOnAttackMonEnd::FDelegate& InDelegate) { OnAttackMonEnd.Add(InDelegate);}
 
 
-// /* Attack  -----------------------------------------------------*/
+/* Attack  -----------------------------------------------------*/
 protected:
 	UPROPERTY(Category=Animation, EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UAnimMontage> AttackMontage;
@@ -71,7 +68,16 @@ protected:
 	virtual void OnAttackStart() final override;      
 	virtual void OnAttackEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded) final override;
 
+/* Hit  -----------------------------------------------------*/
+	// TMap으로 바꿀까!
+	UPROPERTY(Category=Animation, EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UAnimMontage> HitMontage;
+	// 모든 전투 유닛의 Attack의 시작 시점에 호출해주기        
+//	virtual void OnHitStart() final override;      
+//	virtual void OnHitEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded) final override;
+
 	//현재 몽타주 중지하는 기능
+	void StopCurrentMontage() const;
 
 	// 모든 전투 유닛의 Hit 시작 시점에 호출하기
 	//virtual void OnHitStart() final override;
@@ -79,15 +85,10 @@ protected:
 	// 나중에 구현하기 (현재 공격 가능한지)
 	//virtual void TryStartAttack();
 
-//	void AttackActionMontageBegin(); // 공격 시작 시 호출되는 콜백
-	//void AttackActionMontageEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded);
-
-//	void AttackActionMontageBegin(); // 공격 시작 시 호출되는 콜백
-//	void AttackActionMontageEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded);
-
 
 /* Hit Check -----------------------------------------------------*/
 protected:
+	// Anim에서 AttackTiming
 	virtual void AnimNotifyAttackHitCheck() override;
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
 	                         class AController* EventInstigator, AActor* DamageCauser) override;

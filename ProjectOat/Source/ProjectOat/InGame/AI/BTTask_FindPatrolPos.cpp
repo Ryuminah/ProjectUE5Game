@@ -28,7 +28,7 @@ EBTNodeResult::Type UBTTask_FindPatrolPos::ExecuteTask(UBehaviorTreeComponent& O
 		return EBTNodeResult::Failed;
 	}
 
-	// ´ÙÀ½ Á¤Âû À§Ä¡ Å½»ö
+	// ë‹¤ìŒ ì •ì°° ìœ„ì¹˜ íƒìƒ‰
 	FVector Origin = OwnerComp.GetBlackboardComponent()->GetValueAsVector(BBKEY_HOMEPOS);
 	FNavLocation NextPatrolPos;
 

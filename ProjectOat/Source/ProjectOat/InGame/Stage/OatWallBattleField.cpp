@@ -27,6 +27,8 @@ AOatWallBattleField::AOatWallBattleField()
 	
 	WallCollision->SetBoxExtent(FVector(200.f, 200.f, 40.f));
 	WallCollision->SetRelativeLocation(FVector(100.f, 0.f, 0.f));
+
+	// 카메라를 제외하고는 움직이는 건 전부 막음
 	WallCollision->SetCollisionProfileName("BlockAllDynamic");
 	WallCollision->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 

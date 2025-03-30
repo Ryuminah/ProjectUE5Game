@@ -19,6 +19,7 @@ public:
 	AOatCharacterNPC();
 
 protected:
+	virtual void PostInitializeComponents() override;
 	virtual void SetupCallback() override;
 
 public:
@@ -45,7 +46,8 @@ private:
 	bool TryStartAttack();
 
 	// CallbackFunc
-	void AttackActionMontageBegin();
-	void AttackActionMontageEnd();
+	virtual void AttackMontageBegin() override;
+	virtual void AttackMontageEnd() override;
+	virtual void AnimNotifyAttackHitCheck() override;
 
 };

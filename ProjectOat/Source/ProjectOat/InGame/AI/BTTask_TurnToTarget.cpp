@@ -29,12 +29,10 @@ EBTNodeResult::Type UBTTask_TurnToTarget::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	float TurnSpeed = AIPawn->GetAITurnSpeed();
 
-	// AI가 바라봐야하는 회전값 계산
 	FVector LookVector = Target->GetActorLocation() - ControllingPawn->GetActorLocation();
 	LookVector.Z = 0.f;
-	FRotator TargetRot = FRotationMatrix::MakeFromZ(LookVector).Rotator();
+	FRotator TargetRot = FRotationMatrix::MakeFromX(LookVector).Rotator();
 
-	// 회전
 	ControllingPawn->SetActorRotation(FMath::RInterpTo(ControllingPawn->GetActorRotation(), TargetRot, GetWorld()->GetDeltaSeconds(), TurnSpeed));
 
 	return EBTNodeResult::Succeeded;

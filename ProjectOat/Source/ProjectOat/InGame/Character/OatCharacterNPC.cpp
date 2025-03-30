@@ -5,6 +5,7 @@
 
 #include "Components/CapsuleComponent.h"
 #include "Core/OatAIController.h"
+#include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "InGame/Character/Component/OatCharacterStatComponent.h"
 #include "InGame/Physics/OatCollision.h"
@@ -16,7 +17,7 @@ AOatCharacterNPC::AOatCharacterNPC()
 
 	// Capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
-	GetCapsuleComponent()->SetCollisionProfileName(CPROFILE_OATCAPSULE);
+	GetCapsuleComponent()->SetCollisionProfileName(CPROFILE_ENEMYCAPSULE);
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 500.f, 0.f);
@@ -58,12 +59,18 @@ AOatCharacterNPC::AOatCharacterNPC()
 	}
 }
 
+void AOatCharacterNPC::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	SetupCallback();
+}
+
 void AOatCharacterNPC::SetupCallback()
 {
 	Super::SetupCallback();
 	
-	AddDelegateOnAttackMonStart(FOnAttackMonStart::FDelegate::CreateUObject(this,&AOatCharacterNPC::AttackActionMontageBegin));
-	AddDelegateOnAttackMonEnd(FOnAttackMonStart::FDelegate::CreateUObject(this,&AOatCharacterNPC::AttackActionMontageEnd));
+	AddDelegateOnAttackMonStart(FOnAttackMonStart::FDelegate::CreateUObject(this,&AOatCharacterNPC::AttackMontageBegin));
+	AddDelegateOnAttackMonEnd(FOnAttackMonEnd::FDelegate::CreateUObject(this,&AOatCharacterNPC::AttackMontageEnd));
 }
 
 void AOatCharacterNPC::SetDead()
@@ -108,7 +115,7 @@ float AOatCharacterNPC::GetAIAttackRange()
 
 float AOatCharacterNPC::GetAITurnSpeed()
 {
-	return 2.0f;
+	return 6.0f;
 }
 
 void AOatCharacterNPC::SetOnBTTaskAttackFinishedDelegate(const FOnBTTaskAttackFinished& InOnAttackFinished)
@@ -124,27 +131,43 @@ bool AOatCharacterNPC::TryStartAttack()
 	return true;
 }
 
-void AOatCharacterNPC::AttackActionMontageBegin()
+void AOatCharacterNPC::AttackMontageBegin()
 {
 	// 일단 만들어는 둠..
 }
 
-void AOatCharacterNPC::AttackActionMontageEnd()
+void AOatCharacterNPC::AttackMontageEnd()
 {
 	OnAttackFinished.ExecuteIfBound();
 }
 
-//void AOatCharacterNPC::OnAttackStart()
-//{
-//	Super::OnAttackStart();
-//	
-//	UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
-//	
-//	float AttackSpeedRate = 1.f;
-//	AnimInstatnce->Montage_Play(AttackMontage, AttackSpeedRate);
-//
-//	// Attack 몽타주 재생
-//	FOnMontageEnded EndDelegate;
-//	EndDelegate.BindUObject(this, &AOatCharacterNPC::AttackActionMontageEnd);
-//	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
-//}
+void AOatCharacterNPC::AnimNotifyAttackHitCheck()
+{
+	Super::AnimNotifyAttackHitCheck();
+	
+	FHitResult OutHitResult;
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
+
+	const float AttackRange = Stat->GetTotalStat().AtkRange;
+	const float AttackRadius = Stat->GetAttackRadius();
+	const float AttackDamage = Stat->GetTotalStat().Atk;
+	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
+
+	const FVector End = Start + GetActorForwardVector() * AttackRange;
+
+	// CCHANNEL_OATACTION 에 대해서 반응하는 콜리전이 있는지
+	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult,Start, End, FQuat::Identity, CCHANNEL_OATACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
+	if (HitDetected)
+	{
+		FDamageEvent DamageEvent;
+		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
+	}
+#if ENABLE_DRAW_DEBUG
+	FVector CapsuleOrign = Start + (End - Start) * 0.5f;
+	float CapsuleHalfHeight = AttackRange * 0.5f;
+	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
+
+	DrawDebugCapsule(GetWorld(), CapsuleOrign, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DrawColor, false, 5.f);
+#endif
+}
+

@@ -49,17 +49,11 @@ protected:
 	
 /* Combo Action -----------------------------------------------------*/
 private:
-	// UPROPERTY(Category=Animation, EditAnywhere, BlueprintReadWrite)
-	// TObjectPtr<class UAnimMontage> AttackMontage;
-
 	UPROPERTY(Category=Attack, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<class UOatAttackActionData> AttackActionData;
 
-	bool TryStartComboAttack();
-	void AttackActionMontageBegin();
-	void AttackActionMontageEnd();
-
-	//virtual void AttackMonEnd() override {};
+	virtual void AttackMontageBegin() override;
+	virtual void AttackMontageEnd() override;
 
 	// 현재까지 진행된 콤보 수
 	int32 CurrentCombo = 0;
@@ -69,6 +63,10 @@ private:
 	bool bHasNextComboCommand = false;
 	void SetComboCheckTimer();
 	void ComboCheck();
+	bool TryStartComboAttack();
+
+	virtual void AnimNotifyAttackHitCheck() override;
+
 	
 /* Character Control -----------------------------------------------------*/
 protected :

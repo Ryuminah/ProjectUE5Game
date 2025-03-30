@@ -71,34 +71,37 @@ void AOatFightUnitBase::OnAttackEnd(UAnimMontage* TargetMontage, bool IsProperly
 	//AttackMonEnd();
 }
 
-
-
+void AOatFightUnitBase::StopCurrentMontage() const
+{
+	UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
+	AnimInstatnce->Montage_Pause();
+}
 
 void AOatFightUnitBase::AnimNotifyAttackHitCheck()
 {
-	FHitResult OutHitResult;
-	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
-
-	const float AttackRange = Stat->GetTotalStat().AtkRange;
-	const float AttackRadius = Stat->GetAttackRadius();
-	const float AttackDamage = Stat->GetTotalStat().Atk;
-	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
-
-	const FVector End = Start + GetActorForwardVector() * AttackRange;
-
-	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANNEL_OATACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
-	if (HitDetected)
-	{
-		FDamageEvent DamageEvent;
-		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
-	}
-#if ENABLE_DRAW_DEBUG
-	FVector CapsuleOrign = Start + (End - Start) * 0.5f;
-	float CapsuleHalfHeight = AttackRange * 0.5f;
-	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
-
-	DrawDebugCapsule(GetWorld(), CapsuleOrign, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DrawColor, false, 5.f);
-#endif
+//	FHitResult OutHitResult;
+//	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
+//
+//	const float AttackRange = Stat->GetTotalStat().AtkRange;
+//	const float AttackRadius = Stat->GetAttackRadius();
+//	const float AttackDamage = Stat->GetTotalStat().Atk;
+//	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
+//
+//	const FVector End = Start + GetActorForwardVector() * AttackRange;
+//
+//	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANNEL_OATACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
+//	if (HitDetected)
+//	{
+//		FDamageEvent DamageEvent;
+//		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
+//	}
+//#if ENABLE_DRAW_DEBUG
+//	FVector CapsuleOrign = Start + (End - Start) * 0.5f;
+//	float CapsuleHalfHeight = AttackRange * 0.5f;
+//	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
+//
+//	DrawDebugCapsule(GetWorld(), CapsuleOrign, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DrawColor, false, 5.f);
+//#endif
 }
 
 float AOatFightUnitBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

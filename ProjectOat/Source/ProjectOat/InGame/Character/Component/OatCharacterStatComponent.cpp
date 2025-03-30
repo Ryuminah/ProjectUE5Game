@@ -10,8 +10,8 @@ UOatCharacterStatComponent::UOatCharacterStatComponent()
 	CurrentLv = 1;
 	AttackRadius = 50;
 
-	// ÀÌ º¯¼ö°¡ true¿©¾ßÁö InitializeComponent()°¡ È£ÃâµÊ
-	// ¼º´É ¶§¹®¿¡!
+	// ì´ ë³€ìˆ˜ê°€ trueì—¬ì•¼ì§€ InitializeComponent()ê°€ í˜¸ì¶œë¨
+	// ì„±ëŠ¥ ë•Œë¬¸ì—!
 	bWantsInitializeComponent = true;
 }
 
@@ -27,7 +27,7 @@ float UOatCharacterStatComponent::ApplyDamage(float InDamage)
 {
 	const float PrevHp = CurrentHp;
 	
-	// µ¥¹ÌÁö¸¦ À¯È¿ÇÑ ¹üÀ§ Á¶Á¤
+	// ë°ë¯¸ì§€ë¥¼ ìœ íš¨í•œ ë²”ìœ„ ì¡°ì •
 	const float ActualDamage = FMath::Clamp(InDamage, 0, InDamage);
 	SetHp(PrevHp - ActualDamage);
 
@@ -45,13 +45,13 @@ void UOatCharacterStatComponent::SetHp(float NewHp)
 {
 	CurrentHp = FMath::Clamp<float>(NewHp, 0.f, UOatGameSingleton::Get().GetTestData(CurrentLv).MaxHP);
 
-	// Hp°¡ º¯°æµÇ¾úÀ¸´Ï µ¨¸®°ÔÀÌÆ® ½ÇÇà
+	// Hpê°€ ë³€ê²½ë˜ì—ˆìœ¼ë‹ˆ ë¸ë¦¬ê²Œì´íŠ¸ ì‹¤í–‰
 	OnHpChanged.Broadcast(CurrentHp);
 
 	if (CurrentHp <= KINDA_SMALL_NUMBER)
 	{
 		OnHpZero.Broadcast();
-		// Á×À½
+		// ì£½ìŒ
 	}
 }
 

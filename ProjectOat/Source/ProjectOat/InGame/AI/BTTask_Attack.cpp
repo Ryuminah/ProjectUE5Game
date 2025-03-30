@@ -22,23 +22,6 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent & OwnerCo
 		return EBTNodeResult::Failed;
 	}
 
-
-	// FightUnitInterface로 교체
-//	IOatAIInterface* AIPawn = Cast<IOatAIInterface>(ControllingPawn);
-//	if (!AIPawn) { return EBTNodeResult::Failed;}
-//
-//	FAIAttackFinished OnAttackFinished;
-//	OnAttackFinished.BindLambda(
-//		[&]()
-//		{
-//			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-//		});
-//
-//	AIPawn->SetAIAttackFinishedDelegate(OnAttackFinished);
-//	
-//	AIPawn->AttackByAI();
-//	return EBTNodeResult::InProgress;
-
 	AOatCharacterNPC* AIPawn = Cast<AOatCharacterNPC>(ControllingPawn);
 	if (!AIPawn) { return EBTNodeResult::Failed;}
 

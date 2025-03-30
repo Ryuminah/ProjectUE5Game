@@ -16,10 +16,9 @@
 #include "EnhancedInputSubSystems.h"
 #include "OatAttackActionData.h"
 #include "Components/CapsuleComponent.h"
-#include "Core/Interface/OatGameInterface.h"
+#include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "InGame/Physics/OatCollision.h"
-#include "Kismet/KismetSystemLibrary.h"
 
 
 AOatCharacterPlayer::AOatCharacterPlayer()
@@ -181,8 +180,8 @@ void AOatCharacterPlayer::SetupCallback()
 	//TakeItemCallbacks.Add(FTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AOatCharacterPlayer::DrinkPotion)));
 	
 	/* 기본 공격 관련 Callback*/
-	AddDelegateOnAttackMonStart(FOnAttackMonStart::FDelegate::CreateUObject(this, &AOatCharacterPlayer::AttackActionMontageBegin));
-	AddDelegateOnAttackMonEnd(FOnAttackMonEnd::FDelegate::CreateUObject(this, &AOatCharacterPlayer::AttackActionMontageEnd));
+	AddDelegateOnAttackMonStart(FOnAttackMonStart::FDelegate::CreateUObject(this, &AOatCharacterPlayer::AttackMontageBegin));
+	AddDelegateOnAttackMonEnd(FOnAttackMonEnd::FDelegate::CreateUObject(this, &AOatCharacterPlayer::AttackMontageEnd));
 }
 
 bool AOatCharacterPlayer::TryStartComboAttack()
@@ -194,6 +193,35 @@ bool AOatCharacterPlayer::TryStartComboAttack()
 	return true;
 }
 
+void AOatCharacterPlayer::AnimNotifyAttackHitCheck()
+{
+	Super::AnimNotifyAttackHitCheck();
+	
+	FHitResult OutHitResult;
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
+
+	const float AttackRange = Stat->GetTotalStat().AtkRange;
+	const float AttackRadius = Stat->GetAttackRadius();
+	const float AttackDamage = Stat->GetTotalStat().Atk;
+	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
+
+	const FVector End = Start + GetActorForwardVector() * AttackRange;
+
+	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANNEL_ENEMYACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
+	if (HitDetected)
+	{
+		FDamageEvent DamageEvent;
+		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
+	}
+#if ENABLE_DRAW_DEBUG
+	FVector CapsuleOrign = Start + (End - Start) * 0.5f;
+	float CapsuleHalfHeight = AttackRange * 0.5f;
+	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
+
+	DrawDebugCapsule(GetWorld(), CapsuleOrign, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DrawColor, false, 5.f);
+#endif
+}
+
 void AOatCharacterPlayer::SetComboCheckTimer()
 {
 	int32 ComboIndex = CurrentCombo - 1;
@@ -203,7 +231,6 @@ void AOatCharacterPlayer::SetComboCheckTimer()
 	float ComboEffectiveTime = (AttackActionData->EffectiveFrameCount[ComboIndex] / AttackActionData->FrameRate) / AttackSpeedRate;
 	if (ComboEffectiveTime > 0.f)
 	{
-		// �ð��� üũ�ϵ�, �ݺ����� �ʵ��� �ѹ��� �߻��ϵ��� false
 		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&AOatCharacterPlayer::ComboCheck,ComboEffectiveTime,false);
 	}
 }
@@ -213,12 +240,10 @@ void AOatCharacterPlayer::ComboCheck()
 	ComboTimerHandle.Invalidate();
 	if (bHasNextComboCommand)
 	{
-		// ���� �������� üũ
 		UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
 		CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, AttackActionData->MaxComboCount);
 		FName NextSection = *FString::Printf(TEXT("%s%d"), *AttackActionData->MontageSectionNamePrefix, CurrentCombo);
 
-		// ������ ������ ���������� ������ ���Ѿ� ��.
 		AnimInstatnce->Montage_JumpToSection(NextSection, AttackMontage);
 		
 		bHasNextComboCommand = false;
@@ -227,39 +252,14 @@ void AOatCharacterPlayer::ComboCheck()
 }
 
 // 공격 첫 시작 시 몽타주 호출
-void AOatCharacterPlayer::AttackActionMontageBegin()
+void AOatCharacterPlayer::AttackMontageBegin()
 {
 	// ComboStatus
 	CurrentCombo = 1;
-
-//	const float AttackSpeedRate = 1.f;
-//
-//	UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
-//	AnimInstatnce->Montage_Play(AttackMontage, AttackSpeedRate);
-//
-//	FOnMontageEnded EndDelegate;
-//	EndDelegate.BindUObject(this, &AOatCharacterPlayer::AttackActionMontageEnd);
-//	// Delegate����, Montage ����
-//	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
 	SetComboCheckTimer();
-
-//	ComboTimerHandle.Invalidate();
-//
-//	int32 ComboIndex = CurrentCombo - 1;
-//	ensure(AttackActionData->EffectiveFrameCount.IsValidIndex(ComboIndex));
-//
-//	constexpr float AttackSpeedRate = 1.f;
-//	float ComboEffectiveTime = (AttackActionData->EffectiveFrameCount[ComboIndex] / AttackActionData->FrameRate) / AttackSpeedRate;
-//	if (ComboEffectiveTime > 0.f)
-//	{
-//		// �ð��� üũ�ϵ�, �ݺ����� �ʵ��� �ѹ��� �߻��ϵ��� false
-//		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle,this,&AOatCharacterPlayer::ComboCheck,ComboEffectiveTime,false);
-//	}
-	
-	//SetComboCheckTimer();
 }
 
-void AOatCharacterPlayer::AttackActionMontageEnd()
+void AOatCharacterPlayer::AttackMontageEnd()
 {
 	// 콤보 초기화
 	ensure(CurrentCombo != 0);

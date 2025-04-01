@@ -2,9 +2,9 @@
 
 
 #include "Core/OatGameInstance.h"
-#include "GameCommon/Managers/OatStageHandler.h"
-#include "GameCommon/Managers/OatEventHandler.h"
-#include "GameCommon/Managers/OatHandlerInterface.h"
+#include "Core/Managers/OatStageHandler.h"
+#include "Core/Managers/OatEventHandler.h"
+#include "Core/Managers/OatHandlerInterface.h"
 #include "Shared/Enums.h"
 
 

@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "OatAnimInstance.generated.h"
+#include "EnemyBaseAnimInstance.generated.h"
 
 /**
- *
+ * 
  */
 UCLASS()
-class PROJECTOAT_API UOatAnimInstance : public UAnimInstance
+class PROJECTOAT_API UEnemyBaseAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
 public:
-	UOatAnimInstance();
+	UEnemyBaseAnimInstance();
 
 protected:
 	// 처음 생성될 때 1회 호츨
@@ -42,7 +42,7 @@ protected:
 	// 움직이고 있는지?
 	UPROPERTY(Category = Character, EditAnywhere, BlueprintReadOnly)
 	float MovingThreshould;
-
+	
 	UPROPERTY(Category = Character, EditAnywhere, BlueprintReadOnly)
 	uint8 bIsFalling : 1;
 
@@ -50,7 +50,11 @@ protected:
 	UPROPERTY(Category = Character, EditAnywhere, BlueprintReadOnly)
 	float JumpingThreshould;
 
+
+public:
+	// SpawnEnd 호출 이후 true 
 	UPROPERTY(Category = Character, EditAnywhere, BlueprintReadOnly)
-	uint8 bIsJumping : 1;
+	uint8 bIsSpawn : 1;
+
 
 };

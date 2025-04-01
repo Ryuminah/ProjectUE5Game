@@ -1,16 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InGame/Character/OatCharacterNPC.h"
+#include "InGame/Character/OatCharacterEnemy.h"
 
 #include "Components/CapsuleComponent.h"
 #include "Core/OatAIController.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "InGame/AI/EnemyBaseAnimInstance.h"
 #include "InGame/Character/Component/OatCharacterStatComponent.h"
 #include "InGame/Physics/OatCollision.h"
 
-AOatCharacterNPC::AOatCharacterNPC()
+AOatCharacterEnemy::AOatCharacterEnemy()
 {
 	AIControllerClass = AOatAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -57,23 +58,51 @@ AOatCharacterNPC::AOatCharacterNPC()
 	{
 		DeadMontage = DeadMontageRef.Object;
 	}
+
+	// Spawn
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> SpawnMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Cactus/Animations/AM_Enemy_Cactus_Spawn.AM_Enemy_Cactus_Spawn'"));
+	if (SpawnMontageRef.Object)
+	{
+		SpawnMontage = SpawnMontageRef.Object;
+	}
+
+	// Hit
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> HitMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Cactus/Animations/AM_Enemy_Cactus_Hit.AM_Enemy_Cactus_Hit'"));
+	if (HitMontageRef.Object)
+	{
+		HitMontage = HitMontageRef.Object;
+	}
 }
 
-void AOatCharacterNPC::PostInitializeComponents()
+void AOatCharacterEnemy::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	SetupCallback();
 }
 
-void AOatCharacterNPC::SetupCallback()
+void AOatCharacterEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// 첫 생성시
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	OnSpawnStart();
+}
+
+void AOatCharacterEnemy::SetupCallback()
 {
 	Super::SetupCallback();
 	
-	AddDelegateOnAttackMonStart(FOnAttackMonStart::FDelegate::CreateUObject(this,&AOatCharacterNPC::AttackMontageBegin));
-	AddDelegateOnAttackMonEnd(FOnAttackMonEnd::FDelegate::CreateUObject(this,&AOatCharacterNPC::AttackMontageEnd));
+	AddDelegateOnAttackMonStart(FOnAttackMonStart::FDelegate::CreateUObject(this,&AOatCharacterEnemy::AttackMontageBegin));
+	AddDelegateOnAttackMonEnd(FOnAttackMonEnd::FDelegate::CreateUObject(this,&AOatCharacterEnemy::AttackMontageEnd));
 }
 
-void AOatCharacterNPC::SetDead()
+void AOatCharacterEnemy::Reset()
+{
+	Super::Reset();
+}
+
+void AOatCharacterEnemy::SetDead()
 {
 	Super::SetDead();
 
@@ -89,7 +118,7 @@ void AOatCharacterNPC::SetDead()
 
 }
 
-void AOatCharacterNPC::InputAttack()
+void AOatCharacterEnemy::InputAttack()
 {
 	if (TryStartAttack())
 	{
@@ -98,50 +127,50 @@ void AOatCharacterNPC::InputAttack()
 	}
 }
 
-float AOatCharacterNPC::GetAIPatrolRadius()
+float AOatCharacterEnemy::GetAIPatrolRadius()
 {
 	return 800.0f;
 }
 
-float AOatCharacterNPC::GetAIDetectRange()
+float AOatCharacterEnemy::GetAIDetectRange()
 {
 	return 400.0f;
 }
 
-float AOatCharacterNPC::GetAIAttackRange()
+float AOatCharacterEnemy::GetAIAttackRange()
 {
 	return Stat->GetTotalStat().AtkRange+ Stat->GetAttackRadius()*2;
 }
 
-float AOatCharacterNPC::GetAITurnSpeed()
+float AOatCharacterEnemy::GetAITurnSpeed()
 {
 	return 6.0f;
 }
 
-void AOatCharacterNPC::SetOnBTTaskAttackFinishedDelegate(const FOnBTTaskAttackFinished& InOnAttackFinished)
+void AOatCharacterEnemy::SetOnBTTaskAttackFinishedDelegate(const FOnBTTaskAttackFinished& InOnAttackFinished)
 {
 	OnAttackFinished = InOnAttackFinished;
 }
 
 
-bool AOatCharacterNPC::TryStartAttack()
+bool AOatCharacterEnemy::TryStartAttack()
 {
 	// 공격 가능한 상황인지 판단
 	
 	return true;
 }
 
-void AOatCharacterNPC::AttackMontageBegin()
+void AOatCharacterEnemy::AttackMontageBegin()
 {
 	// 일단 만들어는 둠..
 }
 
-void AOatCharacterNPC::AttackMontageEnd()
+void AOatCharacterEnemy::AttackMontageEnd()
 {
 	OnAttackFinished.ExecuteIfBound();
 }
 
-void AOatCharacterNPC::AnimNotifyAttackHitCheck()
+void AOatCharacterEnemy::AnimNotifyAttackHitCheck()
 {
 	Super::AnimNotifyAttackHitCheck();
 	
@@ -155,13 +184,14 @@ void AOatCharacterNPC::AnimNotifyAttackHitCheck()
 
 	const FVector End = Start + GetActorForwardVector() * AttackRange;
 
-	// CCHANNEL_OATACTION 에 대해서 반응하는 콜리전이 있는지
-	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult,Start, End, FQuat::Identity, CCHANNEL_OATACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
+	// EnemyAction 에 대해서 반응하는 콜리전이 있는지
+	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult,Start, End, FQuat::Identity, CCHANNEL_ENEMYACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
 	if (HitDetected)
 	{
 		FDamageEvent DamageEvent;
 		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
 	}
+	
 #if ENABLE_DRAW_DEBUG
 	FVector CapsuleOrign = Start + (End - Start) * 0.5f;
 	float CapsuleHalfHeight = AttackRange * 0.5f;
@@ -169,5 +199,34 @@ void AOatCharacterNPC::AnimNotifyAttackHitCheck()
 
 	DrawDebugCapsule(GetWorld(), CapsuleOrign, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DrawColor, false, 5.f);
 #endif
+}
+
+void AOatCharacterEnemy::AnimNotifySpawnEnd()
+{
+	UEnemyBaseAnimInstance* AnimInstance = Cast<UEnemyBaseAnimInstance>(GetMesh()->GetAnimInstance());
+	if (!AnimInstance)
+	{
+		// Debug
+		return;
+	}
+
+	AnimInstance->bIsSpawn = true;
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+
+}
+
+void AOatCharacterEnemy::OnSpawnStart()
+{
+	// 움직임을 막는다
+
+	if (UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance())
+	{
+		float SpeedRate = 1.f;
+		AnimInstatnce->Montage_Play(SpawnMontage, SpeedRate);
+	}
+	
+//	FOnMontageEnded EndDelegate;
+//	EndDelegate.BindUObject(this, &AOatFightUnitBase::OnAttackEnd);
+//	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, AttackMontage);
 }
 

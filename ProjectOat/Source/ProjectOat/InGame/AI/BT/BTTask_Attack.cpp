@@ -1,12 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InGame/AI/BTTask_Attack.h"
+#include "InGame/AI/BT/BTTask_Attack.h"
 #include "Core/OatAIController.h"
 #include "InGame/AI/Interface/OatAIInterface.h"
-#include "InGame/Character/OatCharacterNPC.h"
-#include "InGame/Character/OatFightUnitBase.h"
-#include "InGame/Interface/OatFightUnitInterface.h"
+#include "InGame/Character/OatCharacterEnemy.h"
 
 
 UBTTask_Attack::UBTTask_Attack()
@@ -22,7 +20,7 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent & OwnerCo
 		return EBTNodeResult::Failed;
 	}
 
-	AOatCharacterNPC* AIPawn = Cast<AOatCharacterNPC>(ControllingPawn);
+	AOatCharacterEnemy* AIPawn = Cast<AOatCharacterEnemy>(ControllingPawn);
 	if (!AIPawn) { return EBTNodeResult::Failed;}
 
 	FOnBTTaskAttackFinished OnAttackFinished;

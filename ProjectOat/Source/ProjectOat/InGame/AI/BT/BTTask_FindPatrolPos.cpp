@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InGame/AI/BTTask_FindPatrolPos.h"
-#include "OatAI.h"
+#include "InGame/AI/BT/BTTask_FindPatrolPos.h"
+#include "InGame/AI/OatAI.h"
 #include "Core/OatAIController.h"
 #include "NavigationSystem.h"
-#include "Interface/OatAIInterface.h"
+#include "InGame/AI/Interface/OatAIInterface.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UBTTask_FindPatrolPos::UBTTask_FindPatrolPos()

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameCommon/Managers/OatHandlerInterface.h"
+#include "Core/Managers/OatHandlerInterface.h"
 #include "GameData/OatStageData.h"
 #include "Shared/Enums.h"
 #include "OatStageHandler.generated.h"

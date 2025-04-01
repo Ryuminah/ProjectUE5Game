@@ -78,7 +78,7 @@ private:
 	// TSubClassOf -> 언리얼엔진이 제공하는 템플릿 : 지정한 클래스로부터 상속받은 클래스 목록만 표시하도록
 	// 임시로 록시 넣어놓기
 	UPROPERTY(Category=Battle, EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<class AOatCharacterNPC> OpponentClass;
+	TSubclassOf<class AOatCharacterEnemy> OpponentClass;
 
 	UFUNCTION()
 	void OnOpponentDestroyed(AActor* DestroyedActor);

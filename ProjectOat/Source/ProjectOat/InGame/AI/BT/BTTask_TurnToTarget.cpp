@@ -1,13 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InGame/AI/BTTask_TurnToTarget.h"
+#include "InGame/AI/BT/BTTask_TurnToTarget.h"
 #include "InGame/AI/OatAI.h"
 #include "Core/OatAIController.h"
 #include "InGame/AI/Interface/OatAIInterface.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
-#include "BTTask_TurnToTarget.h"
 
 UBTTask_TurnToTarget::UBTTask_TurnToTarget()
 {

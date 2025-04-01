@@ -31,6 +31,6 @@ protected:
 
 	/*Notify 관련*/
 public:
-	// HitCheck시작 시 호출
 	virtual void AnimNotifyAttackHitCheck() = 0;
+	// HitCheck시작 시 호출
 };

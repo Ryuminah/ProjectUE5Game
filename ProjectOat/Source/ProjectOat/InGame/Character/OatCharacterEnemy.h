@@ -5,22 +5,25 @@
 #include "CoreMinimal.h"
 #include "InGame/Character/OatFightUnitBase.h"
 #include "InGame/AI/Interface/OatAIInterface.h"
-#include "OatCharacterNPC.generated.h"
+#include "OatCharacterEnemy.generated.h"
 
 /**
  *
  */
 UCLASS()
-class PROJECTOAT_API AOatCharacterNPC : public AOatFightUnitBase, public IOatAIInterface
+class PROJECTOAT_API AOatCharacterEnemy : public AOatFightUnitBase, public IOatAIInterface
 {
 	GENERATED_BODY()
 
 public:
-	AOatCharacterNPC();
+	AOatCharacterEnemy();
 
 protected:
 	virtual void PostInitializeComponents() override;
+	virtual void BeginPlay() override;
+	
 	virtual void SetupCallback() override;
+	virtual void Reset();
 
 public:
 	virtual void SetDead() override;
@@ -49,5 +52,25 @@ private:
 	virtual void AttackMontageBegin() override;
 	virtual void AttackMontageEnd() override;
 	virtual void AnimNotifyAttackHitCheck() override;
+
+
+/* Hit ---------------------------------------------------------------*/
+//	virtual void AttackMontageBegin() override;
+//	virtual void AttackMontageEnd() override;
+
+	
+/* Spawn ---------------------------------------------------------------*/
+public:
+	// Spawn이 끝났을 시점에 호출
+	void AnimNotifySpawnEnd();
+	
+	// 모든 전투 유닛의 Attack의 시작 시점에 호출해주기        
+	void OnSpawnStart();      
+	//virtual void OnSpawnEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded) final override;
+	
+protected:
+	UPROPERTY(Category=Animation, EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UAnimMontage> SpawnMontage;
+
 
 };

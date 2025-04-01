@@ -5,9 +5,9 @@
 
 #include "Components/BoxComponent.h"
 #include "Core/OatGameInstance.h"
-#include "GameCommon/Managers/OatStageHandler.h"
+#include "Core/Managers/OatStageHandler.h"
 #include "InGame/Physics/OatCollision.h"
-#include "InGame/Character/OatCharacterNPC.h"
+#include "InGame/Character/OatCharacterEnemy.h"
 #include "InGame/Stage/OatSpawnPoint.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -27,7 +27,7 @@ AOatStageSectionTrigger::AOatStageSectionTrigger()
 	//StageTrigger->ComponentTags.Add();
 
 
-	OpponentClass = AOatCharacterNPC::StaticClass();
+	OpponentClass = AOatCharacterEnemy::StaticClass();
 	OatSpawnPointClass = AOatSpawnPoint::StaticClass();
 
 	CurrentState = EStageSectionState::NONE;
@@ -160,7 +160,7 @@ void AOatStageSectionTrigger::SpawnSectionEnemy(FVector SpawnPos)
 	UWorld* World = GWorld->GetGameInstance()->GetWorld();
 	AActor* OpponentActor = World->SpawnActor(OpponentClass, &SpawnPos, &FRotator::ZeroRotator);
 
-	if (AOatCharacterNPC* AOatEnemy = Cast<AOatCharacterNPC>(OpponentActor))
+	if (AOatCharacterEnemy* AOatEnemy = Cast<AOatCharacterEnemy>(OpponentActor))
 	{
 		AOatEnemy->OnDestroyed.AddDynamic(this, &AOatStageSectionTrigger::OnOpponentDestroyed);
 	}

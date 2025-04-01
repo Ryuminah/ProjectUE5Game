@@ -7,7 +7,7 @@
 #include "Core/OatGameInstance.h"
 #include "Core/OatGameMode.h"
 
-#include "GameCommon/Managers/OatEventHandler.h"
+#include "Core/Managers/OatEventHandler.h"
 
 #include "Kismet/GameplayStatics.h"
 

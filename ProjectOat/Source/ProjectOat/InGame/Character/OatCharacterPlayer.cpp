@@ -92,6 +92,13 @@ AOatCharacterPlayer::AOatCharacterPlayer()
 		DeadMontage = DeadMontageRef.Object;
 	}
 	
+	// Hit
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> HitMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ProjectOat/Arts/Characters/Roxy/Animations/AM_Roxy_Hit.AM_Roxy_Hit'"));
+	if (HitMontageRef.Object)
+	{
+		HitMontage = HitMontageRef.Object;
+	}
+	
 	/* Input ----------------------------------------------------------------------------------*/
 	static ConstructorHelpers::FObjectFinder<UOatCharacterControlData> ShoulderDataRef(TEXT("/Script/ProjectOat.OatCharacterControlData'/Game/ProjectOat/Core/Systems/Input/DA_Control_Shoulder.DA_Control_Shoulder'"));
 	if (ShoulderDataRef.Object)
@@ -207,12 +214,14 @@ void AOatCharacterPlayer::AnimNotifyAttackHitCheck()
 
 	const FVector End = Start + GetActorForwardVector() * AttackRange;
 
-	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANNEL_ENEMYACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
+	// OatAction에 반응하는 채널을 조사
+	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANNEL_OATACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
 	if (HitDetected)
 	{
 		FDamageEvent DamageEvent;
 		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
 	}
+	
 #if ENABLE_DRAW_DEBUG
 	FVector CapsuleOrign = Start + (End - Start) * 0.5f;
 	float CapsuleHalfHeight = AttackRange * 0.5f;

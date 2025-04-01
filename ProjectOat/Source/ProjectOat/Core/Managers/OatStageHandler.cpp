@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "GameCommon/Managers/OatStageHandler.h"
-#include "GameCommon/Managers/OatEventHandler.h"
+#include "Core/Managers/OatStageHandler.h"
+#include "Core/Managers/OatEventHandler.h"
 #include "Shared/Enums.h"
 #include "Core/OatGameInstance.h"
 

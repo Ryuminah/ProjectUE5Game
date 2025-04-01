@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InGame/AI/BTService_Detect.h"
+#include "InGame/AI/BT/BTService_Detect.h"
 #include "InGame/AI/Interface/OatAIInterface.h"
 #include "InGame/Physics/OatCollision.h"
 #include "InGame/AI/OatAI.h"

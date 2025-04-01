@@ -3,18 +3,13 @@
 
 #include "OatFightUnitBase.h"
 
-#include "Engine/DamageEvents.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimMontage.h"
 
-#include "OatCharacterControlData.h"
-#include "OatAttackActionData.h"
-#include "InGame/Physics/OatCollision.h"
 #include "InGame/Character/Widget/OatHpBarWidget.h"
 #include "InGame/Character/Component/OatCharacterStatComponent.h"
 #include "Shared/Widget/OatWidgetComponent.h"
-#include "GameCommon/Items/OatItemWeaponData.h"
 #include "GameData/TestData.h"
 
 
@@ -79,36 +74,33 @@ void AOatFightUnitBase::StopCurrentMontage() const
 
 void AOatFightUnitBase::AnimNotifyAttackHitCheck()
 {
-//	FHitResult OutHitResult;
-//	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
-//
-//	const float AttackRange = Stat->GetTotalStat().AtkRange;
-//	const float AttackRadius = Stat->GetAttackRadius();
-//	const float AttackDamage = Stat->GetTotalStat().Atk;
-//	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
-//
-//	const FVector End = Start + GetActorForwardVector() * AttackRange;
-//
-//	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANNEL_OATACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
-//	if (HitDetected)
-//	{
-//		FDamageEvent DamageEvent;
-//		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
-//	}
-//#if ENABLE_DRAW_DEBUG
-//	FVector CapsuleOrign = Start + (End - Start) * 0.5f;
-//	float CapsuleHalfHeight = AttackRange * 0.5f;
-//	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
-//
-//	DrawDebugCapsule(GetWorld(), CapsuleOrign, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DrawColor, false, 5.f);
-//#endif
+
 }
 
 float AOatFightUnitBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	Stat->ApplyDamage(DamageAmount);
+	
+	UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
 
+	// 바로 죽음 처리
+	if (AnimInstatnce->Montage_IsPlaying(DeadMontage))
+	{
+		return DamageAmount;
+	}
+	
+	// CC기 걸린 상황 체크하기
+	// Hit                       
+	StopCurrentMontage();
+
+	AnimInstatnce->Montage_Play(HitMontage, 1.f);
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+	
+	FOnMontageEnded EndDelegate;
+	EndDelegate.BindWeakLambda(this,[&](UAnimMontage* Montage, bool bInterrupted) {GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);});
+	AnimInstatnce->Montage_SetEndDelegate(EndDelegate, HitMontage);
+	
 	return DamageAmount;
 }
 

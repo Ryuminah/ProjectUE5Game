@@ -9,7 +9,6 @@
 #include "GameData/TestData.h"
 #include "InGame/Interface/OatFightUnitInterface.h"
 
-
 #include "OatFightUnitBase.generated.h"
 
 UENUM()
@@ -19,16 +18,14 @@ enum class ECharacterControlType : uint8
 	Quater
 };
 
-
 DECLARE_MULTICAST_DELEGATE(FOnAttackMonStart); // 공격 몽타주 시작
-DECLARE_MULTICAST_DELEGATE(FOnAttackMonEnd); // 공격 몽타주 종료 (UAnimMontage* TargetMontage, bool IsProperlyEnded 인자로 받아야할까?)
+DECLARE_MULTICAST_DELEGATE(FOnAttackMonEnd);   // 공격 몽타주 종료 (UAnimMontage* TargetMontage, bool IsProperlyEnded 인자로 받아야할까?)
 
 DECLARE_MULTICAST_DELEGATE(FOnHitMonStart); // 피격		
 DECLARE_MULTICAST_DELEGATE(FOnHitMonEnd);
 
 DECLARE_MULTICAST_DELEGATE(FOnDeadMonStart);
 DECLARE_MULTICAST_DELEGATE(FOnDeadMonStart);
-
 
 // 전투 기능이 필요한 캐릭터들 Base
 UCLASS()
@@ -39,7 +36,10 @@ class PROJECTOAT_API AOatFightUnitBase : public ACharacter, public IOatFightUnit
 public:
 	AOatFightUnitBase();
 	virtual void PostInitializeComponents() override;
-	virtual void SetupCallback(){};
+
+	virtual void SetupCallback()
+	{
+	};
 
 /* Montage Callback  -----------------------------------------------------*/
 private:
@@ -51,26 +51,30 @@ private:
 
 	FOnDeadMonStart OnDeadMonStart;
 	FOnDeadMonStart OnDeadMonEnd;
-	
-protected:
-	virtual void AttackMontageBegin(){};
-	virtual void AttackMontageEnd(){};
-	void AddDelegateOnAttackMonStart(const FOnAttackMonStart::FDelegate& InDelegate){OnAttackMonStart.Add(InDelegate);}
-	void AddDelegateOnAttackMonEnd(const FOnAttackMonEnd::FDelegate& InDelegate) { OnAttackMonEnd.Add(InDelegate);}
 
+protected:
+	virtual void AttackMontageBegin()
+	{
+	};
+
+	virtual void AttackMontageEnd()
+	{
+	};
+	void AddDelegateOnAttackMonStart(const FOnAttackMonStart::FDelegate& InDelegate) { OnAttackMonStart.Add(InDelegate); }
+	void AddDelegateOnAttackMonEnd(const FOnAttackMonEnd::FDelegate& InDelegate) { OnAttackMonEnd.Add(InDelegate); }
 
 /* Attack  -----------------------------------------------------*/
 protected:
-	UPROPERTY(Category=Animation, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category=Animation, EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UAnimMontage> AttackMontage;
 
 	// 모든 전투 유닛의 Attack의 시작 시점에 호출해주기        
-	virtual void OnAttackStart() final override;      
+	virtual void OnAttackStart() final override;
 	virtual void OnAttackEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded) final override;
 
 /* Hit  -----------------------------------------------------*/
 	// TMap으로 바꿀까!
-	UPROPERTY(Category=Animation, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category=Animation, EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UAnimMontage> HitMontage;
 	// 모든 전투 유닛의 Attack의 시작 시점에 호출해주기        
 //	virtual void OnHitStart() final override;      
@@ -85,17 +89,15 @@ protected:
 	// 나중에 구현하기 (현재 공격 가능한지)
 	//virtual void TryStartAttack();
 
-
 /* Hit Check -----------------------------------------------------*/
 protected:
 	// Anim에서 AttackTiming
 	virtual void AnimNotifyAttackHitCheck() override;
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-	                         class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 /* Dead ----------------------------------------------------------*/
 protected:
-	UPROPERTY(Category=Animation, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category=Animation, EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UAnimMontage> DeadMontage;
 
 	virtual void SetDead();

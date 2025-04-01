@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/AnimNotify/AnimNotify_AttackHitCheck.h" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/Managers/OatEventHandler.h" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/Managers/OatStageHandler.cpp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/Managers/OatStageHandler.h" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/OatGameInstance.cpp" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/OatGameInstance.h" charset="EUC-KR" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/OatGameMode.cpp" charset="EUC-KR" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/OatGameMode.h" charset="EUC-KR" />
-    <file url="file://$PROJECT_DIR$/Source/ProjectOat/GameCommon/Managers/OatEventHandler.h" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Source/ProjectOat/GameCommon/Managers/OatStageHandler.cpp" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Source/ProjectOat/GameCommon/Managers/OatStageHandler.h" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/AI/BTService_Detect.cpp" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/AI/BTTask_FindPatrolPos.cpp" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/AI/BTTask_TurnToTarget.cpp" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/AnimNotify_AttackHitCheck.h" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/AI/BT/BTService_Detect.cpp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/AI/BT/BTTask_FindPatrolPos.cpp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/AI/BT/BTTask_TurnToTarget.cpp" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/Component/OatCharacterStatComponent.cpp" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatCharacterControlData.h" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatCharacterNPC.cpp" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatCharacterEnemy.cpp" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatCharacterPlayer.cpp" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatCharacterPlayer.h" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/Character/OatFightUnitBase.cpp" charset="EUC-KR" />

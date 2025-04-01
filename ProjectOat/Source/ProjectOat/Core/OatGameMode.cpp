@@ -4,8 +4,8 @@
 #include "Core/OatGameMode.h"
 #include "Core/OatPlayerController.h"
 #include "Core/OatGameInstance.h"
-#include "GameCommon/Managers/OatEventHandler.h"
-#include "GameCommon/Managers/OatStageHandler.h"
+#include "Core/Managers/OatEventHandler.h"
+#include "Core/Managers/OatStageHandler.h"
 #include "Shared/OatUtilities.h"
 
 AOatGameMode::AOatGameMode()

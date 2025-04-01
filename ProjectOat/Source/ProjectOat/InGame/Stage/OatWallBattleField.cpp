@@ -3,7 +3,7 @@
 
 #include "InGame/Stage/OatWallBattleField.h"
 #include "Shared/Enums.h"
-#include "GameCommon/Managers/OatEventHandler.h"
+#include "Core/Managers/OatEventHandler.h"
 #include "Core/OatGameInstance.h"
 
 #include "Components/BoxComponent.h"

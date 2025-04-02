@@ -40,7 +40,7 @@ void AOatStageHandler::ChangeToReadyBattle(int SectionId)
 	OatGameInstance->GetEventHandler()->OnStageSectionChanged.Broadcast(SectionId, EStageSectionState::READYBATTLE);
 }
 
-void AOatStageHandler::ChangeToInBattle(int SectionId)
+void AOatStageHandler::ChangeToInBattle(int SectionId) const
 {
 	//StageData.StageSectionState = EStageSectionState::INBATTLE;
 	

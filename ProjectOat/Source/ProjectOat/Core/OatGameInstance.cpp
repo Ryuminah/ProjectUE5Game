@@ -2,9 +2,10 @@
 
 
 #include "Core/OatGameInstance.h"
+#include "Core/Managers/OatHandlerInterface.h"
 #include "Core/Managers/OatStageHandler.h"
 #include "Core/Managers/OatEventHandler.h"
-#include "Core/Managers/OatHandlerInterface.h"
+#include "Core/Managers/OatSoundHandler.h"
 #include "Shared/Enums.h"
 
 
@@ -26,11 +27,14 @@ void UOatGameInstance::Init()
 	}
 
 	TArray<IOatHandlerInterface*> HandlersArray;
-	EventHandler = World->SpawnActor<AOatEventHandler>();
-	HandlersArray.Add(EventHandler);
-
 	StageHandler = World->SpawnActor<AOatStageHandler>();
 	HandlersArray.Add(StageHandler);
+	
+	EventHandler = World->SpawnActor<AOatEventHandler>();
+	HandlersArray.Add(EventHandler);
+	
+	SoundHandler = World->SpawnActor<AOatSoundHandler>();
+	HandlersArray.Add(SoundHandler);
 
 	// 초기화 호출
 	for (auto Handler : HandlersArray)
@@ -39,7 +43,6 @@ void UOatGameInstance::Init()
 	}
 
 	SetupGameEventBindings();
-
 }
 
 // UObject의 모든 속성이 초기화 된 이후, 에디터에서 Spawn될 가능성이 있어도 안정적
@@ -69,6 +72,7 @@ void UOatGameInstance::TravelLevel(ELevelType LevelType)
 	// 이동 후
 	CurrentLevelType = LevelType;
 
+	// 브금도 알아서 바꿉시더~
 	switch (CurrentLevelType)
 	{
 	case ELevelType::LOBBY:

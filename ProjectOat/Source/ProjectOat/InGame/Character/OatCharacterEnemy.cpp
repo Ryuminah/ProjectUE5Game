@@ -179,7 +179,7 @@ void AOatCharacterEnemy::AnimNotifyAttackHitCheck()
 
 	const float AttackRange = Stat->GetTotalStat().AtkRange;
 	const float AttackRadius = Stat->GetAttackRadius();
-	const float AttackDamage = Stat->GetTotalStat().Atk;
+	const float AttackDamage = Stat->GetTotalStat().Atk * 0.5f;
 	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
 
 	const FVector End = Start + GetActorForwardVector() * AttackRange;

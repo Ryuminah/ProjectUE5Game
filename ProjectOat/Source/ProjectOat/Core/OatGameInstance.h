@@ -28,6 +28,8 @@ public:
 /* Getter ----------------------------------------------------------------------------------------------------*/
 	class AOatStageHandler* GetStageHandler() { return StageHandler; }
 	class AOatEventHandler* GetEventHandler() { return EventHandler; }
+	class AOatSoundHandler* GetSoundHandler() { return SoundHandler; }
+
 
 	ELevelType GetCurrentLevel() const { return CurrentLevelType; } 
 
@@ -35,16 +37,17 @@ public:
 private:
 	UPROPERTY()
 	TObjectPtr<class AOatStageHandler> StageHandler;
-		
-	// 오브젝트 풀
 	
-	// 델리게이트 핸들러
 	UPROPERTY()
 	TObjectPtr<class AOatEventHandler> EventHandler;
+
+	UPROPERTY()
+	TObjectPtr<class AOatSoundHandler> SoundHandler;
 
 /* GameCore ----------------------------------------------------------------------------------------------------*/
 	// Level ----------------------------------------------------
 private:
+	// 게임 모드에서 관리하자
 	ELevelType CurrentLevelType;
 
 public:

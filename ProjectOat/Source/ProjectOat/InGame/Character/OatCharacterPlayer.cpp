@@ -208,7 +208,7 @@ void AOatCharacterPlayer::AnimNotifyAttackHitCheck()
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
 
 	const float AttackRange = Stat->GetTotalStat().AtkRange;
-	const float AttackRadius = Stat->GetAttackRadius();
+	const float AttackRadius = Stat->GetAttackRadius()*4;
 	const float AttackDamage = Stat->GetTotalStat().Atk;
 	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
 

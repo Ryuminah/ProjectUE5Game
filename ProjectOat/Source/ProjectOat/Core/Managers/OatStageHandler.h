@@ -40,7 +40,7 @@ public:
 	// Section은 1부터로 바꿀까..
 public:
 	void ChangeToReadyBattle(int SectionId);
-	void ChangeToInBattle(int SectionId);
+	void ChangeToInBattle(int SectionId) const;
 	void ChangeToEndBattle(int SectionId);
 	
 private:

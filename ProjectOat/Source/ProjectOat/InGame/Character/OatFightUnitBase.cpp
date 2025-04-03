@@ -42,7 +42,7 @@ void AOatFightUnitBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	Stat->OnHpZero.AddUObject(this, &AOatFightUnitBase::SetDead);
+	Stat->OnHpZero.AddUObject(this, &AOatFightUnitBase::OnDeadStart);
 	Stat->OnStatChanged.AddUObject(this, &AOatFightUnitBase::ApplyStat);
 }
 
@@ -63,14 +63,8 @@ void AOatFightUnitBase::OnAttackStart()
 void AOatFightUnitBase::OnAttackEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
 {
 	OnAttackMonEnd.Broadcast();	
-	//AttackMonEnd();
 }
 
-void AOatFightUnitBase::StopCurrentMontage() const
-{
-	UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance();
-	AnimInstatnce->Montage_Pause();
-}
 
 void AOatFightUnitBase::AnimNotifyAttackHitCheck()
 {
@@ -91,9 +85,10 @@ float AOatFightUnitBase::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	}
 	
 	// CC기 걸린 상황 체크하기
-	// Hit                       
-	StopCurrentMontage();
-
+	// Hit          
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->StopAllMontages(0.f);
+	
 	AnimInstatnce->Montage_Play(HitMontage, 1.f);
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	
@@ -104,19 +99,39 @@ float AOatFightUnitBase::TakeDamage(float DamageAmount, FDamageEvent const& Dama
 	return DamageAmount;
 }
 
-void AOatFightUnitBase::SetDead()
+void AOatFightUnitBase::OnDeadStart()
 {
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
-	PlayDeadAnim();
 	SetActorEnableCollision(false);
-}
-
-void AOatFightUnitBase::PlayDeadAnim()
-{
+	
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->StopAllMontages(0.f);
 	AnimInstance->Montage_Play(DeadMontage, 1.f);
+	OnDeadMonStart.Broadcast();
+
+	FOnMontageEnded EndDelegate;
+	EndDelegate.BindUObject(this, &AOatFightUnitBase::OnDeadEnd);
+	AnimInstance->Montage_SetEndDelegate(EndDelegate, DeadMontage);
 }
+
+void AOatFightUnitBase::OnDeadEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded)
+{
+	OnDeadMonEnd.Broadcast();
+}
+
+//void AOatFightUnitBase::SetDead()
+//{
+//	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+//	PlayDeadAnim();
+//	SetActorEnableCollision(false);
+//}
+
+//void AOatFightUnitBase::PlayDeadAnim()
+//{
+//	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+//	AnimInstance->StopAllMontages(0.f);
+//	AnimInstance->Montage_Play(DeadMontage, 1.f);
+//}
 
 void AOatFightUnitBase::ApplyStat(const FTestData & BaseStat, const FTestData & ModifierStat)
 {

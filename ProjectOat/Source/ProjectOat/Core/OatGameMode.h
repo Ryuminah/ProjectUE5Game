@@ -4,16 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "Core/Interface/OatGameInterface.h"
-#include "GameData/OatStageData.h"
-#include "Shared/Enums.h"
+#include "Core/Interface/OatGameModeInterface.h"
 #include "OatGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTOAT_API AOatGameMode : public AGameModeBase , public IOatGameInterface
+class PROJECTOAT_API AOatGameMode : public AGameModeBase , public IOatGameModeInterface
 {
 	GENERATED_BODY()
 

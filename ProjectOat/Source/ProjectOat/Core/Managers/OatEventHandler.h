@@ -22,6 +22,8 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnSelectSceneDelegate, /*const ELevelType*/
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStageSectionChangedDelegate, const int/*SectionID*/,
                                      const EStageSectionState/*bool InBattle*/);
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnEnemyDead, UObject*); // UObject는 필요 없을수도 있음     
+
 // 게임 내 모든 이벤트는 여기서 관리
 UCLASS()
 class PROJECTOAT_API AOatEventHandler : public AActor, public IOatHandlerInterface
@@ -40,9 +42,10 @@ public:
 	FOnStageClearDungeonDelegate OnStageClearDungeon;
 
 	FOnGameOver OnGameOver; //게임 패배			
-
-
 	FOnQuitGame OnQuitGame; //게임 종료시
+
+	// 적 사망 시
+	FOnEnemyDead OnEnemyDead;
 
 
 private: FOnStageSectionChangedDelegate OnStageSectionChanged;

@@ -27,8 +27,8 @@ public:
 	void GameClear();
 	void GameScoreChanged(int32 NewScore);
 
-	// K2 -> Kismet Á¢µÎ»ç
-	// Blueprint¿¡ º¸¿©Áú ÇÔ¼ö ¸íÀ» meta¿¡¼­ ÁöÁ¤
+	// K2 -> Kismet ì ‘ë‘ì‚¬
+	// Blueprintì— ë³´ì—¬ì§ˆ í•¨ìˆ˜ ëª…ì„ metaì—ì„œ ì§€ì •
 	UFUNCTION(Category=Game, BlueprintImplementableEvent , meta =(DisplayName = "OnScoreChangedCpp"))
 	void K2_OnScoreChanged(int32 NewScore);
 

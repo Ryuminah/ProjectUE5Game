@@ -5,6 +5,8 @@
 
 #include "Components/CapsuleComponent.h"
 #include "Core/OatAIController.h"
+#include "Core/OatGameInstance.h"
+#include "Core/Managers/OatEventHandler.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "InGame/AI/EnemyBaseAnimInstance.h"
@@ -85,7 +87,6 @@ void AOatCharacterEnemy::BeginPlay()
 	Super::BeginPlay();
 
 	// 첫 생성시
-	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	OnSpawnStart();
 }
 
@@ -95,27 +96,14 @@ void AOatCharacterEnemy::SetupCallback()
 	
 	AddDelegateOnAttackMonStart(FOnAttackMonStart::FDelegate::CreateUObject(this,&AOatCharacterEnemy::AttackMontageBegin));
 	AddDelegateOnAttackMonEnd(FOnAttackMonEnd::FDelegate::CreateUObject(this,&AOatCharacterEnemy::AttackMontageEnd));
+
+	AddDelegateOnDeadMonStart(FOnDeadMonStart::FDelegate::CreateUObject(this,&AOatCharacterEnemy::DeadMontageBegin));
+	AddDelegateOnDeadMonEnd(FOnDeadMonEnd::FDelegate::CreateUObject(this,&AOatCharacterEnemy::DeadMontageEnd));
 }
 
 void AOatCharacterEnemy::Reset()
 {
 	Super::Reset();
-}
-
-void AOatCharacterEnemy::SetDead()
-{
-	Super::SetDead();
-
-	if (AOatAIController* OatAIController = Cast<AOatAIController>(GetController()))
-	{
-		OatAIController->StopAI();
-	}
-
-	// 이벤트 시간 이후 종료
-	FTimerHandle DeadTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([&](){ Destroy(); }), 
-										   DeadEventDelayTime, false);
-
 }
 
 void AOatCharacterEnemy::InputAttack()
@@ -149,9 +137,35 @@ float AOatCharacterEnemy::GetAITurnSpeed()
 
 void AOatCharacterEnemy::SetOnBTTaskAttackFinishedDelegate(const FOnBTTaskAttackFinished& InOnAttackFinished)
 {
-	OnAttackFinished = InOnAttackFinished;
+	OnBTTaskAttackFinished = InOnAttackFinished;
 }
 
+void AOatCharacterEnemy::DeadMontageBegin()
+{
+	Super::DeadMontageBegin();
+	
+	if (AOatAIController* OatAIController = Cast<AOatAIController>(GetController()))
+	{
+		OatAIController->StopAI();
+	}
+
+	// 이벤트 시간 이후 종료
+	FTimerHandle DeadTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(DeadTimerHandle, FTimerDelegate::CreateLambda([&](){ Destroy(); }), 
+										   DeadEventDelayTime, false);
+
+	// 적 처치 BroadCast
+	if (UOatGameInstance* OatGameInstance = Cast<UOatGameInstance>(GetGameInstance()))
+	{
+		OatGameInstance->GetEventHandler()->OnEnemyDead.Broadcast(this);		
+	}
+}
+
+void AOatCharacterEnemy::DeadMontageEnd()
+{
+	Super::DeadMontageEnd();
+
+}
 
 bool AOatCharacterEnemy::TryStartAttack()
 {
@@ -167,7 +181,8 @@ void AOatCharacterEnemy::AttackMontageBegin()
 
 void AOatCharacterEnemy::AttackMontageEnd()
 {
-	OnAttackFinished.ExecuteIfBound();
+	// Attack 몽타주 종료시점을 BT 완료로 
+	OnBTTaskAttackFinished.ExecuteIfBound();
 }
 
 void AOatCharacterEnemy::AnimNotifyAttackHitCheck()
@@ -201,7 +216,7 @@ void AOatCharacterEnemy::AnimNotifyAttackHitCheck()
 #endif
 }
 
-void AOatCharacterEnemy::AnimNotifySpawnEnd()
+void AOatCharacterEnemy::AnimNotifySpawnEnd() const
 {
 	UEnemyBaseAnimInstance* AnimInstance = Cast<UEnemyBaseAnimInstance>(GetMesh()->GetAnimInstance());
 	if (!AnimInstance)
@@ -212,12 +227,12 @@ void AOatCharacterEnemy::AnimNotifySpawnEnd()
 
 	AnimInstance->bIsSpawn = true;
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-
 }
 
-void AOatCharacterEnemy::OnSpawnStart()
+void AOatCharacterEnemy::OnSpawnStart() const
 {
 	// 움직임을 막는다
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 
 	if (UAnimInstance* AnimInstatnce = GetMesh()->GetAnimInstance())
 	{

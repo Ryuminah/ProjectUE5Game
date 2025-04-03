@@ -5,7 +5,6 @@
 #include "Core/OatPlayerController.h"
 #include "Core/OatGameInstance.h"
 #include "Core/Managers/OatEventHandler.h"
-#include "Core/Managers/OatStageHandler.h"
 #include "Shared/OatUtilities.h"
 
 AOatGameMode::AOatGameMode()
@@ -79,6 +78,7 @@ bool AOatGameMode::IsGameCleared()
 	return false;
 }
 
+// 이거 이상함 PlayerController로 빼던가 해야함
 void AOatGameMode::OnPlayerDead()
 {
 	AOatPlayerController* OatPlayerController = Cast<AOatPlayerController>(GetWorld()->GetFirstPlayerController());

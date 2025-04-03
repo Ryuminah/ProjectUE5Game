@@ -58,23 +58,16 @@ void AOatSoundHandler::PlayBGM(FName ChangeBGMName)
 	
 	if (BGMAudioComponent->IsPlaying())
 	{
-		BGMAudioComponent->FadeOut(1.5f, 0.0f); // 1.5초 동안 꺼지기
-
-		// 캡쳐란 바깥에 있는 지역 변수를 람다 안에서 사용하도록 '복사' 또는 '참조'로 받아오는 것!
-		FTimerHandle TimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
-		{
-			BGMAudioComponent->SetSound(CurrentBGM);
-			BGMAudioComponent->FadeIn(1.5f, 1.0f, 0.0f); // 1.5초 동안 점점 커짐
-		}, 0.5f, false);
+		BGMAudioComponent->FadeOut(2.0f, 0.0f); // 1.5초 동안 꺼지기
 	}
 
-	else
+	// 캡쳐란 바깥에 있는 지역 변수를 람다 안에서 사용하도록 '복사' 또는 '참조'로 받아오는 것!
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
 	{
 		BGMAudioComponent->SetSound(CurrentBGM);
-		BGMAudioComponent->Play();
-	}
-
+		BGMAudioComponent->FadeIn(3.0f, 1.0f, 0.0f); // 1.5초 동안 점점 커짐
+	}, 0.5f, false);
 
 }
 

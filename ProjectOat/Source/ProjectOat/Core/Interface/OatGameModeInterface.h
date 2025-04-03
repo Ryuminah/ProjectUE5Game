@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "OatGameInterface.generated.h"
+#include "OatGameModeInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UOatGameInterface : public UInterface
+class UOatGameModeInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,7 +16,7 @@ class UOatGameInterface : public UInterface
 /**
  * GameInterface
  */
-class PROJECTOAT_API IOatGameInterface
+class PROJECTOAT_API IOatGameModeInterface
 {
 	GENERATED_BODY()
 

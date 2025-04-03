@@ -27,8 +27,9 @@ protected:
 	virtual void OnAttackEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded) = 0;
 	
 	//virtual void OnHitStart() = 0;
-	//virtual void OnDeadStart() = 0;
-
+	virtual void OnDeadStart() = 0;
+	virtual void OnDeadEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded) = 0;
+	
 	/*Notify 관련*/
 public:
 	virtual void AnimNotifyAttackHitCheck() = 0;

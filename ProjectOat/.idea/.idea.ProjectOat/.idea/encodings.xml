@@ -9,6 +9,7 @@
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/OatGameInstance.h" charset="EUC-KR" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/OatGameMode.cpp" charset="EUC-KR" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/OatGameMode.h" charset="EUC-KR" />
+    <file url="file://$PROJECT_DIR$/Source/ProjectOat/Core/OatPlayerController.h" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/AI/BT/BTService_Detect.cpp" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/AI/BT/BTTask_FindPatrolPos.cpp" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/Source/ProjectOat/InGame/AI/BT/BTTask_TurnToTarget.cpp" charset="UTF-8" />

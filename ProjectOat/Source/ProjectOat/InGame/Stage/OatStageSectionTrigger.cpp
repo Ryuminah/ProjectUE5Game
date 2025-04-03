@@ -5,6 +5,7 @@
 
 #include "Components/BoxComponent.h"
 #include "Core/OatGameInstance.h"
+#include "Core/Managers/OatEventHandler.h"
 #include "Core/Managers/OatStageHandler.h"
 #include "InGame/Physics/OatCollision.h"
 #include "InGame/Character/OatCharacterEnemy.h"
@@ -30,29 +31,35 @@ AOatStageSectionTrigger::AOatStageSectionTrigger()
 	OpponentClass = AOatCharacterEnemy::StaticClass();
 	OatSpawnPointClass = AOatSpawnPoint::StaticClass();
 
+}
+
+void AOatStageSectionTrigger::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	SectionStateChangedCallback.Add(EStageSectionState::READYBATTLE,FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetReadyBattle)));
+	SectionStateChangedCallback.Add(EStageSectionState::INBATTLE,FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetInBattle)));
+	SectionStateChangedCallback.Add(EStageSectionState::ENDBATTLE,FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetEndBattle)));
+
+	if (UOatGameInstance* OatGameInstance = Cast<UOatGameInstance>(GetGameInstance()))
+	{
+		OatGameInstance->GetEventHandler()->OnEnemyDead.AddUObject(this, &AOatStageSectionTrigger::CountKilledEnemy);
+	}
+	
 	CurrentState = EStageSectionState::NONE;
+	CurrentWave = 0;
+	WaveTotalEnemyCount = 5;
+	WaveKillCount = 0;
 }
 
 void AOatStageSectionTrigger::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SectionStateChangedCallback.Add(EStageSectionState::READYBATTLE,
-	                                      FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetReadyBattle)));
-
-	SectionStateChangedCallback.Add(EStageSectionState::INBATTLE,
-	                                      FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetInBattle)));
-
-	SectionStateChangedCallback.Add(EStageSectionState::ENDBATTLE,
-	                                      FStageSectionChangedDelegateWrapper(FOnStageSectionStateChangedDelegate::CreateUObject(this, &AOatStageSectionTrigger::SetEndBattle)));
-
 	CreateSpawnPointData();
 }
 
-void AOatStageSectionTrigger::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-}
+
 
 void AOatStageSectionTrigger::OnStageTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                                          UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
@@ -66,6 +73,33 @@ void AOatStageSectionTrigger::OnStageTriggerBeginOverlap(UPrimitiveComponent* Ov
 	SetSectionState(EStageSectionState::READYBATTLE);
 }
 
+void AOatStageSectionTrigger::CountKilledEnemy(UObject* Object)
+{
+	++WaveKillCount;
+
+	// 웨이브의 적을 다 처치한 경우
+	if (WaveKillCount >= WaveTotalEnemyCount)
+	{
+		++CurrentWave;
+		TrySpawnNextWave();
+	}
+}
+
+void AOatStageSectionTrigger::TrySpawnNextWave()
+{
+	// 다음 웨이브 확인
+	// GetNextWave()
+	// 데이터 여부 확인
+	//	WaveKillCount = 0;
+	//
+	//	if (CurrentWave)
+	//	{
+	//		// SpawnEnemy
+	//	}
+	// 지금은 배틀 종료로
+	SetSectionState(EStageSectionState::ENDBATTLE);
+	
+}
 
 void AOatStageSectionTrigger::SetSectionState(EStageSectionState NewState)
 {
@@ -152,11 +186,9 @@ void AOatStageSectionTrigger::SetEndBattle()
 }
 
 
-void AOatStageSectionTrigger::SpawnSectionEnemy(FVector SpawnPos)
+void AOatStageSectionTrigger::SpawnSectionEnemy(const FVector& SpawnPos)
 {
 	// (GetWorld 안됨)
-
-
 	UWorld* World = GWorld->GetGameInstance()->GetWorld();
 	AActor* OpponentActor = World->SpawnActor(OpponentClass, &SpawnPos, &FRotator::ZeroRotator);
 

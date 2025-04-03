@@ -45,34 +45,12 @@ protected:
 
 protected:
 	virtual void SetupCallback() override;
-
 	
-/* Combo Action -----------------------------------------------------*/
-private:
-	UPROPERTY(Category=Attack, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<class UOatAttackActionData> AttackActionData;
-
-	virtual void AttackMontageBegin() override;
-	virtual void AttackMontageEnd() override;
-
-	// 현재까지 진행된 콤보 수
-	int32 CurrentCombo = 0;
-	// 원하는 시간에 특정 함수 호출
-	FTimerHandle ComboTimerHandle;
-	// 입력 커맨드가 들어왔는지
-	bool bHasNextComboCommand = false;
-	void SetComboCheckTimer();
-	void ComboCheck();
-	bool TryStartComboAttack();
-
-	virtual void AnimNotifyAttackHitCheck() override;
-
 	
 /* Character Control -----------------------------------------------------*/
 protected :
 	void ChangeCharacterControl();
 	void SetCharacterControl(ECharacterControlType NewCharacterControlType);
-	virtual void SetDead() override;
 
 /* Camera ---------------------------------------------------------------------*/
 protected:
@@ -116,6 +94,31 @@ protected:
 	UPROPERTY(Category=Input, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> QuitAction;
 	void QuitGame();
+
+/* Combo Action -----------------------------------------------------*/
+private:
+	UPROPERTY(Category=Attack, EditAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<class UOatAttackActionData> AttackActionData;
+
+	virtual void AttackMontageBegin() override;
+	virtual void AttackMontageEnd() override;
+
+	// 현재까지 진행된 콤보 수
+	int32 CurrentCombo = 0;
+	// 원하는 시간에 특정 함수 호출
+	FTimerHandle ComboTimerHandle;
+	// 입력 커맨드가 들어왔는지
+	bool bHasNextComboCommand = false;
+	void SetComboCheckTimer();
+	void ComboCheck();
+	bool TryStartComboAttack();
+
+	virtual void AnimNotifyAttackHitCheck() override;
+
+/* Dead Action -----------------------------------------------------*/
+private:
+	virtual void DeadMontageBegin() override;
+	virtual void DeadMontageEnd() override;
 
 
 /* Item --------------------------------------------------------*/

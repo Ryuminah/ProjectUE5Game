@@ -16,6 +16,7 @@
 #include "EnhancedInputSubSystems.h"
 #include "OatAttackActionData.h"
 #include "Components/CapsuleComponent.h"
+#include "Core/Interface/OatGameModeInterface.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "InGame/Physics/OatCollision.h"
@@ -189,6 +190,10 @@ void AOatCharacterPlayer::SetupCallback()
 	/* 기본 공격 관련 Callback*/
 	AddDelegateOnAttackMonStart(FOnAttackMonStart::FDelegate::CreateUObject(this, &AOatCharacterPlayer::AttackMontageBegin));
 	AddDelegateOnAttackMonEnd(FOnAttackMonEnd::FDelegate::CreateUObject(this, &AOatCharacterPlayer::AttackMontageEnd));
+	
+	AddDelegateOnDeadMonStart(FOnDeadMonStart::FDelegate::CreateUObject(this, &AOatCharacterPlayer::DeadMontageBegin));
+	AddDelegateOnDeadMonEnd(FOnAttackMonEnd::FDelegate::CreateUObject(this, &AOatCharacterPlayer::DeadMontageEnd));
+	
 }
 
 bool AOatCharacterPlayer::TryStartComboAttack()
@@ -204,22 +209,25 @@ void AOatCharacterPlayer::AnimNotifyAttackHitCheck()
 {
 	Super::AnimNotifyAttackHitCheck();
 	
-	FHitResult OutHitResult;
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
 
-	const float AttackRange = Stat->GetTotalStat().AtkRange;
-	const float AttackRadius = Stat->GetAttackRadius()*4;
+	const float AttackRange = Stat->GetTotalStat().AtkRange * 5;
+	const float AttackRadius = Stat->GetAttackRadius()*3;
 	const float AttackDamage = Stat->GetTotalStat().Atk;
+	
 	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
-
 	const FVector End = Start + GetActorForwardVector() * AttackRange;
 
 	// OatAction에 반응하는 채널을 조사
-	bool HitDetected = GetWorld()->SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANNEL_OATACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
+	TArray<FHitResult> OutHitResults;
+	bool HitDetected = GetWorld()->SweepMultiByChannel(OutHitResults, Start, End, FQuat::Identity, CCHANNEL_OATACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
 	if (HitDetected)
 	{
-		FDamageEvent DamageEvent;
-		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
+		for (const FHitResult& HitResult : OutHitResults)
+		{
+			FDamageEvent DamageEvent;
+			HitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
+		}
 	}
 	
 #if ENABLE_DRAW_DEBUG
@@ -227,7 +235,7 @@ void AOatCharacterPlayer::AnimNotifyAttackHitCheck()
 	float CapsuleHalfHeight = AttackRange * 0.5f;
 	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
 
-	DrawDebugCapsule(GetWorld(), CapsuleOrign, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DrawColor, false, 5.f);
+	DrawDebugCapsule(GetWorld(), CapsuleOrign, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DrawColor, false, 2.f);
 #endif
 }
 
@@ -260,7 +268,6 @@ void AOatCharacterPlayer::ComboCheck()
 	}
 }
 
-// 공격 첫 시작 시 몽타주 호출
 void AOatCharacterPlayer::AttackMontageBegin()
 {
 	// ComboStatus
@@ -275,22 +282,27 @@ void AOatCharacterPlayer::AttackMontageEnd()
 	CurrentCombo = 0;
 }
 
-void AOatCharacterPlayer::SetDead()
+void AOatCharacterPlayer::DeadMontageBegin()
 {
-	Super::SetDead();
+	Super::DeadMontageBegin();
 
 	// 입력 막기
 	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
 		DisableInput(PlayerController);
-
-//		// GameMode는 멀티를 고려한 모든 플레이어를 통틀어 단 하나만 존재함 (방장이 소유한 게임모드이다)
-//		IOatGameInterface* OatGameMode = Cast<IOatGameInterface>(GetWorld()->GetAuthGameMode());
-//		if (OatGameMode)
-//		{
-//			OatGameMode->OnPlayerDead();
-//		}
 	}
+}
+
+void AOatCharacterPlayer::DeadMontageEnd()
+{
+	Super::DeadMontageEnd();
+
+	// GameMode는 멀티를 고려한 모든 플레이어를 통틀어 단 하나만 존재함 (방장이 소유한 게임모드이다)
+//	if (IOatGameModeInterface* OatGameMode = Cast<IOatGameModeInterface>(GetWorld()->GetAuthGameMode()))
+//	{
+//		//OatGameMode->OnPlayerDead();
+//	}
+
 }
 
 void AOatCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

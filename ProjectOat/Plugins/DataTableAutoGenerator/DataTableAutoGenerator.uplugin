@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "DataTableAutoGenerator",
+	"Description": "AutoTool for Loading Spreadsheet and Automatically Generating DataTable Assets",
+	"Category": "Other",
+	"CreatedBy": "devOat",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "DataTableAutoGenerator",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}

@@ -11,7 +11,7 @@ public class ProjectOat : ModuleRules
 		PublicIncludePaths.AddRange(new string[] { "ProjectOat" });
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "NavigationSystem", "AIModule" , "GameplayTasks",
-        "Json" , "JsonUtilities"});
+        "Json" , "JsonUtilities", "DataTableAutoGenerator"});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

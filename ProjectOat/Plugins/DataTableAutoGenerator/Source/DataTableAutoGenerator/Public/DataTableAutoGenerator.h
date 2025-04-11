@@ -19,6 +19,11 @@ public:
 	/** This function will be bound to Command (by default it will bring up plugin window) */
 	// 툴 바 버튼을 눌렀을 때 호출되는 함수 (UI창 띄우는 기능)
 	void PluginButtonClicked();
+
+private:
+	void Init();
+	void Shutdown();
+
 	
 private:
 	// 메뉴 등록할 때 
@@ -32,6 +37,8 @@ private:
 	void AddMenuBarExtension(FMenuBarBuilder& MenuBarBuilder);
 	void FillCustomMenu(FMenuBuilder& MenuBuilder);
 	void FillSubMenu(FMenuBuilder& MenuBuilder);
+
+	void OnClickGenerateTableMenu();
 
 private:
 	// 커맨드 목록 (단축키, 버튼 클릭 등 입력 이벤트를 명령으로 바인딩)

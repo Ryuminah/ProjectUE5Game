@@ -9,4 +9,5 @@ void FDataTableAutoGeneratorCommands::RegisterCommands()
 	UI_COMMAND(OpenPluginWindow, "DTGenerator", "Bring up DataTableAutoGenerator window", EUserInterfaceActionType::Button, FInputChord());
 }
 
+
 #undef LOCTEXT_NAMESPACE

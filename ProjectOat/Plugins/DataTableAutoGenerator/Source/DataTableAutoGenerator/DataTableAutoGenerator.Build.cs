@@ -26,6 +26,7 @@ public class DataTableAutoGenerator : ModuleRules
 			new string[]
 			{
 				"Core",
+				"Http"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

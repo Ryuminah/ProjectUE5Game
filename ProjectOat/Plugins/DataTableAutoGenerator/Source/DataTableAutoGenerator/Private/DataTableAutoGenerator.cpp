@@ -3,7 +3,9 @@
 #include "DataTableAutoGenerator.h"
 #include "DataTableAutoGeneratorStyle.h"
 #include "DataTableAutoGeneratorCommands.h"
+#include "FDTLoader.h"
 #include "LevelEditor.h"
+#include "SDTGeneratorWidget.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Text/STextBlock.h"
@@ -39,6 +41,10 @@ void FDataTableAutoGeneratorModule::StartupModule()
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(DataTableAutoGeneratorTabName, FOnSpawnTab::CreateRaw(this, &FDataTableAutoGeneratorModule::OnSpawnPluginTab))
 	                        .SetDisplayName(LOCTEXT("FDataTableAutoGeneratorTabTitle", "DTGenerator"))
 	                        .SetMenuType(ETabSpawnerMenuType::Hidden);
+
+
+	// 기타 클래스들을 생성하는 함수
+	Init();
 }
 
 void FDataTableAutoGeneratorModule::ShutdownModule()
@@ -54,6 +60,7 @@ void FDataTableAutoGeneratorModule::ShutdownModule()
 
 	// Shutdown MenuBarExtender
 	MenuBarExtender.Reset();
+	Shutdown();
 }
 
 TSharedRef<SDockTab> FDataTableAutoGeneratorModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
@@ -86,6 +93,16 @@ void FDataTableAutoGeneratorModule::PluginButtonClicked()
 	FGlobalTabmanager::Get()->TryInvokeTab(DataTableAutoGeneratorTabName);
 }
 
+void FDataTableAutoGeneratorModule::Init()
+{
+
+}
+
+void FDataTableAutoGeneratorModule::Shutdown()
+{
+
+}
+
 // 메뉴 및 툴바에 커맨드 등록
 void FDataTableAutoGeneratorModule::RegisterMenus()
 {
@@ -101,7 +118,6 @@ void FDataTableAutoGeneratorModule::RegisterMenus()
 //			Section.AddMenuEntryWithCommandList(FDataTableAutoGeneratorCommands::Get().OpenPluginWindow, PluginCommands);
 //		}
 //	}
-
 //	{
 //		// "LevelEditor.LevelEditorToolBar"에 플러그인용 버튼을 추가
 //		// 커맨드 리스트(PluginCommands)를 버튼에 연결하므로써 버튼이 눌렸을ㄸㅐ  FDataTableAutoGeneratorModule::PluginButtonClicked()가 호출되는 것..
@@ -163,7 +179,9 @@ void FDataTableAutoGeneratorModule::FillSubMenu(FMenuBuilder& MenuBuilder)
 		// 나중에 콜백추가                                              
 		MenuBuilder.AddMenuEntry(LOCTEXT("GenerateTable", "GenerateTable"),
 		                         LOCTEXT("GenerateTable_ToolTip", "Generate DataTable from Spreadsheet"),
-		                         FSlateIcon(), FUIAction());
+		                         FSlateIcon(),
+		                         FUIAction(FExecuteAction::CreateRaw(this, &FDataTableAutoGeneratorModule::OnClickGenerateTableMenu)));
+
 	}
 
 	{
@@ -171,6 +189,19 @@ void FDataTableAutoGeneratorModule::FillSubMenu(FMenuBuilder& MenuBuilder)
 		                         LOCTEXT("CheckValid_ToolTip", "Check Validate TableData"),
 		                         FSlateIcon(), FUIAction());
 	}
+}
+
+void FDataTableAutoGeneratorModule::OnClickGenerateTableMenu()
+{
+	TSharedRef<SWindow> Window = SNew(SWindow)
+		.Title(LOCTEXT("Settings", "Generate Settings"))
+		.SupportsMinimize(false).SupportsMaximize(false)
+		.ClientSize(FVector2D(400, 300))
+		[
+			SNew(SDTGeneratorWidget)
+		];
+
+	FSlateApplication::Get().AddWindow(Window);
 }
 #undef LOCTEXT_NAMESPACE
 

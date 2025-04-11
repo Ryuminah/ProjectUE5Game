@@ -18,4 +18,6 @@ public:
 
 public:
 	TSharedPtr<FUICommandInfo> OpenPluginWindow;
+	
+	
 };

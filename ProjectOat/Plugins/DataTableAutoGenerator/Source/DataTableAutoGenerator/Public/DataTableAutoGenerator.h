@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Framework/MultiBox/MultiBoxExtender.h"
 #include "Modules/ModuleManager.h"
 
 class FToolBarBuilder;

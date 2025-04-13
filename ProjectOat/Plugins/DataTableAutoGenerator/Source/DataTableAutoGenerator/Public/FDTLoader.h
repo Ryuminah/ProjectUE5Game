@@ -21,12 +21,18 @@ public:
 
 public:
 	FString SheetURL;
+
+	// 폴더 경로
+	FString ExcelFolderPath;
+
 	void IsValidURL(TFunction<void(bool)> OnChecked);
 	void GenerateDTProcess();
 	
 private:
 	void LoadSpreadSheetData(TFunction<void(const FString&)> OnSuccess = nullptr);
 	void ParseCSV(const FString& CSVData);
+
+	void ReadExcelSheet();
 
 private:
 	static TSharedPtr<FDTLoader> DTLoaderInst;

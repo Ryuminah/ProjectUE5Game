@@ -5,6 +5,9 @@
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"
 
+//#include "DataTableAutoGenerator/ThirdParty/xlnt/include/xlnt.hpp"
+#include "workbook/workbook.hpp"
+
 DEFINE_LOG_CATEGORY(LogDTGenerator);
 TSharedPtr<FDTLoader> FDTLoader::DTLoaderInst = nullptr;
 
@@ -105,6 +108,13 @@ void FDTLoader::ParseCSV(const FString& CSVData)
 			}
 		}
 	}
+}
+
+void FDTLoader::ReadExcelSheet()
+{
+	xlnt::workbook Workbook;
+	Workbook.load(TCHAR_TO_UTF8(*ExcelFolderPath));
+	
 }
 
 void FDTLoader::IsValidURL(TFunction<void(bool)> OnChecked)

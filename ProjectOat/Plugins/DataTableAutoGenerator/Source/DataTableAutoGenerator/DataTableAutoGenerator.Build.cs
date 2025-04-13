@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
+using System.IO;
 
 public class DataTableAutoGenerator : ModuleRules
 {
@@ -11,6 +12,7 @@ public class DataTableAutoGenerator : ModuleRules
 		PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
+					Path.Combine(ModuleDirectory , "ThirdParty", "xlnt", "include")
 			}
 			);
 				
@@ -55,5 +57,14 @@ public class DataTableAutoGenerator : ModuleRules
 				// ... add any modules that your module loads dynamically here ...
 			}
 			);
+		
+		PublicAdditionalLibraries.AddRange(
+			new string[]
+			{
+				Path.Combine(ModuleDirectory, "ThirdParty", "xlnt", "lib", "xlnt.lib")
+			}
+		);
+		
+	
 	}
 }

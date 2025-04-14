@@ -12,7 +12,7 @@ public class DataTableAutoGenerator : ModuleRules
 		PublicIncludePaths.AddRange(
 			new string[] {
 				// ... add public include paths required here ...
-					Path.Combine(ModuleDirectory , "ThirdParty", "xlnt", "include")
+				Path.Combine(ModuleDirectory,"ThirdParty","OpenXLSX","include")    
 			}
 			);
 				
@@ -20,6 +20,7 @@ public class DataTableAutoGenerator : ModuleRules
 		PrivateIncludePaths.AddRange(
 			new string[] {
 				// ... add other private include paths required here ...
+				
 			}
 			);
 			
@@ -57,14 +58,13 @@ public class DataTableAutoGenerator : ModuleRules
 				// ... add any modules that your module loads dynamically here ...
 			}
 			);
+
 		
 		PublicAdditionalLibraries.AddRange(
 			new string[]
 			{
-				Path.Combine(ModuleDirectory, "ThirdParty", "xlnt", "lib", "xlnt.lib")
+				Path.Combine(ModuleDirectory, "ThirdParty", "OpenXLSX", "lib", "OpenXLSX.lib")
 			}
 		);
-		
-	
 	}
 }

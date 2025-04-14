@@ -3,7 +3,6 @@
 #include "DataTableAutoGenerator.h"
 #include "DataTableAutoGeneratorStyle.h"
 #include "DataTableAutoGeneratorCommands.h"
-#include "FDTLoader.h"
 #include "LevelEditor.h"
 #include "SDTGeneratorWidget.h"
 #include "Widgets/Docking/SDockTab.h"
@@ -13,7 +12,7 @@
 
 static const FName DataTableAutoGeneratorTabName("DTGenerator");
 
-#define LOCTEXT_NAMESPACE "FDataTableAutoGeneratorModule"
+#define LOCTEXT_NAMESPACE "FDataTableAutoGeneratorModule"  
 
 void FDataTableAutoGeneratorModule::StartupModule()
 {

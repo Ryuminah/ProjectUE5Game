@@ -21,18 +21,18 @@ public:
 
 public:
 	FString SheetURL;
+	void IsValidURL(TFunction<void(bool)> OnChecked);
 
 	// 폴더 경로
-	FString ExcelFolderPath;
+	// FString ExcelFolderPath;
+	bool GenerateDTProcess();
 
-	void IsValidURL(TFunction<void(bool)> OnChecked);
-	void GenerateDTProcess();
 	
 private:
 	void LoadSpreadSheetData(TFunction<void(const FString&)> OnSuccess = nullptr);
-	void ParseCSV(const FString& CSVData);
+	TArray<TArray<FString>> ParseCSV(const FString& CSVData);
 
-	void ReadExcelSheet();
+	TMap<FString, FString> ReadExcelSheetData();
 
 private:
 	static TSharedPtr<FDTLoader> DTLoaderInst;

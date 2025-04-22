@@ -6,6 +6,7 @@
 #include "XLDocument.hpp"
 #include "XLSheet.hpp"
 #include "Interfaces/IHttpResponse.h"
+#include "Interfaces/IPluginManager.h"
 
 DEFINE_LOG_CATEGORY(LogDTGenerator);
 TSharedPtr<FDTLoader> FDTLoader::DTLoaderInst = nullptr;
@@ -20,7 +21,7 @@ FDTLoader::~FDTLoader()
 
 }
 
-#pragma region Spread Sheets URL 
+#pragma region Spread Sheets URL
 void FDTLoader::LoadSpreadSheetData(TFunction<void(const FString&)> OnSuccess)
 {
 	FHttpModule* Http = &FHttpModule::Get();
@@ -50,24 +51,62 @@ void FDTLoader::IsValidURL(TFunction<void(bool)> OnChecked)
 
 
 	HttpRequest->OnProcessRequestComplete().BindLambda(
-													   [OnChecked](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccess)
-													   {
-														   bool bIsValid = bSuccess && Response.IsValid() && EHttpResponseCodes::IsOk(Response->GetResponseCode());
-														   OnChecked(bIsValid);
-													   });
+	                                                   [OnChecked](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bSuccess)
+	                                                   {
+		                                                   bool bIsValid = bSuccess && Response.IsValid() && EHttpResponseCodes::IsOk(Response->GetResponseCode());
+		                                                   OnChecked(bIsValid);
+	                                                   });
 
 	HttpRequest->ProcessRequest();
 }
 
 #pragma endregion
 
+TSharedRef<FDTLoader> FDTLoader::Get()
+{
+	if (!DTLoaderInst.IsValid()) { DTLoaderInst = MakeShareable(new FDTLoader); }
+	return DTLoaderInst.ToSharedRef();;
+}
+
+bool FDTLoader::GenerateDTProcess()
+{
+	// 로딩 후 CSV를 파싱
+	auto AllSheetMap = ReadExcelSheetData();
+	if (AllSheetMap.IsEmpty())
+	{
+		return false;
+	}
+
+	for (const auto& Sheet : AllSheetMap)
+	{
+		const FString& SheetName = Sheet.Key;
+		const FString& SheetValue = Sheet.Value;
+
+		TArray<TArray<FString>> CSV = ParseCSV(SheetValue);
+
+		UE_LOG(LogDTGenerator, Log, TEXT("=========%s========="), *SheetName);
+
+		for (int32 i = 0; i < CSV.Num(); ++i)
+		{
+			const FString& LineStr = FString::Join(CSV[i], TEXT(","));
+			UE_LOG(LogDTGenerator, Log, TEXT("[%s]"), *LineStr);
+		}
+
+		// Generate USturct
+		GenerateStructFile(SheetName, CSV);
+
+		// Generate DT or DA Asset
+	}
+
+	return true;
+}
+
 // Change ExcelSheet To CSV
 TMap<FString, FString> FDTLoader::ReadExcelSheetData()
 {
 	// Read All Sheets
 	TMap<FString, TArray<TArray<FString>>> AllSheetMap;
-	
-	
+
 	// if not Exist
 	if (!FPaths::FileExists(SheetURL))
 	{
@@ -169,8 +208,6 @@ TMap<FString, FString> FDTLoader::ReadExcelSheetData()
 	return SheetToCSVMap;
 }
 
-
-
 TArray<TArray<FString>> FDTLoader::ParseCSV(const FString& CSVData)
 {
 	TArray<FString> Lines;
@@ -205,38 +242,83 @@ TArray<TArray<FString>> FDTLoader::ParseCSV(const FString& CSVData)
 		//UE_LOG(LogDTGenerator, Log , TEXT("%s"),*FString::Join(Row,TEXT(",")));
 	}
 
-	
 	return DataRows;
 }
 
-bool FDTLoader::GenerateDTProcess()
+void FDTLoader::GenerateStructFile(const FString& SheetName, const TArray<TArray<FString>>& CSVDatas)
 {
-	// 로딩 후 CSV를 파싱
-	auto AllSheetMap = ReadExcelSheetData();
-	if (AllSheetMap.IsEmpty())
+	if (CSVDatas.Num() < 2)
 	{
-		return false;	
+		UE_LOG(LogTemp, Error, TEXT("CSV must contain at least two rows: FieldName and FieldType."));
+		return;
 	}
 
-	for (const auto& Sheet : AllSheetMap)
+	FString Output;
+
+	Output += TEXT("#pragma once\n\n");
+	Output += TEXT("#include \"CoreMinimal.h\"\n");
+	Output +=  FString::Printf(TEXT("#include \"%s.generated.h\"\n\n"), *SheetName);
+	Output += FString::Printf(TEXT("USTRUCT(BlueprintType)\nstruct F%s\n{\n    GENERATED_BODY()\n\n"), *SheetName);
+
+	TArray<FString> FieldNames = CSVDatas[0];
+	TArray<FString> FieldTypes = CSVDatas[1];
+
+	for (int32 i = 0; i < FieldNames.Num(); ++i)
 	{
-		const FString& SheetName = Sheet.Key;
-		const FString& SheetValue = Sheet.Value;
+		const FString& Type = FieldTypes[i];
+		const FString& Name = FieldNames[i];
 
-		TArray<TArray<FString>> CSV = ParseCSV(SheetValue);
+		FString ConvertedType = ConvertToUEType(Type);
+		Output += TEXT("    UPROPERTY(EditAnywhere, BlueprintReadWrite)\n");
+		Output += FString::Printf(TEXT("    %s %s;\n\n"), *ConvertedType, *Name);
+	}                                    
 
-		UE_LOG(LogDTGenerator, Log, TEXT("=========%s========="), *SheetName);
+	Output += TEXT("};\n");
 
-		for (int32 i = 0; i < CSV.Num(); ++i)
-		{
-			const FString& LineStr = FString::Join(CSV[i], TEXT(","));
-			UE_LOG(LogDTGenerator, Log, TEXT("[%s]"),*LineStr);
-		}
+	// 파일 저장 루트
+	const FString FileName = FString::Printf(TEXT("%s.h"), *SheetName);
+	TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin("DataTableAutoGenerator");
+	const FString SavePath = FPaths::Combine(Plugin->GetBaseDir(),TEXT("Source"),TEXT("DataTableAutoGenerator"),TEXT("Generated"),TEXT("Struct"), FileName);
 
-		// Generate USturct
+	// 폴더가 없으면 생성
+	IFileManager::Get().MakeDirectory(*FPaths::GetPath(SavePath), true);
 
-		// Generate DT or DA Asset
+	if (FFileHelper::SaveStringToFile(Output, *SavePath))
+	{
+		UE_LOG(LogTemp, Log, TEXT("Header file successfully saved: %s"), *SavePath);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to save header file: %s"), *SavePath);
+	}
+}
+
+FString FDTLoader::ConvertToUEType(const FString& InType)
+{
+	FString LowerType = InType.ToLower();
+
+	if (LowerType == TEXT("string"))
+	{
+		return TEXT("FString");
 	}
 
-	return true;
+	else if (LowerType == TEXT("int") || LowerType == TEXT("int32"))
+	{
+		return TEXT("int32");
+	}
+	else if (LowerType == TEXT("float"))
+	{
+		return TEXT("float");
+	}
+	else if (LowerType == TEXT("bool"))
+	{
+		return TEXT("bool");
+	}
+
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("⚠️ 알 수 없는 타입 '%s', 그대로 사용합니다."), *InType);
+	}
+
+	return InType; // fallback
 }

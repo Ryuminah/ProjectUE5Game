@@ -33,15 +33,13 @@ private:
 	TArray<TArray<FString>> ParseCSV(const FString& CSVData);
 
 	TMap<FString, FString> ReadExcelSheetData();
+	void GenerateStructFile(const FString& SheetName, const TArray<TArray<FString>>& CSVDatas);
+	FString ConvertToUEType(const FString& InType);
 
 private:
 	static TSharedPtr<FDTLoader> DTLoaderInst;
 
 public:
-	static TSharedRef<FDTLoader> Get()
-	{
-		if (!DTLoaderInst.IsValid()) { DTLoaderInst = MakeShareable(new FDTLoader); }
-		return DTLoaderInst.ToSharedRef();;
-	}
+	static TSharedRef<FDTLoader> Get();
 };
 
